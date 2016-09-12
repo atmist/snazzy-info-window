@@ -1,0 +1,17 @@
+{
+  "name": "snazzy-info-window-test",
+  "version": "0.0.1",
+  "devDependencies": {
+    "bower": "^1.7.9",
+    "del": "^2.2.2",
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.1",
+    "gulp-run": "^1.7.1",
+    "gulp-sass": "^2.3.2"
+  },
+  "scripts": {
+    "gulp": "gulp",
+    "bower": "bower",
+    "clean": "rimraf ./node_modules"
+  }
+}

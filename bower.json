@@ -1,0 +1,16 @@
+{
+  "name": "snazzy-info-window",
+  "homepage": "https://github.com/atmist/snazzy-info-window",
+  "authors": [
+    "developer@atmist.com",
+  ],
+  "keywords": [
+    "Snazzy",
+    "Maps",
+    "Google",
+    "Maps",
+    "info",
+    "window"
+  ],
+  "license": "Apache-2.0"
+}
