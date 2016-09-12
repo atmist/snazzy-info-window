@@ -5,10 +5,10 @@ var run = require('gulp-run');
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
 var del = require('del');
+var concat = require('gulp-concat');
 
 var paths = {
-    sass: './scss/**/*.scss',
-    css: './css'
+    sass: './scss/**/*.scss'
 };
 
 
@@ -22,7 +22,8 @@ gulp.task('sass:build', function(){
     return gulp.src(paths.sass)
         .pipe(sass().on('error', sass.logError))
         .pipe(autoprefixer())
-        .pipe(gulp.dest(paths.css));
+        .pipe(concat('index.css'))
+        .pipe(gulp.dest('./'));
 });
 
 //Rebuild the sass files when they change
@@ -36,7 +37,7 @@ gulp.task('build', ['bower:install', 'sass:build']);
 //Clean all the files except for node_modules
 gulp.task('clean', function(){
     return del([
-        './css',
+        './index.css',
         './bower_components'
     ]);
 });

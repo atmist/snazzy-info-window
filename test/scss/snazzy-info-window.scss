@@ -1,0 +1,12 @@
+$marker-width: 22px;
+$marker-height: 40px;
+
+.snazzy-info-wrapper{
+    background: white;
+    height: 200px;
+    width: 200px;
+    transform: translate(calc(-50% ), calc(-100% - #{$marker-height}));
+}
+.snazzy-info-content{
+    text-align: center;
+}
