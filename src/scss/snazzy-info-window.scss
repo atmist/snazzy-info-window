@@ -10,7 +10,7 @@
 
 .snazzy-info-wrapper-top {
     transform: translate(-50%, -100%);
-    margin-top: -$marker-height;
+    margin-top: -$snazzy-marker-height;
     flex-direction: column;
 }
 .snazzy-info-wrapper-bottom {
@@ -22,14 +22,14 @@
 }
 .snazzy-info-wrapper-left {
     transform: translate(-100%, -50%);
-    margin-top: $marker-height / -2;
-    margin-left: $marker-width / -2;
+    margin-top: $snazzy-marker-height / -2;
+    margin-left: $snazzy-marker-width / -2;
 }
 
 .snazzy-info-wrapper-right {
     transform: translate(0, -50%);
-    margin-top: $marker-height / -2;
-    margin-left: $marker-width / 2;
+    margin-top: $snazzy-marker-height / -2;
+    margin-left: $snazzy-marker-width / 2;
     .snazzy-info-content {
         order: 2;
     }
@@ -37,7 +37,11 @@
 
 /* Content */
 .snazzy-info-content {
-    background-color: $info-bg;
+    padding: $snazzy-content-gutter;
+    background-color: $snazzy-info-bg;
+    border-radius: $snazzy-border-radius;
+    color: $snazzy-font-color;
+    font-size: $snazzy-font-size;
 }
 
 /* Pointer */
@@ -77,18 +81,18 @@
         display: block;
         width: 141%;
         height: 141%;
-        background-color: $info-bg;
+        background-color: $snazzy-info-bg;
     }
 }
 
 .snazzy-info-pointer-top,
 .snazzy-info-pointer-bottom {
-    width: $pointer-length * 2;
-    height: $pointer-length;
+    width: $snazzy-pointer-length * 2;
+    height: $snazzy-pointer-length;
 }
 
 .snazzy-info-pointer-left,
 .snazzy-info-pointer-right {
-    width: $pointer-length;
-    height: $pointer-length * 2;
+    width: $snazzy-pointer-length;
+    height: $snazzy-pointer-length * 2;
 }
