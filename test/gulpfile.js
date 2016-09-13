@@ -8,7 +8,8 @@ var del = require('del');
 var concat = require('gulp-concat');
 
 var paths = {
-    sass: './scss/**/*.scss'
+    sass: './scss/**/*.scss',
+    src_sass: '../src/scss/**/*.scss'
 };
 
 
@@ -19,16 +20,16 @@ gulp.task('bower:install', function(){
 
 //Build the css from the scss files
 gulp.task('sass:build', function(){
-    return gulp.src(paths.sass)
+    return gulp.src('./scss/index.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(autoprefixer())
-        .pipe(concat('index.css'))
         .pipe(gulp.dest('./'));
 });
 
 //Rebuild the sass files when they change
 gulp.task('sass:watch', function(){
     gulp.watch(paths.sass, ['sass:build']);
+    gulp.watch(paths.src_sass, ['sass:build']);
 });
 
 //Build all the test dependencies

@@ -1,14 +1,18 @@
+$info-bg: teal;
+
+@import "../../src/scss/snazzy-info-window";
+
 body {
     background: #D3E3E8;
     height: 1600px;
-}
+} 
 #container{
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    & div{
+    > div{
         flex-grow: 1;
     }
 }
@@ -17,10 +21,20 @@ body {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    & div{
+    > div{
         flex-grow: 1;
     }
-    & #map-canvas{
+    > #map-canvas{
         flex-grow: 6;
     }
 }
+
+
+#map-canvas {
+    .snazzy-info-content{
+        text-align: center;
+        width: 500px;
+        height: 200px;
+    }
+}
+

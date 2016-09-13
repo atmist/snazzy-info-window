@@ -1,0 +1,94 @@
+@import "_settings";
+
+
+
+/* Wrapper */
+.snazzy-info-wrapper{    
+    display: flex;
+    align-items: center;
+}
+
+.snazzy-info-wrapper-top {
+    transform: translate(-50%, -100%);
+    margin-top: -$marker-height;
+    flex-direction: column;
+}
+.snazzy-info-wrapper-bottom {
+    transform: translate(-50%, 0);
+    flex-direction: column;
+    .snazzy-info-content {
+        order: 2;
+    }
+}
+.snazzy-info-wrapper-left {
+    transform: translate(-100%, -50%);
+    margin-top: $marker-height / -2;
+    margin-left: $marker-width / -2;
+}
+
+.snazzy-info-wrapper-right {
+    transform: translate(0, -50%);
+    margin-top: $marker-height / -2;
+    margin-left: $marker-width / 2;
+    .snazzy-info-content {
+        order: 2;
+    }
+}
+
+/* Content */
+.snazzy-info-content {
+    background-color: $info-bg;
+}
+
+/* Pointer */
+.snazzy-info-pointer-top:before {
+    top: 0;
+    left: 0;        
+    transform-origin: 0 0; 
+}
+
+.snazzy-info-pointer-bottom:before {
+    bottom: 0;
+    right: 0;        
+    transform-origin: 100% 100%;
+}
+
+.snazzy-info-pointer-left:before {
+    bottom: 0;
+    left: 0;
+    transform-origin: 0 100%;
+}
+ 
+.snazzy-info-pointer-right:before {
+    top: 0;
+    right: 0;       
+    transform-origin: 100% 0;
+}
+
+
+[class*="snazzy-info-pointer-"] {
+    position: relative;
+    z-index: 2;
+    overflow: hidden;    
+    &:before {
+        transform: rotate(-45deg);
+        content: '';
+        position: absolute;
+        display: block;
+        width: 141%;
+        height: 141%;
+        background-color: $info-bg;
+    }
+}
+
+.snazzy-info-pointer-top,
+.snazzy-info-pointer-bottom {
+    width: $pointer-length * 2;
+    height: $pointer-length;
+}
+
+.snazzy-info-pointer-left,
+.snazzy-info-pointer-right {
+    width: $pointer-length;
+    height: $pointer-length * 2;
+}
