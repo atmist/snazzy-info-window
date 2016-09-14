@@ -20,6 +20,7 @@
         this._offset = options.offset;
         this._position = options.position;
         this._pointer = options.pointer;
+        this._hasShadow = options.hasShadow;
 
         //Create an instance using the superclass OverlayView
         google.maps.OverlayView.apply(this, arguments);
@@ -60,6 +61,7 @@
             this.setMap(this._marker.getMap());
         }
     };
+
     /*Close the info window.*/
     SnazzyInfoWindow.prototype.close = function(){
         this.setMap(null);
@@ -80,6 +82,7 @@
         if (this.html){
             return;
         }
+        
         //Create the html elements
         var html = {
             wrapper: document.createElement('div'),
@@ -116,7 +119,7 @@
             }
         }
 
-        //Assign Position
+        //Assign position
         addClass(html.wrapper, 'wrapper-' + this.getPosition());
 
         //Assign pointer
@@ -130,6 +133,11 @@
             addClass(html.pointer, 'pointer-' + this.getPosition());
 
             html.wrapper.appendChild(html.pointer);
+        }
+
+        //Assign shadow
+        if (this._hasShadow) {
+            addClass(html.wrapper, 'shadow');
         }
 
         //Add the html elements

@@ -22,13 +22,16 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
         visible: true,
         //icon: icon
     });
+
     var infowindow = new SnazzyInfoWindow({
         content: 'cookies',
         position: 'top', // top | left | bottom | right
         offset: {
             //top: '-40px'
-        }
+        },
+        hasShadow: true 
     });
+
     infowindow.attach(marker);
     infowindow.open();
 });

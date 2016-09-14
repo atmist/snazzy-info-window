@@ -1,11 +1,22 @@
-$snazzy-marker-width: 26px !default;
-$snazzy-marker-height: 44px !default;
 
-$snazzy-pointer-length: 20px !default;
-$snazzy-info-bg: white !default;
+// Marker size
+$si-marker-width:       26px !default;                  // Width of the marker
+$si-marker-height:      44px !default;                  // Height of the marker
 
-$snazzy-content-gutter: 20px !default;
-$snazzy-border-radius: 3px !default;
+// Infowindow pointer
+$si-pointer-length:     20px !default;                  // Length of the pointer, from the edge of the infowindow to the tip
+$si-pointer-bg:         $si-content-bg;                 // Background color of the pointer
 
-$snazzy-font-color: #333 !default;
-$snazzy-font-size: 14px !default;
+// Infowindow content  
+$si-border-radius:      3px !default;                   // Border radius of the infowindow
+$si-content-bg:         #fff !default;                  // Background color of the infowindow
+$si-content-padding:    20px !default;                  // Padding of the infowindow
+$si-content-color:      #333 !default;                  // Color of the infowindow content
+$si-content-size:       14px !default;                  // Font size of the infowindow content
+
+// Infowindow shadow
+$si-shadow-h:           6px !default;                   // Shadow horizontal offset
+$si-shadow-v:           8px !default;                   // Shadow vertical offset
+$si-shadow-blur:        8px !default;                   // Shadow blur radius
+$si-shadow-spread:      0px !default;                   // Shadow spread radius
+$si-shadow-color:       rgba(#000, 0.4) !default;       // Shadow color

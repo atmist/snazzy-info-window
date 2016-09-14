@@ -19,11 +19,14 @@ gulp.task('bower:install', function(){
 });
 
 //Build the css from the scss files
-gulp.task('sass:build', function(){
-    return gulp.src('./scss/index.scss')
-        .pipe(sass().on('error', sass.logError))
-        .pipe(autoprefixer())
-        .pipe(gulp.dest('./'));
+gulp.task('sass:build', function(cb){
+    setTimeout(function(){
+        gulp.src('./scss/index.scss')
+            .pipe(sass().on('error', sass.logError))
+            .pipe(autoprefixer())
+            .pipe(gulp.dest('./'));
+        cb();
+    }, 100);
 });
 
 //Rebuild the sass files when they change

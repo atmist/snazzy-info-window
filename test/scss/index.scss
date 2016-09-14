@@ -1,5 +1,9 @@
-$snazzy-info-bg: teal;
-$snazzy-font-color: white;
+$si-content-bg: white;
+$si-content-color: white;
+
+$si-pointer-length: 40px;
+$si-shadow-h:           30px; 
+$si-shadow-v:           5px;
 
 @import "../../src/scss/snazzy-info-window";
 

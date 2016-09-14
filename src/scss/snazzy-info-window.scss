@@ -1,79 +1,96 @@
+/* Snazzy Infowindow */
+
 @import "_settings";
+@import "math/_math";
+
+//////////////////////////////////////////////////
+//
+// Contents:
+//
+// 1. 
+//
+//////////////////////////////////////////////////
 
 
 
-/* Wrapper */
+//////////////////////////////
+// 0. Helpers
+//////////////////////////////
+
+
+
+//////////////////////////////
+// 1. Wrapper Styles
+//////////////////////////////
+
+// Infowindow wrapper
 .snazzy-info-wrapper{    
     display: flex;
     align-items: center;
 }
 
+// Top-positioned infowindow
 .snazzy-info-wrapper-top {
     transform: translate(-50%, -100%);
-    margin-top: -$snazzy-marker-height;
+    margin-top: -$si-marker-height;
     flex-direction: column;
 }
+
+// Bottom-positioned infowindow
 .snazzy-info-wrapper-bottom {
     transform: translate(-50%, 0);
     flex-direction: column;
+
     .snazzy-info-content {
         order: 2;
     }
 }
+
+// Left-positioned infowindow
 .snazzy-info-wrapper-left {
     transform: translate(-100%, -50%);
-    margin-top: $snazzy-marker-height / -2;
-    margin-left: $snazzy-marker-width / -2;
+    margin-top: $si-marker-height / -2;
+    margin-left: $si-marker-width / -2;
 }
 
+// Right-positioned infowindow
 .snazzy-info-wrapper-right {
     transform: translate(0, -50%);
-    margin-top: $snazzy-marker-height / -2;
-    margin-left: $snazzy-marker-width / 2;
+    margin-top: $si-marker-height / -2;
+    margin-left: $si-marker-width / 2;
+
     .snazzy-info-content {
         order: 2;
     }
 }
 
-/* Content */
+
+
+//////////////////////////////
+// 2. Content Styles
+//////////////////////////////
+
+// Content wrapper
 .snazzy-info-content {
-    padding: $snazzy-content-gutter;
-    background-color: $snazzy-info-bg;
-    border-radius: $snazzy-border-radius;
-    color: $snazzy-font-color;
-    font-size: $snazzy-font-size;
-}
-
-/* Pointer */
-.snazzy-info-pointer-top:before {
-    top: 0;
-    left: 0;        
-    transform-origin: 0 0; 
-}
-
-.snazzy-info-pointer-bottom:before {
-    bottom: 0;
-    right: 0;        
-    transform-origin: 100% 100%;
-}
-
-.snazzy-info-pointer-left:before {
-    bottom: 0;
-    left: 0;
-    transform-origin: 0 100%;
-}
- 
-.snazzy-info-pointer-right:before {
-    top: 0;
-    right: 0;       
-    transform-origin: 100% 0;
+    padding: $si-content-padding;
+    background-color: $si-content-bg;
+    border-radius: $si-border-radius;
+    color: $si-content-color;
+    font-size: $si-content-size;
 }
 
 
+
+//////////////////////////////
+// 3. Pointer Styles
+//////////////////////////////
+
+// General pointer styles
 [class*="snazzy-info-pointer-"] {
     position: relative;
     z-index: 2;
-    overflow: hidden;    
+    overflow: hidden;
+    
     &:before {
         transform: rotate(-45deg);
         content: '';
@@ -81,18 +98,78 @@
         display: block;
         width: 141%;
         height: 141%;
-        background-color: $snazzy-info-bg;
+        background-color: $si-pointer-bg;
     }
 }
 
+// Top and bottom pointer dimensions
 .snazzy-info-pointer-top,
 .snazzy-info-pointer-bottom {
-    width: $snazzy-pointer-length * 2;
-    height: $snazzy-pointer-length;
+    width: $si-pointer-length * 2;
+    height: $si-pointer-length;
 }
 
+// Left and right pointer dimensions
 .snazzy-info-pointer-left,
 .snazzy-info-pointer-right {
-    width: $snazzy-pointer-length;
-    height: $snazzy-pointer-length * 2;
+    width: $si-pointer-length;
+    height: $si-pointer-length * 2;
+}
+
+// Pointer position for the top-positioned infowindow
+.snazzy-info-pointer-top:before {
+    top: 0;
+    left: 0;        
+    transform-origin: 0 0; 
+}
+
+// Pointer position for the bottom-positioned infowindow
+.snazzy-info-pointer-bottom:before {
+    bottom: 0;
+    right: 0;        
+    transform-origin: 100% 100%;
+}
+
+// Pointer position for the left-positioned infowindow
+.snazzy-info-pointer-left:before {
+    bottom: 0;
+    left: 0;
+    transform-origin: 0 100%;
+}
+ 
+ // Pointer position for the right-positioned infowindow
+.snazzy-info-pointer-right:before {
+    top: 0;
+    right: 0;       
+    transform-origin: 100% 0;
+}
+
+
+//////////////////////////////
+// 3. Infowindow Shadow
+//////////////////////////////
+
+.snazzy-info-shadow {
+
+//Make sure that no division by zero occurs
+$angle: atan($si-shadow-v/if($si-shadow-h == 0, 0.00000001px, $si-shadow-h));
+$rotated-angle: unitless-rad(rad-to-deg($angle) + 45); 
+
+$left: $si-shadow-h / cos($angle);
+$right: $si-shadow-v / sin($angle);
+$max-shadow-distance: 0;
+@if (abs($left) > abs($right)){
+    $max-shadow-distance: $left;
+}
+@else{
+    $max-shadow-distance: $right;
+}
+    // Content shadow
+    .snazzy-info-content {
+        box-shadow: $si-shadow-h $si-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
+    }
+    // Pointer shadow
+    [class*="snazzy-info-pointer-"]:before {
+        box-shadow: ($max-shadow-distance * cos($rotated-angle)) ($max-shadow-distance * sin($rotated-angle)) $si-shadow-blur $si-shadow-spread $si-shadow-color;
+    }
 }
