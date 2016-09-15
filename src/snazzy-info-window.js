@@ -127,6 +127,7 @@
 
             html.pointerShadow = document.createElement('div');
             addClass(html.pointerShadow, 'pointer');
+            addClass(html.pointerShadow, 'pointer-' + this.getPosition());
             addClass(html.pointerShadow, 'shadow-pointer');
 
             html.contentShadow = document.createElement('div');
@@ -147,6 +148,7 @@
                 html.pointer.style.width = this._pointer.length;
             }
             addClass(html.pointer, 'pointer');
+            addClass(html.pointer, 'pointer-' + this.getPosition());
 
             html.wrapper.appendChild(html.pointer);
         }

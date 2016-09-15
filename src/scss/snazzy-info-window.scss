@@ -19,9 +19,6 @@ $root-2: 1.41421356237;
 $inverse-root-2: 0.70710678118;
 $rotated-shadow-h: $inverse-root-2 * ($si-shadow-h - $si-shadow-v);
 $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);
-$shadow-offset: floor($si-shadow-v + ($si-shadow-spread * $root-2));
-
-
 
 //////////////////////////////
 // 1. Wrapper Styles
@@ -38,22 +35,12 @@ $shadow-offset: floor($si-shadow-v + ($si-shadow-spread * $root-2));
     transform: translate(-50%, -100%);
     margin-top: -$si-marker-height;
     flex-direction: column;
-
-    .snazzy-info-pointer {
-        order: 2;
-        transform-origin: 0 100%;
-        //margin-bottom: max($shadow-offset, 0);
-    }
 }
 
 // Bottom-positioned infowindow
 .snazzy-info-wrapper-bottom {
     transform: translate(-50%, 0);
     flex-direction: column;
-
-    .snazzy-info-pointer {
-        transform-origin: 100% 100%;
-    }
 }
 
 // Left-positioned infowindow
@@ -61,12 +48,6 @@ $shadow-offset: floor($si-shadow-v + ($si-shadow-spread * $root-2));
     transform: translate(-100%, -50%);
     margin-top: $si-marker-height / -2;
     margin-left: $si-marker-width / -2;
-
-    .snazzy-info-pointer {
-        order: 2;
-        transform: translate(0, 50%) rotate(-45deg) scale($root-2);
-        transform-origin: 0 100%;
-    }
 }
 
 // Right-positioned infowindow
@@ -101,16 +82,8 @@ $shadow-offset: floor($si-shadow-v + ($si-shadow-spread * $root-2));
 //////////////////////////////
 
 // General pointer styles
-[class*="snazzy-info-pointer-"] {
-    align-self: stretch;
-    position: relative;
-    z-index: 2;
-    //overflow: hidden;
-}
-
 .snazzy-info-pointer {
     flex: 0 0 auto;
-    transform: translate(50%, 0) rotate(-45deg) scale($root-2);
     position: relative;
     width: $si-pointer-length;
     height: $si-pointer-length;
@@ -118,6 +91,41 @@ $shadow-offset: floor($si-shadow-v + ($si-shadow-spread * $root-2));
     z-index: 2;
     background-color: $si-pointer-bg;
 }
+
+// Top and bottom pointer positioning
+.snazzy-info-pointer-top,
+.snazzy-info-pointer-bottom {
+    transform: translate(50%, 0) rotate(-45deg) scale($root-2);
+}
+
+// Left and right pointer positioning
+.snazzy-info-pointer-left,
+.snazzy-info-pointer-right {
+    transform: translate(0, 50%) rotate(-45deg) scale($root-2);
+}
+
+// Top pointer positioning
+.snazzy-info-pointer-top {
+    order: 2;
+    transform-origin: 0 100%;
+}
+
+// Bottom pointer positioning
+.snazzy-info-pointer-bottom {
+    transform-origin: 100% 100%;
+}
+
+// Left pointer positioning
+.snazzy-info-pointer-left {
+    order: 2;
+    transform-origin: 0 100%;
+}
+
+// Right pointer positioning
+.snazzy-info-pointer-right {
+    transform-origin: 0 0;
+}
+
 
 
 //////////////////////////////

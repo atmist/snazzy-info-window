@@ -29,9 +29,6 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
         });
         var infowindow = new SnazzyInfoWindow($.extend({}, {
             content: 'Cookies',
-            offset: {
-                //top: '-40px'
-            },
             hasShadow: true 
         }, infoSettings[i]));
 
