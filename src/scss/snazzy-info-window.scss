@@ -1,7 +1,6 @@
 /* Snazzy Infowindow */
 
 @import "_settings";
-@import "math/_math";
 
 //////////////////////////////////////////////////
 //
@@ -14,27 +13,13 @@
 
 
 //////////////////////////////
-// 0. Helpers
+// 0. Variables
 //////////////////////////////
-//Make sure that no division by zero occurs
-
-$angle: atan($si-shadow-v/if($si-shadow-h == 0, 0.00000001px, $si-shadow-h));
-$rotated-angle: unitless-rad(rad-to-deg($angle) + 45); 
-
-$left: $si-shadow-h / cos($angle);
-$right: $si-shadow-v / sin($angle);
-$max-shadow-distance: 0;
-@if (abs($left) > abs($right)){
-    $max-shadow-distance: $left;
-}
-@else{
-    $max-shadow-distance: $right;
-}
-
-$rotated-shadow-h: ($max-shadow-distance * cos($rotated-angle));
-$rotated-shadow-v: ($max-shadow-distance * sin($rotated-angle));
-
-$shadow-offset: floor($si-shadow-v + ($si-shadow-spread * 1.414));
+$root-2: 1.41421356237;
+$inverse-root-2: 0.70710678118;
+$rotated-shadow-h: $inverse-root-2 * ($si-shadow-h - $si-shadow-v);
+$rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);
+$shadow-offset: floor($si-shadow-v + ($si-shadow-spread * $root-2));
 
 
 
@@ -79,7 +64,7 @@ $shadow-offset: floor($si-shadow-v + ($si-shadow-spread * 1.414));
 
     .snazzy-info-pointer {
         order: 2;
-        transform: translate(0, 50%) rotate(-45deg) scale(1.414);
+        transform: translate(0, 50%) rotate(-45deg) scale($root-2);
         transform-origin: 0 100%;
     }
 }
@@ -125,7 +110,7 @@ $shadow-offset: floor($si-shadow-v + ($si-shadow-spread * 1.414));
 
 .snazzy-info-pointer {
     flex: 0 0 auto;
-    transform: translate(50%, 0) rotate(-45deg) scale(1.414);
+    transform: translate(50%, 0) rotate(-45deg) scale($root-2);
     position: relative;
     width: $si-pointer-length;
     height: $si-pointer-length;
@@ -157,7 +142,7 @@ $shadow-offset: floor($si-shadow-v + ($si-shadow-spread * 1.414));
 }
 
 .snazzy-info-shadow-pointer {
-    box-shadow: ($rotated-shadow-h * .707) ($rotated-shadow-v * .707) ($si-shadow-blur * .707) ($si-shadow-spread * .707) $si-shadow-color;
+    box-shadow: ($rotated-shadow-h * $inverse-root-2) ($rotated-shadow-v * $inverse-root-2) ($si-shadow-blur * $inverse-root-2) ($si-shadow-spread * $inverse-root-2) $si-shadow-color;
     background-color: transparent;
 }
 
