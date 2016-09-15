@@ -16,6 +16,25 @@
 //////////////////////////////
 // 0. Helpers
 //////////////////////////////
+//Make sure that no division by zero occurs
+
+$angle: atan($si-shadow-v/if($si-shadow-h == 0, 0.00000001px, $si-shadow-h));
+$rotated-angle: unitless-rad(rad-to-deg($angle) + 45); 
+
+$left: $si-shadow-h / cos($angle);
+$right: $si-shadow-v / sin($angle);
+$max-shadow-distance: 0;
+@if (abs($left) > abs($right)){
+    $max-shadow-distance: $left;
+}
+@else{
+    $max-shadow-distance: $right;
+}
+
+$rotated-shadow-h: ($max-shadow-distance * cos($rotated-angle));
+$rotated-shadow-v: ($max-shadow-distance * sin($rotated-angle));
+
+$shadow-offset: floor($si-shadow-v + ($si-shadow-spread * 1.414));
 
 
 
@@ -34,6 +53,12 @@
     transform: translate(-50%, -100%);
     margin-top: -$si-marker-height;
     flex-direction: column;
+
+    .snazzy-info-pointer {
+        order: 2;
+        transform-origin: 0 100%;
+        //margin-bottom: max($shadow-offset, 0);
+    }
 }
 
 // Bottom-positioned infowindow
@@ -41,8 +66,8 @@
     transform: translate(-50%, 0);
     flex-direction: column;
 
-    .snazzy-info-content {
-        order: 2;
+    .snazzy-info-pointer {
+        transform-origin: 100% 100%;
     }
 }
 
@@ -51,6 +76,12 @@
     transform: translate(-100%, -50%);
     margin-top: $si-marker-height / -2;
     margin-left: $si-marker-width / -2;
+
+    .snazzy-info-pointer {
+        order: 2;
+        transform: translate(0, 50%) rotate(-45deg) scale(1.414);
+        transform-origin: 0 100%;
+    }
 }
 
 // Right-positioned infowindow
@@ -58,10 +89,6 @@
     transform: translate(0, -50%);
     margin-top: $si-marker-height / -2;
     margin-left: $si-marker-width / 2;
-
-    .snazzy-info-content {
-        order: 2;
-    }
 }
 
 
@@ -72,6 +99,9 @@
 
 // Content wrapper
 .snazzy-info-content {
+    position: relative;
+    width: 100%;
+    z-index: 3;
     padding: $si-content-padding;
     background-color: $si-content-bg;
     border-radius: $si-border-radius;
@@ -87,61 +117,21 @@
 
 // General pointer styles
 [class*="snazzy-info-pointer-"] {
+    align-self: stretch;
     position: relative;
     z-index: 2;
-    overflow: hidden;
-    
-    &:before {
-        transform: rotate(-45deg);
-        content: '';
-        position: absolute;
-        display: block;
-        width: 141%;
-        height: 141%;
-        background-color: $si-pointer-bg;
-    }
+    //overflow: hidden;
 }
 
-// Top and bottom pointer dimensions
-.snazzy-info-pointer-top,
-.snazzy-info-pointer-bottom {
-    width: $si-pointer-length * 2;
-    height: $si-pointer-length;
-}
-
-// Left and right pointer dimensions
-.snazzy-info-pointer-left,
-.snazzy-info-pointer-right {
+.snazzy-info-pointer {
+    flex: 0 0 auto;
+    transform: translate(50%, 0) rotate(-45deg) scale(1.414);
+    position: relative;
     width: $si-pointer-length;
-    height: $si-pointer-length * 2;
-}
-
-// Pointer position for the top-positioned infowindow
-.snazzy-info-pointer-top:before {
-    top: 0;
-    left: 0;        
-    transform-origin: 0 0; 
-}
-
-// Pointer position for the bottom-positioned infowindow
-.snazzy-info-pointer-bottom:before {
-    bottom: 0;
-    right: 0;        
-    transform-origin: 100% 100%;
-}
-
-// Pointer position for the left-positioned infowindow
-.snazzy-info-pointer-left:before {
-    bottom: 0;
-    left: 0;
-    transform-origin: 0 100%;
-}
- 
- // Pointer position for the right-positioned infowindow
-.snazzy-info-pointer-right:before {
-    top: 0;
-    right: 0;       
-    transform-origin: 100% 0;
+    height: $si-pointer-length;
+    margin: auto;
+    z-index: 2;
+    background-color: $si-pointer-bg;
 }
 
 
@@ -149,27 +139,29 @@
 // 3. Infowindow Shadow
 //////////////////////////////
 
-.snazzy-info-shadow {
-
-//Make sure that no division by zero occurs
-$angle: atan($si-shadow-v/if($si-shadow-h == 0, 0.00000001px, $si-shadow-h));
-$rotated-angle: unitless-rad(rad-to-deg($angle) + 45); 
-
-$left: $si-shadow-h / cos($angle);
-$right: $si-shadow-v / sin($angle);
-$max-shadow-distance: 0;
-@if (abs($left) > abs($right)){
-    $max-shadow-distance: $left;
+[class*="snazzy-info-shadow-wrapper"] {
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+    opacity: 0.4;
 }
-@else{
-    $max-shadow-distance: $right;
+
+.snazzy-info-shadow-content {
+    flex: 1 1 auto;
+    display: block;
+    box-shadow: $si-shadow-h $si-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
 }
-    // Content shadow
-    .snazzy-info-content {
-        box-shadow: $si-shadow-h $si-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
-    }
-    // Pointer shadow
-    [class*="snazzy-info-pointer-"]:before {
-        box-shadow: ($max-shadow-distance * cos($rotated-angle)) ($max-shadow-distance * sin($rotated-angle)) $si-shadow-blur $si-shadow-spread $si-shadow-color;
-    }
+
+.snazzy-info-shadow-pointer {
+    box-shadow: ($rotated-shadow-h * .707) ($rotated-shadow-v * .707) ($si-shadow-blur * .707) ($si-shadow-spread * .707) $si-shadow-color;
+    background-color: transparent;
+}
+
+.snazzy-info-shadow-wrapper-top,
+.snazzy-info-shadow-wrapper-bottom {
+    flex-direction: column;
 }

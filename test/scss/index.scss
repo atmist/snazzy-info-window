@@ -1,16 +1,29 @@
 $si-content-bg: white;
-$si-content-color: white;
+$si-content-color: #333;
 
-$si-pointer-length: 40px;
-$si-shadow-h:           30px; 
-$si-shadow-v:           5px;
+$si-pointer-length: 20px;
+$si-content-padding: 20px;
+$si-shadow-h:           40px; 
+$si-shadow-v:           40px;
+$si-shadow-blur:        0px;
+$si-shadow-spread:      0px;
 
 @import "../../src/scss/snazzy-info-window";
 
+* {
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+}
+
 body {
-    background: #D3E3E8;
     height: 1600px;
+    margin: 0;
+    background: #D3E3E8;
 } 
+
 #container{
     width: 100%;
     height: 100%;
@@ -21,25 +34,34 @@ body {
         flex-grow: 1;
     }
 }
+
 #center{
     width: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+
     > div{
         flex-grow: 1;
     }
+
     > #map-canvas{
         flex-grow: 6;
     }
 }
 
+body#center {
+    height: 100%;
+}
 
-#map-canvas {
+#map-canvas,
+.map-canvas {
     .snazzy-info-content{
         text-align: center;
-        width: 500px;
-        height: 200px;
     }
 }
 
+.map-canvas {
+    width: 50%;
+    height: 50%;
+}

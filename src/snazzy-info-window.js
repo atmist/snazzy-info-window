@@ -89,9 +89,6 @@
             content: document.createElement('div'),
             pointer: null
         };
-        this._html = html;
-        html.content.innerHTML = this._content;
-        html.wrapper.appendChild(html.content);
 
         //Assign class names
         var me = this;
@@ -122,23 +119,44 @@
         //Assign position
         addClass(html.wrapper, 'wrapper-' + this.getPosition());
 
+        //Assign shadow
+        if (this._hasShadow) {
+            addClass(html.wrapper, 'has-shadow');
+            html.shadow = document.createElement('div');
+            addClass(html.shadow, 'shadow-wrapper-' + this.getPosition());
+
+            html.pointerShadow = document.createElement('div');
+            addClass(html.pointerShadow, 'pointer');
+            addClass(html.pointerShadow, 'shadow-pointer');
+
+            html.contentShadow = document.createElement('div');
+            addClass(html.contentShadow, 'shadow-content');
+
+            html.shadow.appendChild(html.pointerShadow);
+            html.shadow.appendChild(html.contentShadow);
+            html.wrapper.appendChild(html.shadow);
+        }
+
         //Assign pointer
         if (this._pointer === undefined || this._pointer.enabled !== false) {
 
+            // Pointer
             html.pointer = document.createElement('div');
             if (this._pointer && this._pointer.length){
-                html.pointer.style.height = this._pointer.length
-                html.pointer.style.width = "calc(" + this._pointer.length + " * 2)";
+                html.pointer.style.height = this._pointer.length;
+                html.pointer.style.width = this._pointer.length;
             }
-            addClass(html.pointer, 'pointer-' + this.getPosition());
+            addClass(html.pointer, 'pointer');
 
             html.wrapper.appendChild(html.pointer);
         }
 
-        //Assign shadow
-        if (this._hasShadow) {
-            addClass(html.wrapper, 'shadow');
+        //Add the content
+        this._html = html;
+        if(this._content) {
+            html.content.innerHTML = this._content;
         }
+        html.wrapper.appendChild(html.content);
 
         //Add the html elements
         this.getPane().appendChild(html.wrapper);

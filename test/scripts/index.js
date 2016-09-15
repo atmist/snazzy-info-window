@@ -19,12 +19,11 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
         map: map,
         draggable: true,
         position: new google.maps.LatLng(49.47216, -123.77307),
-        visible: true,
-        //icon: icon
+        visible: true
     });
 
     var infowindow = new SnazzyInfoWindow({
-        content: 'cookies',
+        content: 'Cookies',
         position: 'top', // top | left | bottom | right
         offset: {
             //top: '-40px'
