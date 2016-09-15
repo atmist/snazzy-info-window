@@ -1,12 +1,16 @@
 $si-content-bg: white;
 $si-content-color: #333;
 
-$si-pointer-length: 40px;
-$si-content-padding: 40px;
-$si-shadow-h:           -4px; 
-$si-shadow-v:           4px;
-$si-shadow-blur:        0px;
-$si-shadow-spread:      0px;
+$si-pointer-length: 80px;
+$si-content-padding: 80px;
+$si-shadow-h:           -40px; 
+$si-shadow-v:           -40px;
+$si-shadow-blur:        40px;
+$si-shadow-spread:      40px;
+$si-shadow-opacity: 1;
+$si-border-width:       40px;
+$si-border-style:       solid;
+$si-border-color:       lime;
 
 @import "../../src/scss/snazzy-info-window";
 
@@ -21,7 +25,7 @@ html {
 body {
     height: 1600px;
     margin: 0;
-    background: #D3E3E8;
+    background: #fff;
 } 
 
 #container{
@@ -62,6 +66,8 @@ body#center {
 }
 
 .map-canvas {
-    width: 50%;
-    height: 50%;
+    width: calc(50% - 20px);
+    height: calc(50% - 20px);
+    margin: 10px;
+    box-shadow: 0 1px 3px 0 rgba(black, 0.4);
 }

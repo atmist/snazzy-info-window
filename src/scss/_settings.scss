@@ -8,6 +8,9 @@ $si-pointer-length:     20px !default;                  // Length of the pointer
 $si-pointer-bg:         $si-content-bg;                 // Background color of the pointer
 
 // Infowindow content  
+$si-border-width:       1px !default;
+$si-border-style:       solid !default;
+$si-border-color:       #eee !default;
 $si-border-radius:      3px !default;                   // Border radius of the infowindow
 $si-content-bg:         #fff !default;                  // Background color of the infowindow
 $si-content-padding:    20px !default;                  // Padding of the infowindow
@@ -20,3 +23,4 @@ $si-shadow-v:           8px !default;                   // Shadow vertical offse
 $si-shadow-blur:        8px !default;                   // Shadow blur radius
 $si-shadow-spread:      0px !default;                   // Shadow spread radius
 $si-shadow-color:       #000 !default;       // Shadow color
+$si-shadow-opacity:     0.4 !default;

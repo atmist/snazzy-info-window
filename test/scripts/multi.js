@@ -29,7 +29,7 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
         });
         var infowindow = new SnazzyInfoWindow($.extend({}, {
             content: 'Cookies',
-            hasShadow: true 
+            hasShadow: true
         }, infoSettings[i]));
 
         infowindow.attach(marker);

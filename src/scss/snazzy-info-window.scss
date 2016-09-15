@@ -15,43 +15,55 @@
 //////////////////////////////
 // 0. Variables
 //////////////////////////////
+
+// Snazzy Info Window settings
+$si-pre:             si;
+
+// Math variables
 $root-2: 1.41421356237;
 $inverse-root-2: 0.70710678118;
-$rotated-shadow-h: $inverse-root-2 * ($si-shadow-h - $si-shadow-v);
-$rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);
+
+// Pointer settings
+$rotation: -45deg;
+$rotated-shadow-h: $inverse-root-2 * ($si-shadow-h - $si-shadow-v);     // Only apolies to a -45deg rotation
+$rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only apolies to a -45deg rotation
+
+
 
 //////////////////////////////
 // 1. Wrapper Styles
 //////////////////////////////
 
 // Infowindow wrapper
-.snazzy-info-wrapper{    
+.#{$si-pre}-wrapper{    
     display: flex;
     align-items: center;
+    color: $si-content-color;
+    font-size: $si-content-size;
 }
 
 // Top-positioned infowindow
-.snazzy-info-wrapper-top {
+.#{$si-pre}-wrapper-top {
     transform: translate(-50%, -100%);
     margin-top: -$si-marker-height;
     flex-direction: column;
 }
 
 // Bottom-positioned infowindow
-.snazzy-info-wrapper-bottom {
+.#{$si-pre}-wrapper-bottom {
     transform: translate(-50%, 0);
     flex-direction: column;
 }
 
 // Left-positioned infowindow
-.snazzy-info-wrapper-left {
+.#{$si-pre}-wrapper-left {
     transform: translate(-100%, -50%);
     margin-top: $si-marker-height / -2;
     margin-left: $si-marker-width / -2;
 }
 
 // Right-positioned infowindow
-.snazzy-info-wrapper-right {
+.#{$si-pre}-wrapper-right {
     transform: translate(0, -50%);
     margin-top: $si-marker-height / -2;
     margin-left: $si-marker-width / 2;
@@ -64,15 +76,13 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);
 //////////////////////////////
 
 // Content wrapper
-.snazzy-info-content {
+.#{$si-pre}-content {
     position: relative;
-    width: 100%;
-    z-index: 3;
+    z-index: 2;
     padding: $si-content-padding;
     background-color: $si-content-bg;
     border-radius: $si-border-radius;
-    color: $si-content-color;
-    font-size: $si-content-size;
+    border: $si-border-width $si-border-style $si-border-color;
 }
 
 
@@ -81,49 +91,74 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);
 // 3. Pointer Styles
 //////////////////////////////
 
-// General pointer styles
-.snazzy-info-pointer {
-    flex: 0 0 auto;
+// Wrapper
+[class*="#{$si-pre}-pointer-wrapper-"] {
+    align-self: stretch;
     position: relative;
-    width: $si-pointer-length;
-    height: $si-pointer-length;
-    margin: auto;
-    z-index: 2;
+    overflow: hidden;
+}
+
+// General pointer styles
+.#{$si-pre}-pointer {
+    position: relative;
+    width: $si-pointer-length * $root-2;
+    height: $si-pointer-length * $root-2;
+    z-index: 3;
     background-color: $si-pointer-bg;
-}
-
-// Top and bottom pointer positioning
-.snazzy-info-pointer-top,
-.snazzy-info-pointer-bottom {
-    transform: translate(50%, 0) rotate(-45deg) scale($root-2);
-}
-
-// Left and right pointer positioning
-.snazzy-info-pointer-left,
-.snazzy-info-pointer-right {
-    transform: translate(0, 50%) rotate(-45deg) scale($root-2);
+    border: $si-border-width $si-border-style $si-border-color;
+    position: absolute;
 }
 
 // Top pointer positioning
-.snazzy-info-pointer-top {
+.#{$si-pre}-pointer-wrapper-top {  
     order: 2;
-    transform-origin: 0 100%;
+    height: $si-pointer-length;
+    margin-top: -$si-border-width;
+}
+.#{$si-pre}-wrapper-top {
+    .#{$si-pre}-pointer {
+        left: 50%;
+        transform: translate(-50%, -50%) rotate($rotation);
+    }
 }
 
 // Bottom pointer positioning
-.snazzy-info-pointer-bottom {
-    transform-origin: 100% 100%;
+.#{$si-pre}-pointer-wrapper-bottom {  
+    height: $si-pointer-length;
+    margin-bottom: -$si-border-width;
+}
+.#{$si-pre}-wrapper-bottom {
+    .#{$si-pre}-pointer {
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 50%) rotate($rotation);
+    }
 }
 
 // Left pointer positioning
-.snazzy-info-pointer-left {
+.#{$si-pre}-pointer-wrapper-left {  
     order: 2;
-    transform-origin: 0 100%;
+    width: $si-pointer-length;
+    margin-left: -$si-border-width;
+}
+.#{$si-pre}-wrapper-left {  
+    .#{$si-pre}-pointer {
+        top: 50%;
+        transform: translate(-50%, -50%) rotate($rotation);
+    }
 }
 
 // Right pointer positioning
-.snazzy-info-pointer-right {
-    transform-origin: 0 0;
+.#{$si-pre}-pointer-wrapper-right {  
+    width: $si-pointer-length;
+    margin-right: -$si-border-width;
+}
+.#{$si-pre}-wrapper-right {    
+    .#{$si-pre}-pointer {
+        top: 50%;
+        right: 0;
+        transform: translate(50%, -50%) rotate($rotation);
+    }
 }
 
 
@@ -132,7 +167,7 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);
 // 3. Infowindow Shadow
 //////////////////////////////
 
-[class*="snazzy-info-shadow-wrapper"] {
+[class*="#{$si-pre}-shadow-wrapper"] {
     display: flex;
     position: absolute;
     top: 0;
@@ -140,21 +175,26 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);
     bottom: 0;
     right: 0;
     z-index: 1;
-    opacity: 0.4;
+    opacity: $si-shadow-opacity;
+
+    .#{$si-pre}-pointer-wrapper {
+        overflow: visible;
+    }
 }
 
-.snazzy-info-shadow-content {
+.#{$si-pre}-shadow-content {
     flex: 1 1 auto;
     display: block;
     box-shadow: $si-shadow-h $si-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
 }
 
-.snazzy-info-shadow-pointer {
-    box-shadow: ($rotated-shadow-h * $inverse-root-2) ($rotated-shadow-v * $inverse-root-2) ($si-shadow-blur * $inverse-root-2) ($si-shadow-spread * $inverse-root-2) $si-shadow-color;
+.#{$si-pre}-shadow-pointer {
+    box-shadow: $rotated-shadow-h $rotated-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
     background-color: transparent;
+    border: none;
 }
 
-.snazzy-info-shadow-wrapper-top,
-.snazzy-info-shadow-wrapper-bottom {
+.#{$si-pre}-shadow-wrapper-top,
+.#{$si-pre}-shadow-wrapper-bottom {
     flex-direction: column;
 }

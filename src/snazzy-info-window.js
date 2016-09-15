@@ -15,7 +15,7 @@
 
     function SnazzyInfoWindow(options){
         this._marker = null;
-        this._classPrefix = "snazzy-info-";
+        this._classPrefix = "si-";
         this._content = options.content;
         this._offset = options.offset;
         this._position = options.position;
@@ -125,21 +125,33 @@
             html.shadow = document.createElement('div');
             addClass(html.shadow, 'shadow-wrapper-' + this.getPosition());
 
+            // Pointer shadow wrapper
+            html.pointerShadowWrapper = document.createElement('div');
+            addClass(html.pointerShadowWrapper, 'pointer-wrapper');
+            addClass(html.pointerShadowWrapper, 'pointer-wrapper-' + this.getPosition());
+
+            // Pointer shadow
             html.pointerShadow = document.createElement('div');
             addClass(html.pointerShadow, 'pointer');
-            addClass(html.pointerShadow, 'pointer-' + this.getPosition());
             addClass(html.pointerShadow, 'shadow-pointer');
 
+            // Content shadow
             html.contentShadow = document.createElement('div');
             addClass(html.contentShadow, 'shadow-content');
 
-            html.shadow.appendChild(html.pointerShadow);
+            html.pointerShadowWrapper.appendChild(html.pointerShadow);
+            html.shadow.appendChild(html.pointerShadowWrapper);
             html.shadow.appendChild(html.contentShadow);
             html.wrapper.appendChild(html.shadow);
         }
 
         //Assign pointer
         if (this._pointer === undefined || this._pointer.enabled !== false) {
+
+            // Pointer wrapper
+            html.pointerWrapper = document.createElement('div');
+            addClass(html.pointerWrapper, 'pointer-wrapper');
+            addClass(html.pointerWrapper, 'pointer-wrapper-' + this.getPosition());
 
             // Pointer
             html.pointer = document.createElement('div');
@@ -148,9 +160,9 @@
                 html.pointer.style.width = this._pointer.length;
             }
             addClass(html.pointer, 'pointer');
-            addClass(html.pointer, 'pointer-' + this.getPosition());
 
-            html.wrapper.appendChild(html.pointer);
+            html.pointerWrapper.appendChild(html.pointer);
+            html.wrapper.appendChild(html.pointerWrapper);
         }
 
         //Add the content
