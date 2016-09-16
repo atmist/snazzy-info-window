@@ -20,10 +20,16 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
     var infoSettings = [
         {
             position: 'top',
-            wrapperClass: 'info-one'
+            wrapperClass: 'info-one',
+            pointer: {
+                enabled: false
+            }
         },
         {
-            position: 'bottom'
+            position: 'bottom',
+            pointer: {
+                enabled: false
+            }
         },
         {
             position: 'left',

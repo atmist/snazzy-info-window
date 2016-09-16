@@ -23,8 +23,14 @@ Settings can be applied through three different methods: javascript, sass, or cs
 | wrapper class | ✔ | ✘ | ✘ |
 | offset left | ✔ | ✘ | ✔ |
 | offset top | ✔ | ✘ | ✔ |
+| background color | ✔ | ✔ | ✔ |
 
+### Pointer Settings
 
+| Option | JS | SASS | CSS
+|---|---|---|---|---|
+| pointer enabled | ✔ | ✘ | ✘ |
+| pointer length | ✔ | ✔ | ✔* |
 
 ### Shadow Settings
 
@@ -38,13 +44,6 @@ Settings can be applied through three different methods: javascript, sass, or cs
 |---|---|---|---|---|
 | border enabled | ✔ | ✔ | ✘ |
 
-### Pointer Settings
-
-| Option | JS | SASS | CSS
-|---|---|---|---|---|
-| pointer enabled | ✔ | ✔ | ✘ |
-| pointer length | ✔ | ✔ | ✔* |
-| pointer background color | ✔ | ✔ | ✔ |
 
 ---
 

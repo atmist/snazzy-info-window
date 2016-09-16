@@ -40,6 +40,10 @@
                 return 'top';
             }
         };
+
+        this.getPointerEnabled = function(){
+            return this._pointer === undefined || this._pointer.enabled !== false;
+        };
     };
 
     /*Extend the OverlayView in the Google Maps API.*/
@@ -133,19 +137,21 @@
             addClass(html.contentShadow, 'box');
             addClass(html.contentShadow, 'shadow-box');
 
-            // Pointer shadow wrapper
-            html.pointerShadowWrapper = document.createElement('div');
-            addClass(html.pointerShadowWrapper, 'pointer-wrapper');
-            addClass(html.pointerShadowWrapper, 'pointer-wrapper-' + this.getPosition());
-
-            // Pointer shadow
-            html.pointerShadow = document.createElement('div');
-            addClass(html.pointerShadow, 'pointer');
-            addClass(html.pointerShadow, 'shadow-pointer');
-
             html.shadow.appendChild(html.contentShadow);
-            html.pointerShadowWrapper.appendChild(html.pointerShadow);
-            html.shadow.appendChild(html.pointerShadowWrapper);
+            if (this.getPointerEnabled()){
+                // Pointer shadow wrapper
+                html.pointerShadowWrapper = document.createElement('div');
+                addClass(html.pointerShadowWrapper, 'pointer-wrapper');
+                addClass(html.pointerShadowWrapper, 'pointer-wrapper-' + this.getPosition());
+
+                // Pointer shadow
+                html.pointerShadow = document.createElement('div');
+                addClass(html.pointerShadow, 'pointer');
+                addClass(html.pointerShadow, 'shadow-pointer');
+
+                html.pointerShadowWrapper.appendChild(html.pointerShadow);
+                html.shadow.appendChild(html.pointerShadowWrapper);
+            }
             html.wrapper.appendChild(html.shadow);
         }
 
@@ -157,7 +163,7 @@
         html.wrapper.appendChild(html.content);
 
         //Assign pointer
-        if (this._pointer === undefined || this._pointer.enabled !== false) {
+        if (this.getPointerEnabled()) {
 
             // Pointer wrapper
             html.pointerWrapper = document.createElement('div');

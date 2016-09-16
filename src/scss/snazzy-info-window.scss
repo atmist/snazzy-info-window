@@ -42,6 +42,7 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only 
     color: $si-font-color;
     font-size: $si-font-size;
 
+    &,
     * {
         box-sizing: border-box;
     }
@@ -103,69 +104,71 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only 
 // 3. Pointer Styles
 //////////////////////////////
 
-// Pointer wrapper
-[class*="#{$si-pre}-pointer-wrapper-"] {
-    align-self: stretch;
-    position: relative;
-    overflow: hidden;
-}
-
-// General pointer styles
-.#{$si-pre}-pointer {
-    position: absolute;
-    width: $si-pointer-length * $root-2;
-    height: $si-pointer-length * $root-2;
-}
-
-// Top pointer positioning
-.#{$si-pre}-pointer-wrapper-top {  
-    height: $si-pointer-length;
-    margin-top: -$si-border-width;
-}
-.#{$si-pre}-wrapper-top {
-    .#{$si-pre}-pointer {
-        left: 50%;
-        transform: translate(-50%, -50%) rotate($rotation);
+@if ($si-include-pointer) {
+    // Pointer wrapper
+    [class*="#{$si-pre}-pointer-wrapper-"] {
+        align-self: stretch;
+        position: relative;
+        overflow: hidden;
     }
-}
 
-// Bottom pointer positioning
-.#{$si-pre}-pointer-wrapper-bottom {  
-    order: -1;
-    height: $si-pointer-length;
-    margin-bottom: -$si-border-width;
-}
-.#{$si-pre}-wrapper-bottom {
+    // General pointer styles
     .#{$si-pre}-pointer {
-        bottom: 0;
-        left: 50%;
-        transform: translate(-50%, 50%) rotate($rotation);
+        position: absolute;
+        width: $si-pointer-length * $root-2;
+        height: $si-pointer-length * $root-2;
     }
-}
 
-// Left pointer positioning
-.#{$si-pre}-pointer-wrapper-left {  
-    width: $si-pointer-length;
-    margin-left: -$si-border-width;
-}
-.#{$si-pre}-wrapper-left {  
-    .#{$si-pre}-pointer {
-        top: 50%;
-        transform: translate(-50%, -50%) rotate($rotation);
+    // Top pointer positioning
+    .#{$si-pre}-pointer-wrapper-top {  
+        height: $si-pointer-length;
+        margin-top: -$si-border-width;
     }
-}
+    .#{$si-pre}-wrapper-top {
+        .#{$si-pre}-pointer {
+            left: 50%;
+            transform: translate(-50%, -50%) rotate($rotation);
+        }
+    }
 
-// Right pointer positioning
-.#{$si-pre}-pointer-wrapper-right {  
-    order: -1;
-    width: $si-pointer-length;
-    margin-right: -$si-border-width;
-}
-.#{$si-pre}-wrapper-right {    
-    .#{$si-pre}-pointer {
-        top: 50%;
-        right: 0;
-        transform: translate(50%, -50%) rotate($rotation);
+    // Bottom pointer positioning
+    .#{$si-pre}-pointer-wrapper-bottom {  
+        order: -1;
+        height: $si-pointer-length;
+        margin-bottom: -$si-border-width;
+    }
+    .#{$si-pre}-wrapper-bottom {
+        .#{$si-pre}-pointer {
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 50%) rotate($rotation);
+        }
+    }
+
+    // Left pointer positioning
+    .#{$si-pre}-pointer-wrapper-left {  
+        width: $si-pointer-length;
+        margin-left: -$si-border-width;
+    }
+    .#{$si-pre}-wrapper-left {  
+        .#{$si-pre}-pointer {
+            top: 50%;
+            transform: translate(-50%, -50%) rotate($rotation);
+        }
+    }
+
+    // Right pointer positioning
+    .#{$si-pre}-pointer-wrapper-right {  
+        order: -1;
+        width: $si-pointer-length;
+        margin-right: -$si-border-width;
+    }
+    .#{$si-pre}-wrapper-right {    
+        .#{$si-pre}-pointer {
+            top: 50%;
+            right: 0;
+            transform: translate(50%, -50%) rotate($rotation);
+        }
     }
 }
 
@@ -185,8 +188,10 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only 
     right: 0;
     opacity: $si-shadow-opacity;
 
-    .#{$si-pre}-pointer-wrapper {
-        overflow: visible;
+    @if ($si-include-pointer) {
+        .#{$si-pre}-pointer-wrapper {
+            overflow: visible;
+        }
     }
 }
 
@@ -201,7 +206,9 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only 
     box-shadow: $si-shadow-h $si-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
 }
 
-// Pointer shadow
-.#{$si-pre}-shadow-pointer {
-    box-shadow: $rotated-shadow-h $rotated-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
+@if ($si-include-pointer) {
+    // Pointer shadow
+    .#{$si-pre}-shadow-pointer {
+        box-shadow: $rotated-shadow-h $rotated-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
+    }
 }

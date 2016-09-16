@@ -1,4 +1,5 @@
 // Info window pointer
+$si-include-pointer:    true;                           // Whether to compile the pointer CSS or not
 $si-pointer-length:     20px !default;                  // Length of the pointer, from the edge of the infowindow to the tip
 $si-pointer-bg:         $si-content-bg;                 // Background color of the pointer
 
