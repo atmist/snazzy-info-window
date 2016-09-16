@@ -1,21 +1,40 @@
 require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $){
 
-    //Custom info settings per map
+
+    var icon = {
+        path: "M40,40L0,40L0,0L40,0L40,40ZM38,2L2,2L2,38L38,38L38,2ZM13.085,28.316C14.188,28.316 15.085,29.212 15.085,30.316C15.085,31.42 14.188,32.316 13.085,32.316C11.981,32.316 11.085,31.42 11.085,30.316C11.085,29.212 11.981,28.316 13.085,28.316Z",
+        fillColor: '#FF0000',
+        fillOpacity: .6,
+        anchor: new google.maps.Point(13,30),
+        strokeWeight: 0,
+        scale: 2
+    };
+
+    var icons = [
+        $.extend({}, icon, {scale: 0.5}),
+        $.extend({}, icon, {scale: 0.5}),
+        $.extend({}, icon, {scale: 1}),
+        $.extend({}, icon, {scale: 2})
+    ];
+
     var infoSettings = [
         {
-            position: 'top'
+            position: 'top',
+            wrapperClass: 'info-one'
         },
         {
             position: 'bottom'
         },
         {
-            position: 'left'
+            position: 'left',
+            wrapperClass: 'info-two'
         },
         {
             position: 'right'
-        }
+        },
     ];
-    for (var i = 0; i < infoSettings.length; i++){
+    
+    for (var i = 0; i < $('.map-canvas').length; i++){
        var map = new google.maps.Map($('#map-canvas-' + (i + 1))[0], {
             zoom: 15,
             center: new google.maps.LatLng(49.47216, -123.77307),
@@ -25,7 +44,8 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
             map: map,
             draggable: true,
             position: new google.maps.LatLng(49.47216, -123.77307),
-            visible: true
+            visible: true,
+            //icon: icons[i]
         });
         var infowindow = new SnazzyInfoWindow($.extend({}, {
             content: 'Cookies',

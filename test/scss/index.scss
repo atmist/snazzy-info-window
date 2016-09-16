@@ -1,22 +1,20 @@
-$si-content-bg: white;
-$si-content-color: #333;
+$si-content-bg: rgba(#333, 0.5);
+$si-font-size: 12px;
+$si-font-color: #333;
 
-$si-pointer-length: 80px;
-$si-content-padding: 80px;
-$si-shadow-h:           -40px; 
-$si-shadow-v:           -40px;
-$si-shadow-blur:        40px;
-$si-shadow-spread:      40px;
-$si-shadow-opacity: 1;
-$si-border-width:       40px;
+$si-pointer-length: 20px;
+$si-content-padding: 20px;
+$si-shadow-h:           0px; 
+$si-shadow-v:           0px;
+$si-shadow-blur:        0px;
+$si-shadow-spread:      0px;
+$si-shadow-opacity: 0.4;
+$si-border-width:       0px;
 $si-border-style:       solid;
 $si-border-color:       lime;
+$si-border-radius:      0px;    
 
 @import "../../src/scss/snazzy-info-window";
-
-* {
-    box-sizing: border-box;
-}
 
 html {
     height: 100%;
@@ -60,7 +58,7 @@ body#center {
 
 #map-canvas,
 .map-canvas {
-    .snazzy-info-content{
+    .si-content{
         text-align: center;
     }
 }
@@ -70,4 +68,15 @@ body#center {
     height: calc(50% - 20px);
     margin: 10px;
     box-shadow: 0 1px 3px 0 rgba(black, 0.4);
+}
+
+
+.info-one .si-content {
+    width: 200px;
+    height: 200px;
+}
+
+.info-two .si-content {
+    width: 200px;
+    height: 200px;
 }

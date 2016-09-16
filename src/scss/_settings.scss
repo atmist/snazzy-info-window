@@ -1,26 +1,28 @@
-
-// Marker size
-$si-marker-width:       26px !default;                  // Width of the marker
-$si-marker-height:      44px !default;                  // Height of the marker
-
-// Infowindow pointer
+// Info window pointer
 $si-pointer-length:     20px !default;                  // Length of the pointer, from the edge of the infowindow to the tip
 $si-pointer-bg:         $si-content-bg;                 // Background color of the pointer
 
-// Infowindow content  
+// Info window default marker
+$si-default-marker-width: 22px;
+$si-default-marker-height: 40px;
+$si-default-marker-anchor-x: 11px;
+$si-default-marker-anchor-y: 40px;
+$si-default-marker-margin: 0px;
+
+// Info window content  
 $si-border-width:       1px !default;
 $si-border-style:       solid !default;
 $si-border-color:       #eee !default;
 $si-border-radius:      3px !default;                   // Border radius of the infowindow
 $si-content-bg:         #fff !default;                  // Background color of the infowindow
 $si-content-padding:    20px !default;                  // Padding of the infowindow
-$si-content-color:      #333 !default;                  // Color of the infowindow content
-$si-content-size:       14px !default;                  // Font size of the infowindow content
+$si-font-color:      #333 !default;                  // Color of the infowindow content
+$si-font-size:       14px !default;                    // Font size of the infowindow content
 
-// Infowindow shadow
+// Info window shadow
 $si-shadow-h:           6px !default;                   // Shadow horizontal offset
 $si-shadow-v:           8px !default;                   // Shadow vertical offset
 $si-shadow-blur:        8px !default;                   // Shadow blur radius
 $si-shadow-spread:      0px !default;                   // Shadow spread radius
-$si-shadow-color:       #000 !default;       // Shadow color
+$si-shadow-color:       #000 !default;                  // Shadow color
 $si-shadow-opacity:     0.4 !default;
