@@ -21,6 +21,7 @@
         this._position = options.position;
         this._pointer = options.pointer;
         this._hasShadow = options.hasShadow;
+        this._wrapperClass = options.wrapperClass;
 
         //Create an instance using the superclass OverlayView
         google.maps.OverlayView.apply(this, arguments);
@@ -72,6 +73,17 @@
         if (!this._marker || !this._html){
             return;
         }
+
+        //Assign offset
+        if (this._offset) {
+            if(this._offset.left) {
+                this._html.wrapper.style.marginLeft = this._offset.left;
+            }
+            if (this._offset.top) {
+                this._html.wrapper.style.marginTop = this._offset.top;
+            }
+        }
+
         var markerPos = this.getProjection().fromLatLngToDivPixel(this._marker.position);
         this._html.wrapper.style.top = Math.floor(markerPos.y) + "px";
         this._html.wrapper.style.left = Math.floor(markerPos.x) + "px";
@@ -100,22 +112,13 @@
                 element.className += me._classPrefix + className;
             }
         }
+        addClass(html.content, 'window');
+        addClass(html.content, 'box');
         addClass(html.content, 'content');
         addClass(html.wrapper, 'wrapper');
-
-        //Assign styles
-        html.wrapper.style.position = "absolute";
-
-        //Assign offset
-        if (this._offset) {
-            if(this._offset.left) {
-                html.wrapper.style.marginLeft = this._offset.left;
-            }
-            if (this._offset.top) {
-                html.wrapper.style.marginTop = this._offset.top;
-            }
+        if (this._wrapperClass){
+            html.wrapper.className += " " + this._wrapperClass;
         }
-
         //Assign position
         addClass(html.wrapper, 'wrapper-' + this.getPosition());
 
@@ -124,6 +127,11 @@
             addClass(html.wrapper, 'has-shadow');
             html.shadow = document.createElement('div');
             addClass(html.shadow, 'shadow-wrapper-' + this.getPosition());
+
+            // Content shadow
+            html.contentShadow = document.createElement('div');
+            addClass(html.contentShadow, 'box');
+            addClass(html.contentShadow, 'shadow-box');
 
             // Pointer shadow wrapper
             html.pointerShadowWrapper = document.createElement('div');
@@ -135,15 +143,18 @@
             addClass(html.pointerShadow, 'pointer');
             addClass(html.pointerShadow, 'shadow-pointer');
 
-            // Content shadow
-            html.contentShadow = document.createElement('div');
-            addClass(html.contentShadow, 'shadow-content');
-
+            html.shadow.appendChild(html.contentShadow);
             html.pointerShadowWrapper.appendChild(html.pointerShadow);
             html.shadow.appendChild(html.pointerShadowWrapper);
-            html.shadow.appendChild(html.contentShadow);
             html.wrapper.appendChild(html.shadow);
         }
+
+        //Add the content
+        this._html = html;
+        if(this._content) {
+            html.content.innerHTML = this._content;
+        }
+        html.wrapper.appendChild(html.content);
 
         //Assign pointer
         if (this._pointer === undefined || this._pointer.enabled !== false) {
@@ -155,22 +166,12 @@
 
             // Pointer
             html.pointer = document.createElement('div');
-            if (this._pointer && this._pointer.length){
-                html.pointer.style.height = this._pointer.length;
-                html.pointer.style.width = this._pointer.length;
-            }
+            addClass(html.pointer, 'window');
             addClass(html.pointer, 'pointer');
 
             html.pointerWrapper.appendChild(html.pointer);
             html.wrapper.appendChild(html.pointerWrapper);
         }
-
-        //Add the content
-        this._html = html;
-        if(this._content) {
-            html.content.innerHTML = this._content;
-        }
-        html.wrapper.appendChild(html.content);
 
         //Add the html elements
         this.getPane().appendChild(html.wrapper);
