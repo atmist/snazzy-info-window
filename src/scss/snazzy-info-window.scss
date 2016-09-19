@@ -6,7 +6,7 @@
 //
 // Contents:
 //
-// 1. 
+// 1.
 //
 //////////////////////////////////////////////////
 
@@ -28,6 +28,18 @@ $rotation: -45deg;
 $rotated-shadow-h: $inverse-root-2 * ($si-shadow-h - $si-shadow-v);     // Only applies to a -45deg rotation
 $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only applies to a -45deg rotation
 
+/// Remove the unit of a length
+/// @param {Number} $number - Number to remove unit from
+/// @return {Number} - Unitless number
+@function strip-unit($number) {
+  @if type-of($number) == 'number' and not unitless($number) {
+    @return $number / ($number * 0 + 1);
+  }
+
+  @return $number;
+}
+
+$si-show-border: $si-border-style != none and strip-unit($si-border-width) != 0;
 
 
 //////////////////////////////
@@ -35,7 +47,7 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only 
 //////////////////////////////
 
 // Infowindow wrapper
-.#{$si-pre}-wrapper{    
+.#{$si-pre}-wrapper{
     display: flex;
     position: absolute;
     align-items: center;
@@ -87,7 +99,9 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only 
 // Window styles
 .#{$si-pre}-window {
     background-color: $si-content-bg;
-    border: $si-border-width $si-border-style $si-border-color;
+    @if ($si-show-border){
+        border: $si-border-width $si-border-style $si-border-color;
+    }
 }
 
 // Box styles
@@ -120,9 +134,11 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only 
     }
 
     // Top pointer positioning
-    .#{$si-pre}-pointer-wrapper-top {  
+    .#{$si-pre}-pointer-wrapper-top {
         height: $si-pointer-length;
-        margin-top: -$si-border-width;
+        @if ($si-show-border){
+            margin-top: -$si-border-width;
+        }
     }
     .#{$si-pre}-wrapper-top {
         .#{$si-pre}-pointer {
@@ -132,10 +148,12 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only 
     }
 
     // Bottom pointer positioning
-    .#{$si-pre}-pointer-wrapper-bottom {  
+    .#{$si-pre}-pointer-wrapper-bottom {
         order: -1;
         height: $si-pointer-length;
-        margin-bottom: -$si-border-width;
+        @if ($si-show-border){
+            margin-bottom: -$si-border-width;
+        }
     }
     .#{$si-pre}-wrapper-bottom {
         .#{$si-pre}-pointer {
@@ -146,11 +164,13 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only 
     }
 
     // Left pointer positioning
-    .#{$si-pre}-pointer-wrapper-left {  
+    .#{$si-pre}-pointer-wrapper-left {
         width: $si-pointer-length;
-        margin-left: -$si-border-width;
+        @if ($si-show-border){
+            margin-left: -$si-border-width;
+        }
     }
-    .#{$si-pre}-wrapper-left {  
+    .#{$si-pre}-wrapper-left {
         .#{$si-pre}-pointer {
             top: 50%;
             transform: translate(-50%, -50%) rotate($rotation);
@@ -158,12 +178,14 @@ $rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only 
     }
 
     // Right pointer positioning
-    .#{$si-pre}-pointer-wrapper-right {  
+    .#{$si-pre}-pointer-wrapper-right {
         order: -1;
         width: $si-pointer-length;
-        margin-right: -$si-border-width;
+        @if ($si-show-border){
+            margin-right: -$si-border-width;
+        }
     }
-    .#{$si-pre}-wrapper-right {    
+    .#{$si-pre}-wrapper-right {
         .#{$si-pre}-pointer {
             top: 50%;
             right: 0;

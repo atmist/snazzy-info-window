@@ -28,6 +28,7 @@
         this._borderRadius = options.borderRadius;
         this._fontColor = options.fontColor;
         this._font = options.font;
+        this._border = options.border;
 
         //Create an instance using the superclass OverlayView
         google.maps.OverlayView.apply(this, arguments);
@@ -126,6 +127,34 @@
             this.eachByClassName('box', function(e){
                 e.style.borderRadius = this._borderRadius;
             });
+        }
+
+        //Border
+        if (this._border){
+            var borderWidth = 0;
+            this.eachByClassName('window', function(e){
+                e.style.border = this._border;
+                if (getComputedStyle !== undefined){
+                    borderWidth = getComputedStyle(e)
+                        .getPropertyValue('border-left-width');
+                }
+            });
+            var position = this.getPosition();
+            this.eachByClassName('pointer-wrapper', function(e){
+                if (position == 'top'){
+                    e.style.marginTop = "-" + borderWidth;
+                }
+                else if (position == 'bottom'){
+                    e.style.marginBottom = "-" + borderWidth;
+                }
+                else if (position == 'left'){
+                    e.style.marginLeft = "-" + borderWidth;
+                }
+                else if (position == 'right'){
+                    e.style.marginRight = "-" + borderWidth;
+                }
+            });
+
         }
 
         //Assign offset

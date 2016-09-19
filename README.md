@@ -25,9 +25,11 @@ Settings can be applied through three different methods: javascript, sass, or cs
 | offset top | ✔ | ✘ | ✔ |
 | background color | ✔ | ✔ | ✔ |
 | content padding | ✔ | ✔ | ✔ |
+| border | ✔ | ✔ | ✘ |
 | border radius | ✔ | ✔ | ✔ |
 | font color | ✔ | ✔ | ✔ |
 | font | ✔ | ✔ | ✔ |
+
 
 ### Pointer Settings
 
@@ -41,13 +43,6 @@ Settings can be applied through three different methods: javascript, sass, or cs
 | Option | JS | SASS | CSS
 |---|---|---|---|---|
 | shadow enabled | ✔ | ✔ | ✘ |
-
-### Border Settings
-
-| Option | JS | SASS | CSS
-|---|---|---|---|---|
-| border enabled | ✔ | ✔ | ✘ |
-
 
 ---
 
