@@ -22,24 +22,34 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
             position: 'top',
             wrapperClass: 'info-one',
             pointer: {
-                enabled: false
+                enabled: true,
+                length: '5.5em',
             }
         },
         {
             position: 'bottom',
             pointer: {
-                enabled: false
+                enabled: true,
+                length: '5      '
             }
         },
         {
             position: 'left',
-            wrapperClass: 'info-two'
+            wrapperClass: 'info-two',
+            pointer: {
+                enabled: true,
+                length: '41.12398123     px'
+            }
         },
         {
-            position: 'right'
+            position: 'right',
+            pointer: {
+                enabled: true,
+                length: '20pt'
+            }
         },
     ];
-    
+
     for (var i = 0; i < $('.map-canvas').length; i++){
        var map = new google.maps.Map($('#map-canvas-' + (i + 1))[0], {
             zoom: 15,

@@ -22,6 +22,7 @@
         this._pointer = options.pointer;
         this._hasShadow = options.hasShadow;
         this._wrapperClass = options.wrapperClass;
+        this._warningPrefix = "Snazzy Info Window warning: ";
 
         //Create an instance using the superclass OverlayView
         google.maps.OverlayView.apply(this, arguments);
@@ -33,8 +34,8 @@
 
         //Get the position of the info window relative to the marker
         this.getPosition = function(){
-            if (this._position == 'top' || this._position == 'bottom' || 
-                this._position == 'left' || this._position == 'right' ) {      
+            if (this._position == 'top' || this._position == 'bottom' ||
+                this._position == 'left' || this._position == 'right' ) {
                 return this._position;
             }else{
                 return 'top';
@@ -44,6 +45,12 @@
         this.getPointerEnabled = function(){
             return this._pointer === undefined || this._pointer.enabled !== false;
         };
+
+        this.warn = function(message){
+            if (message){
+                console.warn(this._warningPrefix + message);
+            }
+        }
     };
 
     /*Extend the OverlayView in the Google Maps API.*/
@@ -77,6 +84,7 @@
         if (!this._marker || !this._html){
             return;
         }
+        var me = this;
 
         //Assign offset
         if (this._offset) {
@@ -85,6 +93,49 @@
             }
             if (this._offset.top) {
                 this._html.wrapper.style.marginTop = this._offset.top;
+            }
+        }
+
+        //Assign pointer length
+
+        //Go through each element under the wrapper with the provided classname
+        var eachByClassName = function(className, lambda){
+            if (me._html.wrapper){
+                var elements = me._html.wrapper
+                    .getElementsByClassName(me._classPrefix + className);
+                for (var i = 0; i < elements.length; i++){
+                    if (lambda){
+                        lambda(elements[i]);
+                    }
+                }
+            }
+        };
+
+        if (this.getPointerEnabled() && this._pointer && this._pointer.length){
+            //1em, 1.0em, 0.1em, .1em, 1.    em
+            var re = /^(\.{0,1}\d+(\.\d+)?)[\s|\.]*(\w*)$/;
+            if (re.test(this._pointer.length)){
+                var match = re.exec(this._pointer.length);
+                var number = match[1];
+                var unit = match[3];
+                if (!unit){
+                    unit = "px";
+                }
+                var root2 = 1.41421356237;
+                eachByClassName('pointer', function(e){
+                    e.style.width = (number * root2) + unit;
+                    e.style.height = (number * root2) + unit;
+                });
+                var position = me.getPosition();
+                eachByClassName('pointer-wrapper', function(e){
+                    if (position == 'top' || position == 'bottom'){
+                        e.style.height = number + unit;
+                    }else{
+                        e.style.width = number + unit;
+                    }
+                });
+            }else{
+                this.warn('Pointer length ' + this._pointer.length + ' is invalid.');
             }
         }
 
@@ -98,7 +149,7 @@
         if (this.html){
             return;
         }
-        
+
         //Create the html elements
         var html = {
             wrapper: document.createElement('div'),
