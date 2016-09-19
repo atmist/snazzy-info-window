@@ -23,15 +23,24 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
             wrapperClass: 'info-one',
             pointer: {
                 enabled: true,
-                length: '5.5em',
-            }
+                length: '1em',
+            },
+            backgroundColor: 'rgba(125, 125, 125, 1)',
+            contentPadding: '3em',
+            border: '2px solid black',
+            borderRadius: '0.25em',
+            fontColor: 'rgba(255,255,255,1)',
+            font: 'italic 40px Serif'
         },
         {
             position: 'bottom',
             pointer: {
                 enabled: true,
-                length: '5      '
-            }
+                length: '25      '
+            },
+            backgroundColor: 'rgba(50, 50, 50, 1)',
+            contentPadding: '5rem',
+            borderRadius: '10px'
         },
         {
             position: 'left',
@@ -39,14 +48,20 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
             pointer: {
                 enabled: true,
                 length: '41.12398123     px'
-            }
+            },
+            backgroundColor: '#345345',
+            contentPadding: '5em',
+            borderRadius: '0'
         },
         {
             position: 'right',
             pointer: {
                 enabled: true,
                 length: '20pt'
-            }
+            },
+            backgroundColor: 'green',
+            contentPadding: '100pt',
+            borderRadius: '30pt'
         },
     ];
 

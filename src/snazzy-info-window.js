@@ -23,6 +23,11 @@
         this._hasShadow = options.hasShadow;
         this._wrapperClass = options.wrapperClass;
         this._warningPrefix = "Snazzy Info Window warning: ";
+        this._backgroundColor = options.backgroundColor;
+        this._contentPadding = options.contentPadding;
+        this._borderRadius = options.borderRadius;
+        this._fontColor = options.fontColor;
+        this._font = options.font;
 
         //Create an instance using the superclass OverlayView
         google.maps.OverlayView.apply(this, arguments);
@@ -50,7 +55,20 @@
             if (message){
                 console.warn(this._warningPrefix + message);
             }
-        }
+        };
+
+        //Go through each element under the wrapper with the provided classname
+        this.eachByClassName = function(className, lambda){
+            if (this._html.wrapper){
+                var elements = this._html.wrapper
+                    .getElementsByClassName(this._classPrefix + className);
+                for (var i = 0; i < elements.length; i++){
+                    if (lambda){
+                        lambda.apply(this, [elements[i]]);
+                    }
+                }
+            }
+        };
     };
 
     /*Extend the OverlayView in the Google Maps API.*/
@@ -84,7 +102,31 @@
         if (!this._marker || !this._html){
             return;
         }
-        var me = this;
+
+
+        //Font
+        if (this._html.wrapper){
+            if (this._fontColor){
+                this._html.wrapper.style.color = this._fontColor;
+            }
+            if (this._font){
+                this._html.wrapper.style.font = this._font;
+            }
+        }
+
+        //Content Padding
+        if (this._contentPadding){
+            this.eachByClassName('box', function(e){
+                e.style.padding = this._contentPadding;
+            });
+        }
+
+        //Border radius
+        if (this._borderRadius){
+            this.eachByClassName('box', function(e){
+                e.style.borderRadius = this._borderRadius;
+            });
+        }
 
         //Assign offset
         if (this._offset) {
@@ -96,38 +138,21 @@
             }
         }
 
-        //Assign pointer length
-
-        //Go through each element under the wrapper with the provided classname
-        var eachByClassName = function(className, lambda){
-            if (me._html.wrapper){
-                var elements = me._html.wrapper
-                    .getElementsByClassName(me._classPrefix + className);
-                for (var i = 0; i < elements.length; i++){
-                    if (lambda){
-                        lambda(elements[i]);
-                    }
-                }
-            }
-        };
-
+        //Assign pointer settings
         if (this.getPointerEnabled() && this._pointer && this._pointer.length){
             //1em, 1.0em, 0.1em, .1em, 1.    em
             var re = /^(\.{0,1}\d+(\.\d+)?)[\s|\.]*(\w*)$/;
             if (re.test(this._pointer.length)){
                 var match = re.exec(this._pointer.length);
                 var number = match[1];
-                var unit = match[3];
-                if (!unit){
-                    unit = "px";
-                }
+                var unit = match[3] || "px";
                 var root2 = 1.41421356237;
-                eachByClassName('pointer', function(e){
+                this.eachByClassName('pointer', function(e){
                     e.style.width = (number * root2) + unit;
                     e.style.height = (number * root2) + unit;
                 });
-                var position = me.getPosition();
-                eachByClassName('pointer-wrapper', function(e){
+                var position = this.getPosition();
+                this.eachByClassName('pointer-wrapper', function(e){
                     if (position == 'top' || position == 'bottom'){
                         e.style.height = number + unit;
                     }else{
@@ -137,6 +162,12 @@
             }else{
                 this.warn('Pointer length ' + this._pointer.length + ' is invalid.');
             }
+        }
+
+        if (this._backgroundColor){
+            this.eachByClassName('window', function(e){
+                e.style.backgroundColor = this._backgroundColor;
+            });
         }
 
         var markerPos = this.getProjection().fromLatLngToDivPixel(this._marker.position);

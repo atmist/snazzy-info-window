@@ -4,7 +4,7 @@ $si-font-color: #333;
 
 $si-pointer-length: 20px;
 $si-content-padding: 20px;
-$si-shadow-h:           10px; 
+$si-shadow-h:           10px;
 $si-shadow-v:           10px;
 $si-shadow-blur:        0px;
 $si-shadow-spread:      0px;
@@ -12,7 +12,7 @@ $si-shadow-opacity: 0.4;
 $si-border-width:       1px;
 $si-border-style:       solid;
 $si-border-color:       lime;
-$si-border-radius:      0px;    
+$si-border-radius:      0px;
 
 @import "../../src/scss/snazzy-info-window";
 
@@ -24,7 +24,7 @@ body {
     height: 1600px;
     margin: 0;
     background: #fff;
-} 
+}
 
 #container{
     width: 100%;
@@ -68,15 +68,4 @@ body#center {
     height: calc(50% - 20px);
     margin: 10px;
     box-shadow: 0 1px 3px 0 rgba(black, 0.4);
-}
-
-
-.info-one .si-content {
-    width: 200px;
-    height: 200px;
-}
-
-.info-two .si-content {
-    width: 200px;
-    height: 200px;
 }

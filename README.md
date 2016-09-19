@@ -24,6 +24,10 @@ Settings can be applied through three different methods: javascript, sass, or cs
 | offset left | ✔ | ✘ | ✔ |
 | offset top | ✔ | ✘ | ✔ |
 | background color | ✔ | ✔ | ✔ |
+| content padding | ✔ | ✔ | ✔ |
+| border radius | ✔ | ✔ | ✔ |
+| font color | ✔ | ✔ | ✔ |
+| font | ✔ | ✔ | ✔ |
 
 ### Pointer Settings
 
