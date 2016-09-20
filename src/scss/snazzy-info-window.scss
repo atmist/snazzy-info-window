@@ -102,6 +102,13 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 }
 
 
+// Content styles
+.#{$si-pre}-content {
+    z-index: 2;
+}
+
+
+
 
 //////////////////////////////
 // 3. Pointer Styles
@@ -112,6 +119,7 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
     align-self: stretch;
     position: relative;
     overflow: hidden;
+    z-index: 3;
 }
 
 // General pointer styles
@@ -185,6 +193,7 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
     bottom: 0;
     right: 0;
     opacity: $si-shadow-opacity;
+    z-index: 1;
 
     .#{$si-pre}-pointer-wrapper {
         overflow: visible;

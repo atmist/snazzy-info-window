@@ -44,16 +44,13 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
             },
             backgroundColor: '#345345',
             contentPadding: '5em',
-            borderRadius: '0',
-            border: {
-                style: 'dotted'
-            }
+            borderRadius: '0'
         },
         {
             position: 'right',
             pointer: {
                 enabled: true,
-                length: '20pt'
+                length: '20px'
             },
             backgroundColor: 'green',
             contentPadding: '100pt',
