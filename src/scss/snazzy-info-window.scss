@@ -1,5 +1,4 @@
 /* Snazzy Infowindow */
-
 @import "_settings";
 
 //////////////////////////////////////////////////
@@ -19,28 +18,21 @@
 // Snazzy Info Window settings
 $si-pre:             si;
 
-// Math variables
-$root-2: 1.41421356237;
-$inverse-root-2: 0.70710678118;
+// Default marker
+$si-default-marker-width: 22px !default;
+$si-default-marker-height: 40px !default;
+$si-default-marker-anchor-x: 11px !default;
+$si-default-marker-anchor-y: 40px !default;
+$si-default-marker-margin: 0px !default;
+
+// Math variable
+$si-root-2: 1.41421356237;
+$si-inverse-root-2: 0.7071067811865474;
 
 // Pointer settings
-$rotation: -45deg;
-$rotated-shadow-h: $inverse-root-2 * ($si-shadow-h - $si-shadow-v);     // Only applies to a -45deg rotation
-$rotated-shadow-v: $inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only applies to a -45deg rotation
-
-/// Remove the unit of a length
-/// @param {Number} $number - Number to remove unit from
-/// @return {Number} - Unitless number
-@function strip-unit($number) {
-  @if type-of($number) == 'number' and not unitless($number) {
-    @return $number / ($number * 0 + 1);
-  }
-
-  @return $number;
-}
-
-$si-show-border: $si-border-style != none and strip-unit($si-border-width) != 0;
-
+$si-rotation: -45deg;
+$si-rotated-shadow-h: $si-inverse-root-2 * ($si-shadow-h - $si-shadow-v);     // Only applies to a -45deg rotation
+$si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only applies to a -45deg rotation
 
 //////////////////////////////
 // 1. Wrapper Styles
@@ -53,7 +45,6 @@ $si-show-border: $si-border-style != none and strip-unit($si-border-width) != 0;
     align-items: center;
     color: $si-font-color;
     font-size: $si-font-size;
-
     &,
     * {
         box-sizing: border-box;
@@ -99,9 +90,7 @@ $si-show-border: $si-border-style != none and strip-unit($si-border-width) != 0;
 // Window styles
 .#{$si-pre}-window {
     background-color: $si-content-bg;
-    @if ($si-show-border){
-        border: $si-border-width $si-border-style $si-border-color;
-    }
+    border: $si-border;
 }
 
 // Box styles
@@ -118,79 +107,66 @@ $si-show-border: $si-border-style != none and strip-unit($si-border-width) != 0;
 // 3. Pointer Styles
 //////////////////////////////
 
-@if ($si-include-pointer) {
-    // Pointer wrapper
-    [class*="#{$si-pre}-pointer-wrapper-"] {
-        align-self: stretch;
-        position: relative;
-        overflow: hidden;
-    }
+// Pointer wrapper
+[class*="#{$si-pre}-pointer-wrapper-"] {
+    align-self: stretch;
+    position: relative;
+    overflow: hidden;
+}
 
-    // General pointer styles
+// General pointer styles
+.#{$si-pre}-pointer {
+    position: absolute;
+    width: $si-pointer-length * $si-root-2;
+    height: $si-pointer-length * $si-root-2;
+}
+
+
+// Top pointer positioning
+.#{$si-pre}-pointer-wrapper-top {
+    height: $si-pointer-length;
+}
+.#{$si-pre}-wrapper-top {
     .#{$si-pre}-pointer {
-        position: absolute;
-        width: $si-pointer-length * $root-2;
-        height: $si-pointer-length * $root-2;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate($si-rotation);
     }
+}
 
-    // Top pointer positioning
-    .#{$si-pre}-pointer-wrapper-top {
-        height: $si-pointer-length;
-        @if ($si-show-border){
-            margin-top: -$si-border-width;
-        }
+// Bottom pointer positioning
+.#{$si-pre}-pointer-wrapper-bottom {
+    order: -1;
+    height: $si-pointer-length;
+}
+.#{$si-pre}-wrapper-bottom {
+    .#{$si-pre}-pointer {
+        bottom: 0;
+        left: 50%;
+        transform: translate(-50%, 50%) rotate($si-rotation);
     }
-    .#{$si-pre}-wrapper-top {
-        .#{$si-pre}-pointer {
-            left: 50%;
-            transform: translate(-50%, -50%) rotate($rotation);
-        }
-    }
+}
 
-    // Bottom pointer positioning
-    .#{$si-pre}-pointer-wrapper-bottom {
-        order: -1;
-        height: $si-pointer-length;
-        @if ($si-show-border){
-            margin-bottom: -$si-border-width;
-        }
+// Left pointer positioning
+.#{$si-pre}-pointer-wrapper-left {
+    width: $si-pointer-length;
+}
+.#{$si-pre}-wrapper-left {
+    .#{$si-pre}-pointer {
+        top: 50%;
+        transform: translate(-50%, -50%) rotate($si-rotation);
     }
-    .#{$si-pre}-wrapper-bottom {
-        .#{$si-pre}-pointer {
-            bottom: 0;
-            left: 50%;
-            transform: translate(-50%, 50%) rotate($rotation);
-        }
-    }
+}
 
-    // Left pointer positioning
-    .#{$si-pre}-pointer-wrapper-left {
-        width: $si-pointer-length;
-        @if ($si-show-border){
-            margin-left: -$si-border-width;
-        }
-    }
-    .#{$si-pre}-wrapper-left {
-        .#{$si-pre}-pointer {
-            top: 50%;
-            transform: translate(-50%, -50%) rotate($rotation);
-        }
-    }
-
-    // Right pointer positioning
-    .#{$si-pre}-pointer-wrapper-right {
-        order: -1;
-        width: $si-pointer-length;
-        @if ($si-show-border){
-            margin-right: -$si-border-width;
-        }
-    }
-    .#{$si-pre}-wrapper-right {
-        .#{$si-pre}-pointer {
-            top: 50%;
-            right: 0;
-            transform: translate(50%, -50%) rotate($rotation);
-        }
+// Right pointer positioning
+.#{$si-pre}-pointer-wrapper-right {
+    order: -1;
+    width: $si-pointer-length;
+}
+.#{$si-pre}-wrapper-right {
+    .#{$si-pre}-pointer {
+        top: 50%;
+        right: 0;
+        transform: translate(50%, -50%) rotate($si-rotation);
     }
 }
 
@@ -210,10 +186,8 @@ $si-show-border: $si-border-style != none and strip-unit($si-border-width) != 0;
     right: 0;
     opacity: $si-shadow-opacity;
 
-    @if ($si-include-pointer) {
-        .#{$si-pre}-pointer-wrapper {
-            overflow: visible;
-        }
+    .#{$si-pre}-pointer-wrapper {
+        overflow: visible;
     }
 }
 
@@ -228,9 +202,7 @@ $si-show-border: $si-border-style != none and strip-unit($si-border-width) != 0;
     box-shadow: $si-shadow-h $si-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
 }
 
-@if ($si-include-pointer) {
-    // Pointer shadow
-    .#{$si-pre}-shadow-pointer {
-        box-shadow: $rotated-shadow-h $rotated-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
-    }
+// Pointer shadow
+.#{$si-pre}-shadow-pointer {
+    box-shadow: $si-rotated-shadow-h $si-rotated-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
 }

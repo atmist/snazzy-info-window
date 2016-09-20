@@ -16,7 +16,7 @@ Settings can be applied through three different methods: javascript, sass, or cs
 
 ### General Settings
 
-| Option | JS | SASS | CSS
+| Option | JS | SASS | CSS | Notes
 |---|---|---|---|---|
 | position | ✔ | ✘ | ✘ |
 | content | ✔ | ✘ | ✘ |
@@ -25,24 +25,37 @@ Settings can be applied through three different methods: javascript, sass, or cs
 | offset top | ✔ | ✘ | ✔ |
 | background color | ✔ | ✔ | ✔ |
 | content padding | ✔ | ✔ | ✔ |
-| border | ✔ | ✔ | ✘ |
 | border radius | ✔ | ✔ | ✔ |
 | font color | ✔ | ✔ | ✔ |
 | font | ✔ | ✔ | ✔ |
 
+### Border Settings
+
+| Option | JS | SASS | CSS | Notes
+|---|---|---|---|---|
+| border enabled | ✔ | ✔ | ✘ |
+| border width | ✔ | ✔ | ✘ |
+| border style | ✔ | ✔ | ✘ |
+| border color | ✔ | ✔ | ✘ |
 
 ### Pointer Settings
 
-| Option | JS | SASS | CSS
+| Option | JS | SASS | CSS | Notes
 |---|---|---|---|---|
-| pointer enabled | ✔ | ✘ | ✘ |
+| pointer enabled | ✔ | ✘* | ✘ |
 | pointer length | ✔ | ✔ | ✘ |
 
 ### Shadow Settings
 
-| Option | JS | SASS | CSS
+| Option | JS | SASS | CSS | Notes
 |---|---|---|---|---|
 | shadow enabled | ✔ | ✔ | ✘ |
+| shadow horizontal | ✔ | ✔ | ✘ |
+| shadow vertical | ✔ | ✔ | ✘ |
+| shadow blur | ✔ | ✔ | ✘ |
+| shadow spread | ✔ | ✔ | ✘ |
+| shadow color | ✔ | ✔ | ✘ |
+| shadow opacity | ✔ | ✔ | ✘ |
 
 ---
 

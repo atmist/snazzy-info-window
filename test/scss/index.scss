@@ -2,17 +2,15 @@ $si-content-bg: rgba(white, 1);
 $si-font-size: 12px;
 $si-font-color: #333;
 
-$si-pointer-length: 20px;
+$si-pointer-length: 30px;
 $si-content-padding: 20px;
-$si-shadow-h:           10px;
-$si-shadow-v:           10px;
+$si-shadow-h:           5px;
+$si-shadow-v:           -5px;
 $si-shadow-blur:        0px;
 $si-shadow-spread:      0px;
 $si-shadow-opacity: 0.4;
-$si-border-width:       10px;
-$si-border-style:       solid;
-$si-border-color:       lime;
-$si-border-radius:      0px;
+
+$si-border:             solid 10px lime;
 
 @import "../../src/scss/snazzy-info-window";
 

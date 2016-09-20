@@ -19,7 +19,10 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
 
     var infoSettings = [
         {
-            position: 'top'
+            position: 'top',
+            pointer: {
+                enabled: true
+            }
         },
         {
             position: 'bottom',
@@ -28,21 +31,23 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
                 length: '50px'
             },
             backgroundColor: 'rgba(50, 50, 50, 1)',
+            fontColor: 'white',
             contentPadding: '5rem',
-            borderRadius: '10px',
-            border: 'black dotted 20px'
+            borderRadius: '10px'
         },
         {
             position: 'left',
             wrapperClass: 'info-two',
             pointer: {
-                enabled: true,
+                enabled: false,
                 length: '41.12398123     px'
             },
             backgroundColor: '#345345',
             contentPadding: '5em',
             borderRadius: '0',
-            border: 'red solid'
+            border: {
+                style: 'dotted'
+            }
         },
         {
             position: 'right',
@@ -53,7 +58,14 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
             backgroundColor: 'green',
             contentPadding: '100pt',
             borderRadius: '30pt',
-            border: 'none'
+            shadow: {
+                horizontal: '60px',
+                vertical: '80px',
+                blur: '5px',
+                spread: '4px',
+                color: 'red',
+                opacity: 0.4
+            }
         },
     ];
 
