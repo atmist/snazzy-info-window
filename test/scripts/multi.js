@@ -19,10 +19,7 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
 
     var infoSettings = [
         {
-            position: 'top',
-            pointer: {
-                enabled: true
-            }
+            position: 'top'
         },
         {
             position: 'bottom',
@@ -33,7 +30,8 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
             backgroundColor: 'rgba(50, 50, 50, 1)',
             fontColor: 'white',
             contentPadding: '5rem',
-            borderRadius: '10px'
+            borderRadius: '10px',
+			border: 'none'
         },
         {
             position: 'left',

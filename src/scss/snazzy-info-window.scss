@@ -127,8 +127,8 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
     position: absolute;
     width: $si-pointer-length * $si-root-2;
     height: $si-pointer-length * $si-root-2;
+	background-clip: padding-box;
 }
-
 
 // Top pointer positioning
 .#{$si-pre}-pointer-wrapper-top {

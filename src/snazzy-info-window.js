@@ -60,8 +60,8 @@
 
         //Go through each element under the wrapper with the provided classname
         this.eachByClassName = function(className, lambda){
-            if (this._html.wrapper){
-                var elements = this._html.wrapper
+            if (this._wrapper){
+                var elements = this._wrapper
                     .getElementsByClassName(this._classPrefix + className);
                 for (var i = 0; i < elements.length; i++){
                     if (lambda){
@@ -70,6 +70,22 @@
                 }
             }
         };
+
+		//Parse a css attribute into the numeric portion and the units
+		this.parseAttribute = function(attribute, onSuccess, onError){
+			//1em, 1.0em, 0.1em, .1em, 1.    em
+            var re = /^(\.{0,1}\d+(\.\d+)?)[\s|\.]*(\w*)$/;
+            if (re.test(attribute)){
+                var match = re.exec(attribute);
+                var number = match[1];
+                var unit = match[3] || "px";
+				if (onSuccess){
+					onSuccess.apply(this, [number*1, unit]);
+				}
+            }else if(onError){
+				onError.apply(this, []);
+            }
+		};
     };
 
     /*Extend the OverlayView in the Google Maps API.*/
@@ -100,18 +116,17 @@
 
     /*Implementation of OverlayView draw method.*/
     SnazzyInfoWindow.prototype.draw = function(){
-        if (!this._marker || !this._html){
+        if (!this._marker || !this._wrapper){
             return;
         }
 
-
         //Font
-        if (this._html.wrapper){
+        if (this._wrapper){
             if (this._fontColor){
-                this._html.wrapper.style.color = this._fontColor;
+                this._wrapper.style.color = this._fontColor;
             }
             if (this._font){
-                this._html.wrapper.style.font = this._font;
+                this._wrapper.style.font = this._font;
             }
         }
 
@@ -162,37 +177,46 @@
         //Assign offset
         if (this._offset) {
             if(this._offset.left) {
-                this._html.wrapper.style.marginLeft = this._offset.left;
+                this._wrapper.style.marginLeft = this._offset.left;
             }
             if (this._offset.top) {
-                this._html.wrapper.style.marginTop = this._offset.top;
+                this._wrapper.style.marginTop = this._offset.top;
             }
         }
 
         //Assign pointer settings
         if (this.getPointerEnabled() && this._pointer && this._pointer.length){
             //1em, 1.0em, 0.1em, .1em, 1.    em
-            var re = /^(\.{0,1}\d+(\.\d+)?)[\s|\.]*(\w*)$/;
-            if (re.test(this._pointer.length)){
-                var match = re.exec(this._pointer.length);
-                var number = match[1];
-                var unit = match[3] || "px";
-                var root2 = 1.41421356237;
-                this.eachByClassName('pointer', function(e){
-                    e.style.width = (number * root2) + unit;
-                    e.style.height = (number * root2) + unit;
-                });
-                var position = this.getPosition();
-                this.eachByClassName('pointer-wrapper', function(e){
-                    if (position == 'top' || position == 'bottom'){
-                        e.style.height = number + unit;
-                    }else{
-                        e.style.width = number + unit;
-                    }
-                });
-            }else{
-                this.warn('Pointer length ' + this._pointer.length + ' is invalid.');
-            }
+			this.parseAttribute(this._pointer.length, function(number, unit){
+				var root2 = 1.41421356237;
+	            this.eachByClassName('pointer', function(e){
+	                e.style.width = (number * root2) + unit;
+	                e.style.height = (number * root2) + unit;
+	            });
+	            var position = this.getPosition();
+	            this.eachByClassName('pointer-wrapper', function(e){
+	                if (position == 'top' || position == 'bottom'){
+	                    e.style.height = number + unit;
+	                }else{
+	                    e.style.width = number + unit;
+	                }
+	            });
+				this.parseAttribute(borderWidth, function(number, unit){
+					this.eachByClassName('pointer', function(e){
+						if (number == 0){
+							e.style.backgroundClip = 'none';
+						}else{
+							e.style.backgroundClip = 'padding-box';
+						}
+					});
+				}, function(){
+					this.eachByClassName('pointer', function(e){
+						e.style.backgroundClip = 'none';
+					});
+				});
+			}, function(){
+				this.warn('Pointer length ' + this._pointer.length + ' is invalid.');
+			});
         }
 
         if (this._backgroundColor){
@@ -202,24 +226,17 @@
         }
 
         var markerPos = this.getProjection().fromLatLngToDivPixel(this._marker.position);
-        this._html.wrapper.style.top = Math.floor(markerPos.y) + "px";
-        this._html.wrapper.style.left = Math.floor(markerPos.x) + "px";
+        this._wrapper.style.top = Math.floor(markerPos.y) + "px";
+        this._wrapper.style.left = Math.floor(markerPos.x) + "px";
     };
 
     /*Implementation of OverlayView onAdd method.*/
     SnazzyInfoWindow.prototype.onAdd = function(){
-        if (this.html){
+        if (this._wrapper){
             return;
         }
 
-        //Create the html elements
-        var html = {
-            wrapper: document.createElement('div'),
-            content: document.createElement('div'),
-            pointer: null
-        };
-
-        //Assign class names
+        //Used for assigning class names
         var me = this;
         var addClass = function(element, className){
             if (element && className){
@@ -228,85 +245,100 @@
                 }
                 element.className += me._classPrefix + className;
             }
-        }
-        addClass(html.content, 'window');
-        addClass(html.content, 'box');
-        addClass(html.content, 'content');
-        addClass(html.wrapper, 'wrapper');
-        if (this._wrapperClass){
-            html.wrapper.className += " " + this._wrapperClass;
-        }
-        //Assign position
-        addClass(html.wrapper, 'wrapper-' + this.getPosition());
+        };
+		//Used for creating new elements
+		var newElement = function(classNames){
+			var element = document.createElement('div');
+			if(classNames){
+				for(var i = 0; i < classNames.length; i++){
+					addClass(element, classNames[i]);
+				}
+			}
+			return element;
+		};
 
-        //Assign shadow
+		//1. Create the wrapper
+		var wrapper = newElement([
+			'wrapper',
+			'wrapper-' + this.getPosition(),
+			//Will only add the class name if it exists
+			this._wrapperClass
+		]);
+		this._wrapper = wrapper;
+
+		//2. Create the shadow DOM elements, order does matter
         if (this._hasShadow) {
-            addClass(html.wrapper, 'has-shadow');
-            html.shadow = document.createElement('div');
-            addClass(html.shadow, 'shadow-wrapper-' + this.getPosition());
-
+			//Additional Wrapper class
+			addClass(wrapper, 'has-shadow');
+			//Shadow wrapper
+			var shadowWrapper = newElement([
+				'shadow-wrapper-' + this.getPosition()
+			]);
             // Content shadow
-            html.contentShadow = document.createElement('div');
-            addClass(html.contentShadow, 'box');
-            addClass(html.contentShadow, 'shadow-box');
-
-            html.shadow.appendChild(html.contentShadow);
+            var contentShadow = newElement([
+				'box',
+				'shadow-box'
+			]);
+            shadowWrapper.appendChild(contentShadow);
+			// Pointer shadow
             if (this.getPointerEnabled()){
                 // Pointer shadow wrapper
-                html.pointerShadowWrapper = document.createElement('div');
-                addClass(html.pointerShadowWrapper, 'pointer-wrapper');
-                addClass(html.pointerShadowWrapper, 'pointer-wrapper-' + this.getPosition());
-
+				var pointerShadowWrapper = newElement([
+					'pointer-wrapper',
+					'pointer-wrapper-' + this.getPosition()
+				]);
                 // Pointer shadow
-                html.pointerShadow = document.createElement('div');
-                addClass(html.pointerShadow, 'pointer');
-                addClass(html.pointerShadow, 'shadow-pointer');
-
-                html.pointerShadowWrapper.appendChild(html.pointerShadow);
-                html.shadow.appendChild(html.pointerShadowWrapper);
+				var pointerShadow = newElement([
+					'pointer',
+					'shadow-pointer'
+				]);
+                pointerShadowWrapper.appendChild(pointerShadow);
+                shadowWrapper.appendChild(pointerShadowWrapper);
             }
-            html.wrapper.appendChild(html.shadow);
+			wrapper.appendChild(shadowWrapper);
         }
 
-        //Add the content
-        this._html = html;
+		//3. Create the content
+		var content = newElement([
+			'window',
+			'box',
+			'content'
+		]);
         if(this._content) {
-            html.content.innerHTML = this._content;
+			content.innerHTML = this._content;
         }
-        html.wrapper.appendChild(html.content);
+		wrapper.appendChild(content);
 
-        //Assign pointer
+        //4. Create the pointer
         if (this.getPointerEnabled()) {
-
             // Pointer wrapper
-            html.pointerWrapper = document.createElement('div');
-            addClass(html.pointerWrapper, 'pointer-wrapper');
-            addClass(html.pointerWrapper, 'pointer-wrapper-' + this.getPosition());
-
+            var pointerWrapper = newElement([
+				'pointer-wrapper',
+				'pointer-wrapper-' + this.getPosition()
+			]);
             // Pointer
-            html.pointer = document.createElement('div');
-            addClass(html.pointer, 'window');
-            addClass(html.pointer, 'pointer');
-
-            html.pointerWrapper.appendChild(html.pointer);
-            html.wrapper.appendChild(html.pointerWrapper);
+            var pointer = newElement([
+				'window',
+				'pointer',
+				'pointer-foreground'
+			]);
+            pointerWrapper.appendChild(pointer);
+            wrapper.appendChild(pointerWrapper);
         }
 
         //Add the html elements
-        this.getPane().appendChild(html.wrapper);
+        this.getPane().appendChild(wrapper);
     };
 
     /*Implementation of OverlayView onRemove method*/
     SnazzyInfoWindow.prototype.onRemove = function(){
-        if (!this._html){
-            return;
-        }
-        var wrapper = this._html.wrapper;
-        var parent = wrapper.parentElement;
-        if (parent){
-            parent.removeChild(wrapper);
-        }
-        this._html = undefined;
+		if (this._wrapper){
+	        var parent = this._wrapper.parentElement;
+	        if (parent){
+	            parent.removeChild(this._wrapper);
+	        }
+			this._wrapper = null;
+		}
     };
 
     return SnazzyInfoWindow;
