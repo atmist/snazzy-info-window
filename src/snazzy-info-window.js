@@ -20,7 +20,6 @@
         this._offset = options.offset;
         this._position = options.position;
         this._pointer = options.pointer;
-        this._hasShadow = options.hasShadow;
         this._wrapperClass = options.wrapperClass;
         this._warningPrefix = "Snazzy Info Window warning: ";
         this._backgroundColor = options.backgroundColor;
@@ -252,36 +251,34 @@
 		this._wrapper = wrapper;
 
 		//2. Create the shadow DOM elements, order does matter
-        if (this._hasShadow) {
-			//Additional Wrapper class
-			addClass(wrapper, 'has-shadow');
-			//Shadow wrapper
-			var shadowWrapper = newElement([
-				'shadow-wrapper-' + this.getPosition()
+		//Additional Wrapper class
+		addClass(wrapper, 'has-shadow');
+		//Shadow wrapper
+		var shadowWrapper = newElement([
+			'shadow-wrapper-' + this.getPosition()
+		]);
+        // Content shadow
+        var contentShadow = newElement([
+			'box',
+			'shadow-box'
+		]);
+        shadowWrapper.appendChild(contentShadow);
+		// Pointer shadow
+        if (this.getPointerEnabled()){
+            // Pointer shadow wrapper
+			var pointerShadowWrapper = newElement([
+				'pointer-wrapper',
+				'pointer-wrapper-' + this.getPosition()
 			]);
-            // Content shadow
-            var contentShadow = newElement([
-				'box',
-				'shadow-box'
+            // Pointer shadow
+			var pointerShadow = newElement([
+				'pointer',
+				'shadow-pointer'
 			]);
-            shadowWrapper.appendChild(contentShadow);
-			// Pointer shadow
-            if (this.getPointerEnabled()){
-                // Pointer shadow wrapper
-				var pointerShadowWrapper = newElement([
-					'pointer-wrapper',
-					'pointer-wrapper-' + this.getPosition()
-				]);
-                // Pointer shadow
-				var pointerShadow = newElement([
-					'pointer',
-					'shadow-pointer'
-				]);
-                pointerShadowWrapper.appendChild(pointerShadow);
-                shadowWrapper.appendChild(pointerShadowWrapper);
-            }
-			wrapper.appendChild(shadowWrapper);
+            pointerShadowWrapper.appendChild(pointerShadow);
+            shadowWrapper.appendChild(pointerShadowWrapper);
         }
+		wrapper.appendChild(shadowWrapper);
 
 		//3. Create the content
 		var content = newElement([
@@ -301,11 +298,10 @@
 				'pointer-wrapper',
 				'pointer-wrapper-' + this.getPosition()
 			]);
-            // Pointer
+            // Pointer foreground
             var pointer = newElement([
 				'window',
-				'pointer',
-				'pointer-foreground'
+				'pointer'
 			]);
             pointerWrapper.appendChild(pointer);
             wrapper.appendChild(pointerWrapper);

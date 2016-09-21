@@ -1,16 +1,25 @@
-$si-content-bg: rgba(white, 1);
-$si-font-size: 12px;
-$si-font-color: #333;
+// Content
+$si-content-bg:         #fff !default;                  // Background color of the infowindow
+$si-content-padding:    40px !default;                  // Padding of the infowindow
+$si-font-color:      #fff !default;                  // Color of the infowindow content
+$si-font-size:       14px !default;                    // Font size of the infowindow content
 
-$si-pointer-length: 30px;
-$si-content-padding: 20px;
-$si-shadow-h:           5px;
-$si-shadow-v:           -5px;
-$si-shadow-blur:        0px;
-$si-shadow-spread:      0px;
-$si-shadow-opacity: 0.4;
+// Border
+$si-border:             none;//10px solid lime !default;
+$si-border-radius:      10px !default;                   // Border radius of the infowindow
 
-$si-border:             solid 10px lime;
+// Pointer
+$si-pointer-length:     30px !default;                  // Length of the pointer, from the edge of the infowindow to the tip
+
+// Shadow
+$si-shadow-h:           10px !default;                   // Shadow horizontal offset
+$si-shadow-v:           -10px !default;                   // Shadow vertical offset
+$si-shadow-blur:        0px !default;                   // Shadow blur radius
+$si-shadow-spread:      0px !default;                   // Shadow spread radius
+$si-shadow-color:       #000 !default;                  // Shadow color
+$si-shadow-opacity:     0.5 !default;
+
+
 
 @import "../../src/scss/snazzy-info-window";
 

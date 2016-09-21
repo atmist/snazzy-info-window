@@ -19,48 +19,16 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
 
     var infoSettings = [
         {
-            position: 'top'
+            position: 'top',
         },
         {
             position: 'bottom',
-            pointer: {
-                enabled: true,
-                length: '50px'
-            },
-            backgroundColor: 'rgba(50, 50, 50, 1)',
-            fontColor: 'white',
-            contentPadding: '5rem',
-            borderRadius: '10px',
-			border: 'none'
         },
         {
             position: 'left',
-            wrapperClass: 'info-two',
-            pointer: {
-                enabled: false,
-                length: '41.12398123     px'
-            },
-            backgroundColor: '#345345',
-            contentPadding: '5em',
-            borderRadius: '0'
         },
         {
             position: 'right',
-            pointer: {
-                enabled: true,
-                length: '20px'
-            },
-            backgroundColor: 'green',
-            contentPadding: '100pt',
-            borderRadius: '30pt',
-            shadow: {
-                horizontal: '60px',
-                vertical: '80px',
-                blur: '5px',
-                spread: '4px',
-                color: 'red',
-                opacity: 0.4
-            }
         },
     ];
 
@@ -78,8 +46,7 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
             //icon: icons[i]
         });
         var infowindow = new SnazzyInfoWindow($.extend({}, {
-            content: 'Cookies',
-            hasShadow: true
+            content: 'Cookies'
         }, infoSettings[i]));
 
         infowindow.attach(marker);
