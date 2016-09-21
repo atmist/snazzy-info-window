@@ -46,7 +46,8 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
             //icon: icons[i]
         });
         var infowindow = new SnazzyInfoWindow($.extend({}, {
-            content: 'Cookies'
+            //content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer hendrerit facilisis interdum. Cras non faucibus urna, sed lobortis lectus. Morbi lorem turpis, porttitor in arcu eget, pharetra dictum eros. Sed vestibulum sagittis orci et tempor. Donec et accumsan augue. Integer quis dui convallis, faucibus lorem sed, molestie mi. Phasellus bibendum sodales aliquam. Morbi eu justo non dui hendrerit tempus pellentesque a mi. Curabitur posuere justo augue, sed aliquet dolor elementum non.'
+            content: '<div><b>Testing</b></div><div>Test</div>'
         }, infoSettings[i]));
 
         infowindow.attach(marker);

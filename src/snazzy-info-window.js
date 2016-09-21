@@ -243,7 +243,6 @@
 
 		//1. Create the wrapper
 		var wrapper = newElement([
-			'wrapper',
 			'wrapper-' + this.getPosition(),
 			//Will only add the class name if it exists
 			this._wrapperClass
@@ -251,39 +250,29 @@
 		this._wrapper = wrapper;
 
 		//2. Create the shadow DOM elements, order does matter
-		//Additional Wrapper class
-		addClass(wrapper, 'has-shadow');
 		//Shadow wrapper
 		var shadowWrapper = newElement([
 			'shadow-wrapper-' + this.getPosition()
 		]);
         // Content shadow
-        var contentShadow = newElement([
-			'box',
-			'shadow-box'
+        var shadowFrame = newElement([
+            'frame',
+			'shadow-frame'
 		]);
-        shadowWrapper.appendChild(contentShadow);
+        shadowWrapper.appendChild(shadowFrame);
 		// Pointer shadow
         if (this.getPointerEnabled()){
-            // Pointer shadow wrapper
-			var pointerShadowWrapper = newElement([
-				'pointer-wrapper',
-				'pointer-wrapper-' + this.getPosition()
+            // Pointer shadow 
+			var shadowPointer = newElement([
+				'shadow-pointer-' + this.getPosition()
 			]);
-            // Pointer shadow
-			var pointerShadow = newElement([
-				'pointer',
-				'shadow-pointer'
-			]);
-            pointerShadowWrapper.appendChild(pointerShadow);
-            shadowWrapper.appendChild(pointerShadowWrapper);
+            shadowWrapper.appendChild(shadowPointer);
         }
 		wrapper.appendChild(shadowWrapper);
 
 		//3. Create the content
 		var content = newElement([
-			'window',
-			'box',
+            'frame',
 			'content'
 		]);
         if(this._content) {
@@ -293,18 +282,18 @@
 
         //4. Create the pointer
         if (this.getPointerEnabled()) {
-            // Pointer wrapper
-            var pointerWrapper = newElement([
-				'pointer-wrapper',
-				'pointer-wrapper-' + this.getPosition()
+            // Pointer border
+            var pointerBorder = newElement([
+                'pointer-' + this.getPosition(),
+                'pointer-border-' + this.getPosition()
 			]);
-            // Pointer foreground
-            var pointer = newElement([
-				'window',
-				'pointer'
+            // Pointer background
+            var pointerBg = newElement([
+                'pointer-' + this.getPosition(),
+                'pointer-bg-' + this.getPosition()
 			]);
-            pointerWrapper.appendChild(pointer);
-            wrapper.appendChild(pointerWrapper);
+            wrapper.appendChild(pointerBorder);
+            wrapper.appendChild(pointerBg);
         }
 
         //Add the html elements
