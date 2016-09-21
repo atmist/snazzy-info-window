@@ -201,30 +201,15 @@
 	                    e.style.width = number + unit;
 	                }
 	            });
-				this.parseAttribute(borderWidth, function(number, unit){
-					this.eachByClassName('pointer', function(e){
-						if (number == 0){
-							e.style.backgroundClip = 'none';
-						}else{
-							e.style.backgroundClip = 'padding-box';
-						}
-					});
-				}, function(){
-					this.eachByClassName('pointer', function(e){
-						e.style.backgroundClip = 'none';
-					});
-				});
 			}, function(){
 				this.warn('Pointer length ' + this._pointer.length + ' is invalid.');
 			});
         }
-
         if (this._backgroundColor){
             this.eachByClassName('window', function(e){
                 e.style.backgroundColor = this._backgroundColor;
             });
         }
-
         var markerPos = this.getProjection().fromLatLngToDivPixel(this._marker.position);
         this._wrapper.style.top = Math.floor(markerPos.y) + "px";
         this._wrapper.style.left = Math.floor(markerPos.x) + "px";
