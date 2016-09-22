@@ -1,22 +1,22 @@
 // Content
-$si-content-bg:         #333 !default;                  // Background color of the infowindow
+$si-content-bg:         #fff !default;                  // Background color of the infowindow
 $si-content-padding:    20px !default;                  // Padding of the infowindow
-$si-font-color:      #fff !default;                  // Color of the infowindow content
+$si-font-color:        #333 !default;                  // Color of the infowindow content
 $si-font-size:       14px !default;                    // Font size of the infowindow content
 
 // Border
-$si-border-width: 2px !default;
-$si-border-color: #fff!default;
+$si-border-width: 1px !default;
+$si-border-color: #eee !default;
 
 $si-border-radius:      3px !default;                   // Border radius of the infowindow
 
 // Pointer
-$si-pointer-length:     20px !default;                  // Length of the pointer, from the edge of the infowindow to the tip
+$si-pointer-length:     15px !default;                  // Length of the pointer, from the edge of the infowindow to the tip
 
 // Shadow
-$si-shadow-h:           10px !default;                   // Shadow horizontal offset
-$si-shadow-v:           10px !default;                   // Shadow vertical offset
-$si-shadow-blur:        0px !default;                   // Shadow blur radius
+$si-shadow-h:           0px !default;                   // Shadow horizontal offset
+$si-shadow-v:           3px !default;                   // Shadow vertical offset
+$si-shadow-blur:        6px !default;                   // Shadow blur radius
 $si-shadow-spread:      0px !default;                   // Shadow spread radius
 $si-shadow-color:       #000 !default;                  // Shadow color
 $si-shadow-opacity:     0.25 !default;

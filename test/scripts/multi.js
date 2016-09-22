@@ -1,39 +1,12 @@
 require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $){
+    
+    var settings = {
+        content: '<div><b>Testing</b></div><div>Snazzy Maps</div>'
 
-
-    var icon = {
-        path: "M40,40L0,40L0,0L40,0L40,40ZM38,2L2,2L2,38L38,38L38,2ZM13.085,28.316C14.188,28.316 15.085,29.212 15.085,30.316C15.085,31.42 14.188,32.316 13.085,32.316C11.981,32.316 11.085,31.42 11.085,30.316C11.085,29.212 11.981,28.316 13.085,28.316Z",
-        fillColor: '#FF0000',
-        fillOpacity: .6,
-        anchor: new google.maps.Point(13,30),
-        strokeWeight: 0,
-        scale: 2
     };
 
-    var icons = [
-        $.extend({}, icon, {scale: 0.5}),
-        $.extend({}, icon, {scale: 0.5}),
-        $.extend({}, icon, {scale: 1}),
-        $.extend({}, icon, {scale: 2})
-    ];
-
-    var infoSettings = [
-        {
-            position: 'top',
-        },
-        {
-            position: 'bottom',
-        },
-        {
-            position: 'left',
-        },
-        {
-            position: 'right',
-        },
-    ];
-
-    for (var i = 0; i < $('.map-canvas').length; i++){
-       var map = new google.maps.Map($('#map-canvas-' + (i + 1))[0], {
+    $.each($('.map-canvas'), function(i, e){
+        var map = new google.maps.Map(e, {
             zoom: 15,
             center: new google.maps.LatLng(49.47216, -123.77307),
             mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -42,15 +15,14 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
             map: map,
             draggable: true,
             position: new google.maps.LatLng(49.47216, -123.77307),
-            visible: true,
-            //icon: icons[i]
+            visible: true
         });
         var infowindow = new SnazzyInfoWindow($.extend({}, {
-            //content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer hendrerit facilisis interdum. Cras non faucibus urna, sed lobortis lectus. Morbi lorem turpis, porttitor in arcu eget, pharetra dictum eros. Sed vestibulum sagittis orci et tempor. Donec et accumsan augue. Integer quis dui convallis, faucibus lorem sed, molestie mi. Phasellus bibendum sodales aliquam. Morbi eu justo non dui hendrerit tempus pellentesque a mi. Curabitur posuere justo augue, sed aliquet dolor elementum non.'
-            content: '<div><b>Testing</b></div><div>Test</div>'
-        }, infoSettings[i]));
+            position: $(e).data('position')
+        }, settings));
 
         infowindow.attach(marker);
         infowindow.open();
-    }
+
+    });
 });
