@@ -19,37 +19,33 @@ Settings can be applied through three different methods: javascript, sass, or cs
 | Option | JS | SASS | CSS | Notes
 |---|---|---|---|---|
 | position | ✔ | ✘ | ✘ |
-| content | ✔ | ✘ | ✘ |
+| static content | ✔ | ✘ | ✘ |
+| dynamic content | ✔ | ✘ | ✘ | Not Done |
 | wrapper class | ✔ | ✘ | ✘ |
-| offset left | ✔ | ✘ | ✔ |
-| offset top | ✔ | ✘ | ✔ |
+| offset | ✔ | ✘ | ✔ |
 | background color | ✔ | ✔ | ✔ |
-| content padding | ✔ | ✔ | ✔ |
+| padding | ✔ | ✔ | ✔ |
 | border radius | ✔ | ✔ | ✔ |
 | font color | ✔ | ✔ | ✔ |
-| font | ✔ | ✔ | ✔ |
+| font size | ✔ | ✔ | ✔ |
 
 ### Border Settings
 
 | Option | JS | SASS | CSS | Notes
 |---|---|---|---|---|
-| border enabled | ✔ | ✔ | ✘ |
-| border width | ✔ | ✔ | ✘ |
-| border style | ✔ | ✔ | ✘ |
+| border width | ✔ | ✔ | ✘ | 
 | border color | ✔ | ✔ | ✘ |
 
 ### Pointer Settings
 
 | Option | JS | SASS | CSS | Notes
 |---|---|---|---|---|
-| pointer enabled | ✔ | ✘* | ✘ |
 | pointer length | ✔ | ✔ | ✘ |
 
 ### Shadow Settings
 
 | Option | JS | SASS | CSS | Notes
 |---|---|---|---|---|
-| shadow enabled | ✔ | ✔ | ✘ |
 | shadow horizontal | ✔ | ✔ | ✘ |
 | shadow vertical | ✔ | ✔ | ✘ |
 | shadow blur | ✔ | ✔ | ✘ |
