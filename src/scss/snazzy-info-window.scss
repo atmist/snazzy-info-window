@@ -39,17 +39,26 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 //////////////////////////////
 
 // Infowindow wrapper
-[class*="#{$si-pre}-wrapper"]{
-    display: flex;
+.#{$si-pre}-float-wrapper {
     position: absolute;
-    align-items: center;
-    color: $si-font-color;
-    font-size: $si-font-size;
+    width: 100%;
 
     &,
     * {
         box-sizing: border-box;
     }
+}
+
+[class*="#{$si-pre}-wrapper"] {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
+    // max-width: 25%;
+    // height: 200px;
+    color: $si-font-color;
+    font-size: $si-font-size;
 }
 
 // Top-positioned infowindow
@@ -63,7 +72,7 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 // Bottom-positioned infowindow
 .#{$si-pre}-wrapper-bottom {
     transform: translate(-50%, 0);
-    flex-direction: column;
+    flex-direction: column-reverse;
     margin-top: $si-default-marker-height - $si-default-marker-anchor-y + $si-default-marker-margin;
     margin-left: $si-default-marker-width/2 - $si-default-marker-anchor-x;
 }
@@ -78,6 +87,7 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 // Right-positioned infowindow
 .#{$si-pre}-wrapper-right {
     transform: translate(0, -50%);
+    flex-direction: row-reverse;
     margin-top: $si-default-marker-height/2 - $si-default-marker-anchor-y;
     margin-left: $si-default-marker-width - $si-default-marker-anchor-x + $si-default-marker-margin;
 }
@@ -90,7 +100,7 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 
 // Content styles
 .si-frame {
-    flex: 1 0;
+    flex: 1 1 auto;
     position: relative;
     padding: $si-content-padding;
     z-index: 2;
@@ -98,8 +108,17 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 }
 
 .si-content {
+    width: 100%;
+    height: 100%;
     background-color: $si-content-bg;
     border: $si-border-width solid $si-border-color;
+    overflow: hidden;
+
+    > div {
+        height: 100%;
+        overflow: auto;
+        //padding: 10px;
+    }
 }
 
 
@@ -109,16 +128,18 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 // 3. Pointer Styles
 //////////////////////////////
 
-[class*="#{$si-pre}-pointer"] {
-    border: $si-pointer-length solid transparent;
-}
 
 [class*="#{$si-pre}-pointer-border"] {
+    border: $si-pointer-length solid transparent;
     position: absolute;
     z-index: 3;
 }
 
+
+$si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width);
+
 [class*="#{$si-pre}-pointer-bg"] {
+    border: ($si-pointer-length - $si-triangle-difference) solid transparent;
     position: relative;
     z-index: 4;
 }
@@ -135,11 +156,6 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
     transform: translate(0, -50%);
 }
 
-.#{$si-pre}-pointer-bottom,
-.#{$si-pre}-pointer-right {
-    order: -1;
-}
-
 // Top pointer poisitioning
 .#{$si-pre}-pointer-top {
     border-bottom: none;
@@ -151,7 +167,8 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 }
 
 .#{$si-pre}-pointer-bg-top {
-    top: round(-$si-border-width * $si-root-2);
+    top: -$si-border-width;    
+    margin-bottom: $si-triangle-difference;
     border-top-color: $si-content-bg;
 }
 
@@ -167,7 +184,8 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 }
 
 .#{$si-pre}-pointer-bg-bottom {
-    bottom: round(-$si-border-width * $si-root-2);
+    bottom: -$si-border-width;    
+    margin-top: $si-triangle-difference;
     border-bottom-color: $si-content-bg;
 }
 
@@ -182,7 +200,8 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 }
 
 .#{$si-pre}-pointer-bg-left {
-    left: round(-$si-border-width * $si-root-2);
+    left: -$si-border-width;    
+    margin-right: $si-triangle-difference;
     border-left-color: $si-content-bg;
 }
 
@@ -197,7 +216,8 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 }
 
 .#{$si-pre}-pointer-bg-right {
-    right: round(-$si-border-width * $si-root-2);
+    right: -$si-border-width;    
+    margin-left: $si-triangle-difference;
     border-right-color: $si-content-bg;
 }
 

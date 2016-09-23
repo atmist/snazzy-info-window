@@ -28,7 +28,7 @@
 
         //Private properties
         this._marker = null;
-        this._wrapper = null;
+        this._floatWrapper = null;
         this._opts = opts || {};
 
         //Validate the options
@@ -52,8 +52,8 @@
 
         /*Go through each element under the wrapper with the provided class name*/
         this.eachByClassName = function(className, lambda){
-            if (this._wrapper){
-                var elements = this._wrapper.getElementsByClassName(_classPrefix + className);
+            if (this._floatWrapper){
+                var elements = this._floatWrapper.getElementsByClassName(_classPrefix + className);
                 for (var i = 0; i < elements.length; i++){
                     if (lambda){
                         lambda.apply(this, [elements[i]]);
@@ -110,7 +110,7 @@
 
     /*Implementation of OverlayView draw method.*/
     SnazzyInfoWindow.prototype.draw = function(){
-        if (!this._marker || !this._wrapper){
+        if (!this._marker || !this._floatWrapper){
             return;
         }
 
@@ -123,10 +123,14 @@
         var offset = this._opts.offset;
         if (offset) {
             if(offset.left) {
-                this._wrapper.style.marginLeft = offset.left;
+                this.eachByClassName('wrapper-' + this._opts.position, function(e){
+                    e.style.marginLeft = offset.left;
+                });
             }
-            if (offset.top) {
-                this._wrapper.style.marginTop = offset.top;
+            if (offset.top) {                
+                this.eachByClassName('wrapper-' + this._opts.position, function(e){
+                    e.style.marginTop = offset.top;
+                });
             }
         }
         //2. Set the background color
@@ -154,12 +158,16 @@
             });
         }
         //5. Font Color
-        if (this._opts.fontColor){
-            this._wrapper.style.color = this._opts.fontColor;
+        if (this._opts.fontColor){              
+            this.eachByClassName('wrapper-' + this._opts.position, function(e){
+                e.style.color = this._opts.fontColor;
+            });
         }        
         //6. Font Size
-        if (this._opts.fontSize){
-            this._wrapper.style.fontSize = this._opts.fontSize;
+        if (this._opts.fontSize){    
+            this.eachByClassName('wrapper-' + this._opts.position, function(e){
+                e.style.fontSize = this._opts.fontSize;
+            });
         }
         //7. Border
         if (this._opts.border){   
@@ -246,13 +254,13 @@
         }
 
         var markerPos = this.getProjection().fromLatLngToDivPixel(this._marker.position);
-        this._wrapper.style.top = Math.floor(markerPos.y) + "px";
-        this._wrapper.style.left = Math.floor(markerPos.x) + "px";
+        this._floatWrapper.style.top = Math.floor(markerPos.y) + "px";
+        this._floatWrapper.style.left = Math.floor(markerPos.x) + "px";
     };
 
     /*Implementation of OverlayView onAdd method.*/
     SnazzyInfoWindow.prototype.onAdd = function(){
-        if (this._wrapper){
+        if (this._floatWrapper){
             return;
         }
 		//Used for creating new elements
@@ -273,11 +281,11 @@
 		};
 
 		//1. Create the wrapper
-		this._wrapper = newElement(
+		var wrapper = newElement(
 			'wrapper-' + this._opts.position
 		);
         if (this._opts.wrapperClass){
-            this._wrapper.className += ' ' + this._opts.wrapperClass;
+            wrapper.className += ' ' + this._opts.wrapperClass;
         }
 
 		//2. Create the shadow
@@ -302,7 +310,7 @@
                 shadowWrapper.appendChild(shadowPointer);
             }
 
-            this._wrapper.appendChild(shadowWrapper);
+            wrapper.appendChild(shadowWrapper);
         }
 
 		//3. Create the content
@@ -313,7 +321,7 @@
         if(this._opts.content) {
 			content.innerHTML = this._opts.content;
         }
-		this._wrapper.appendChild(content);
+		wrapper.appendChild(content);
 
         //4. Create the pointer
         if (this._opts.pointer){
@@ -325,22 +333,29 @@
                 'pointer-' + this._opts.position,
                 'pointer-bg-' + this._opts.position
             );
-            this._wrapper.appendChild(pointerBorder);
-            this._wrapper.appendChild(pointerBg);
+            wrapper.appendChild(pointerBorder);
+            wrapper.appendChild(pointerBg);
         }
 
+        //Create an outer wrapper
+        var floatWrapper = newElement(
+            'float-wrapper'
+        );
+        floatWrapper.appendChild(wrapper);
+        this._floatWrapper = floatWrapper;
+
         //Add the wrapper to the Google Maps float pane
-        this.getPanes()["floatPane"].appendChild(this._wrapper);
+        this.getPanes()["floatPane"].appendChild(this._floatWrapper);
     };
 
     /*Implementation of OverlayView onRemove method*/
     SnazzyInfoWindow.prototype.onRemove = function(){
-		if (this._wrapper){
-	        var parent = this._wrapper.parentElement;
+		if (this._floatWrapper){
+	        var parent = this._floatWrapper.parentElement;
 	        if (parent){
-	            parent.removeChild(this._wrapper);
+	            parent.removeChild(this._floatWrapper);
 	        }
-			this._wrapper = null;
+			this._floatWrapper = null;
 		}
     };
 
