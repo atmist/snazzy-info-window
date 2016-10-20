@@ -2,7 +2,7 @@
   "name": "snazzy-info-window",
   "homepage": "https://github.com/atmist/snazzy-info-window",
   "authors": [
-    "developer@atmist.com",
+    "developer@atmist.com"
   ],
   "keywords": [
     "Snazzy",
@@ -12,5 +12,8 @@
     "info",
     "window"
   ],
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "requirejs": "^2.3.1"
+  }
 }

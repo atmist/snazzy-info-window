@@ -2,3 +2,5 @@
 /test/css
 /test/node_modules
 /test/index.css
+/node_modules
+/bower_components
