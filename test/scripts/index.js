@@ -1,4 +1,4 @@
-require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $){
+require(['SnazzyInfoWindow', 'jquery'], function(SnazzyInfoWindow, $){
 
     var map = new google.maps.Map($("#map-canvas")[0], {
         zoom: 15,
@@ -28,7 +28,7 @@ require(['main_src/snazzy-info-window', 'jquery'], function(SnazzyInfoWindow, $)
         offset: {
             //top: '-40px'
         },
-        hasShadow: true 
+        hasShadow: true
     });
 
     infowindow.attach(marker);

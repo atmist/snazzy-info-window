@@ -6,6 +6,7 @@ var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
 var del = require('del');
 var concat = require('gulp-concat');
+var babel = require('gulp-babel');
 
 var paths = {
     src_sass: './src/scss/**/*.scss',
@@ -36,10 +37,30 @@ var sassTaskBuilder = function(mainFile, dest){
 gulp.task('build:src:sass', sassTaskBuilder('./src/scss/snazzy-info-window.scss', './dist'));
 gulp.task('build:test:sass', sassTaskBuilder('./test/scss/index.scss', './test'));
 
+//JS
+gulp.task('build:src:js', function(){
+	return gulp.src('./src/snazzy-info-window.js')
+	.pipe(babel({
+		presets: ['es2015'],
+		plugins: [
+	    	'add-module-exports',
+			'transform-es2015-modules-umd'
+		],
+		moduleId: 'SnazzyInfoWindow'
+	}))
+	.on('error', function(e) {
+      console.log('>>> ERROR', e.message);
+      // emit here
+      this.emit('end');
+    })
+	.pipe(gulp.dest('dist'));
+});
+
 //Rebuild the sass files when they change
 gulp.task('watch', function(){
     gulp.watch(paths.test_sass, ['build:src:sass', 'build:test:sass']);
     gulp.watch(paths.src_sass, ['build:src:sass', 'build:test:sass']);
+    gulp.watch('./src/snazzy-info-window.js', ['build:src:js']);
 });
 
 //Clean all the files except for node_modules
