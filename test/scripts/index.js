@@ -25,10 +25,6 @@ require(['SnazzyInfoWindow', 'jquery'], function(SnazzyInfoWindow, $){
     var infowindow = new SnazzyInfoWindow({
         content: 'Cookies',
         position: 'top', // top | left | bottom | right
-        offset: {
-            //top: '-40px'
-        },
-        hasShadow: true
     });
 
     infowindow.attach(marker);

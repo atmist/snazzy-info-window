@@ -360,11 +360,13 @@
 				}
 
 				//3. Create the content
-				var content = newElement('frame', 'content');
+				var contentWrapper = newElement('frame', 'content-wrapper');
+				var content = newElement('content');
 				if (this._opts.content) {
 					content.innerHTML = this._opts.content;
 				}
-				wrapper.appendChild(content);
+				contentWrapper.appendChild(content);
+				wrapper.appendChild(contentWrapper);
 
 				//4. Create the pointer
 				if (this._opts.pointer) {
