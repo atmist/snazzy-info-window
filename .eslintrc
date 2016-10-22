@@ -1,0 +1,21 @@
+{
+  "extends": [
+    "airbnb-base"
+  ],
+  "env": {
+    "browser": true
+  },
+  rules: {
+      "import/no-extraneous-dependencies": [2, { devDependencies: true }],
+      "indent": [2, 4],
+      "comma-dangle": ["error", "never"],
+      "no-underscore-dangle": 0,
+      "vars-on-top": 0,
+      "arrow-body-style": 0,
+      "no-plusplus": 0,
+      "no-param-reassign": 0
+    },
+    globals: {
+      "google": false
+    }
+}
