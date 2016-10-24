@@ -2,7 +2,7 @@
 
 Snazzy Info Window is a library for customizable popup windows in the Google Maps JavaScript API.
 
-## Demo
+## Demos
 
 - [Simple Example](https://codepen.io/snazzymaps/pen/dpAbGN/)
 - [Advanced Example](https://codepen.io/snazzymaps/pen/vXPBKJ)
@@ -57,7 +57,7 @@ Choose where you want the info window to be displayed, relative to the marker.
 
 - Type: _string_
 - Default: `'top'`
-- Possible Values: `top`, `bottom`, `left`, `right`
+- Possible Values: `'top'`, `'bottom'`, `'left'`, `'right'`
 
 #### wrapperClass
 
@@ -70,6 +70,7 @@ used for applying custom CSS to the info window.
 
 - Type: _object_
 - Example:
+
   ```js
   offset: {
     top: '10px',
@@ -121,6 +122,7 @@ A custom border around the info window.
 
 - Type: _object_
 - Example:
+
   ```js
   border: {
     width: '10px',
@@ -142,6 +144,7 @@ The CSS properties for the shadow of the info window.
 
 - Type: _object_
 - Default:
+
   ```js
   shadow: {
       h: '0px',
