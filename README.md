@@ -1,5 +1,11 @@
-# snazzy-info-window
----
+# Snazzy Info Window
+
+Snazzy Info Window is a library for customizable popup windows in the Google Maps JavaScript API.
+
+## Demo
+
+- [Simple Example](https://codepen.io/snazzymaps/pen/dpAbGN/)
+- [Advanced Example](https://codepen.io/snazzymaps/pen/vXPBKJ)
 
 ## Quick Start
 1. Add a reference to Google Maps API.
@@ -8,64 +14,140 @@
 <script src="https://maps.googleapis.com/maps/api/js?key={{YOUR KEY HERE}}"></script>
 ```
 
----
+## Features
 
-## Supported Settings
+- **Custom position**
+  - Position the info window to the top, bottom, right, or left of the marker.
+- **Custom styling**
+  - Customize the border radius, shadow, background color, border, and much more.
 
-Settings can be applied through three different methods: javascript, sass, or css. Some settings are more complicated than others. This is why they might only be supported by javascript.
+## Options
 
-### General Settings
+```js
+var options = {
+    content: '<div>Hello, World!</div>',
+    wrapperClass: 'custom-info-window',
+    backgroundColor: 'black',
+    padding: '40px',
+    borderRadius: '2px 20px',
+    fontColor: '#eee',
+    fontSize: '16px',
+    pointer: '30px',
+    border: {
+        width: '20px'
+    },
+    shadow: {
+        h: '10px',
+        v: '10px',
+        opacity: 0.5,
+        color: 'black'
+    }
+};
+```
 
-| Option | JS | SASS | CSS | Notes
-|---|---|---|---|---|
-| position | ✔ | ✘ | ✘ |
-| static content | ✔ | ✘ | ✘ |
-| dynamic content | ✔ | ✘ | ✘ | Not Done |
-| wrapper class | ✔ | ✘ | ✘ |
-| offset | ✔ | ✘ | ✔ |
-| background color | ✔ | ✔ | ✔ |
-| padding | ✔ | ✔ | ✔ |
-| border radius | ✔ | ✔ | ✔ |
-| font color | ✔ | ✔ | ✔ |
-| font size | ✔ | ✔ | ✔ |
+#### content
 
-### Border Settings
+The text or HTML to insert into the info window body.
 
-| Option | JS | SASS | CSS | Notes
-|---|---|---|---|---|
-| border width | ✔ | ✔ | ✘ | 
-| border color | ✔ | ✔ | ✘ |
+- Type: _string_
 
-### Pointer Settings
+#### position
 
-| Option | JS | SASS | CSS | Notes
-|---|---|---|---|---|
-| pointer length | ✔ | ✔ | ✘ |
+Choose where you want the info window to be displayed, relative to the marker.
 
-### Shadow Settings
+- Type: _string_
+- Default: `'top'`
+- Possible Values: `top`, `bottom`, `left`, `right`
 
-| Option | JS | SASS | CSS | Notes
-|---|---|---|---|---|
-| shadow horizontal | ✔ | ✔ | ✘ |
-| shadow vertical | ✔ | ✔ | ✘ |
-| shadow blur | ✔ | ✔ | ✘ |
-| shadow spread | ✔ | ✔ | ✘ |
-| shadow color | ✔ | ✔ | ✘ |
-| shadow opacity | ✔ | ✔ | ✘ |
+#### wrapperClass
 
----
+An optional CSS class to assign to the wrapper container of the info window. Can be
+used for applying custom CSS to the info window.
 
+- Type: _string_
 
+#### offset
 
-## Testing
+- Type: _object_
+- Example:
+  ```js
+  offset: {
+    top: '10px',
+    left: '20px'
+  }
+  ```
 
-The test framework requires npm to be installed on your computer.
+#### backgroundColor
 
-### Setting up test environment
-1. ``` npm install ```
-2. ``` npm run gulp -- build ```
+The color to use for the background of the info window.
 
-### Cleaning test environment
-1. ``` npm run gulp -- clean ```
-2. ``` npm install rimraf -g ```
-3. ``` rimraf node_modules ```
+- Type: _string_
+- Possible Values: Any valid CSS color value.
+- Examples: `'#FF0000'`, `'blue'`
+
+#### padding
+
+A custom padding size around the content of the info window.
+
+- Type: _string_
+- Possible Values: Any valid CSS size value.
+- Examples: `'10px'`, `'2em'`, `'5%'`
+
+#### borderRadius
+
+A custom CSS border radius property to specify the rounded corners of the info window.
+
+- Type: _string_
+- Example: `'2px 20px'`
+
+#### fontColor
+
+The font color to use for the content inside the body of the info window.
+
+- Type: _string_
+- Possible Values: Any valid CSS color value.
+- Examples: `'#FF0000'`, `'blue'`
+
+#### fontSize
+
+The font size to use for the content inside the body of the info window.
+
+- Type: _string_
+- Possible Values: Any valid CSS font size value.
+
+#### border
+
+A custom border around the info window.
+
+- Type: _object_
+- Example:
+  ```js
+  border: {
+    width: '10px',
+    color: '#FF0000'
+  }
+  ```
+
+#### pointer
+
+The height of the pointer from the info window to the marker.
+
+- Type: _string_
+- Possible Values: Any valid CSS size value.
+- Example: `'10px'`
+
+#### shadow
+
+The CSS properties for the shadow of the info window.
+
+- Type: _object_
+- Default:
+  ```js
+  shadow: {
+      h: '0px',
+      v: '3px',
+      blur: '6px',
+      spread: '0px',
+      color: '#000'
+  }
+  ```
