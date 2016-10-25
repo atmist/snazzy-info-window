@@ -8,11 +8,22 @@ Snazzy Info Window is a library for customizable popup windows in the Google Map
 - [Advanced Example](https://codepen.io/snazzymaps/pen/vXPBKJ)
 
 ## Quick Start
-1. Add a reference to Google Maps API.
+1. Include the required files.
 
-```
-<script src="https://maps.googleapis.com/maps/api/js?key={{YOUR KEY HERE}}"></script>
-```
+  ```html
+  <script src="https://maps.googleapis.com/maps/api/js?key={{YOUR KEY HERE}}"></script>
+  <script src="snazzy-info-window.js"></script>
+  <script src="snazzy-info-window.css"></script>
+  ```
+
+1. Create a new `SnazzyInfoWindow` and attach it to a marker.
+  ```js
+  var infoWindow = new SnazzyInfoWindow({
+      content: 'Snazzy!',
+  });
+
+  infoWindow.attach(marker);
+  ```
 
 ## Features
 
@@ -20,6 +31,14 @@ Snazzy Info Window is a library for customizable popup windows in the Google Map
   - Position the info window to the top, bottom, right, or left of the marker.
 - **Custom styling**
   - Customize the border radius, shadow, background color, border, and much more.
+
+## Methods
+
+#### attach(marker)
+
+#### open()
+
+#### close()
 
 ## Options
 
@@ -33,12 +52,19 @@ var options = {
     fontColor: '#eee',
     fontSize: '16px',
     pointer: '30px',
+    offset: {
+        top: '10px',
+        left: '10px'
+    },
     border: {
         width: '20px'
+        color: '#FF0000'
     },
     shadow: {
         h: '10px',
         v: '10px',
+        blur: '6px',
+        spread: '0px',
         opacity: 0.5,
         color: 'black'
     }
@@ -151,6 +177,7 @@ The CSS properties for the shadow of the info window.
       v: '3px',
       blur: '6px',
       spread: '0px',
+      opacity: 0.5,
       color: '#000'
   }
   ```
