@@ -35,7 +35,7 @@
     "**/*",
     "!dist/**/*"
   ],
-  "license": "Apache-2.0",
+  "license": "MIT",
   "devDependencies": {
     "requirejs": "^2.3.1"
   }
