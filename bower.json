@@ -1,16 +1,44 @@
 {
   "name": "snazzy-info-window",
+  "description": "Snazzier info windows for Google Maps.",
   "homepage": "https://github.com/atmist/snazzy-info-window",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/atmist/snazzy-info-window.git"
+  },
+  "main": [
+    "dist/snazzy-info-window.js",
+    "dist/snazzy-info-window.css"
+  ],
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
   "authors": [
-    "developer@atmist.com"
+    "Joel Kravets",
+    "Darcy Chan",
+    "Adam Krogh",
+    "Mike Chow"
   ],
   "keywords": [
-    "Snazzy",
-    "Maps",
-    "Google",
-    "Maps",
+    "snazzy-maps",
+    "google-maps",
+    "snazzy",
+    "google",
+    "maps",
     "info",
     "window"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "docs",
+    "src",
+    "test",
+    "bower.json",
+    "gulpfile.js",
+    "package.json"
   ],
   "license": "Apache-2.0",
   "devDependencies": {
