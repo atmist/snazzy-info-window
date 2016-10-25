@@ -1,6 +1,35 @@
 {
-  "name": "snazzy-info-window-test",
+  "name": "snazzy-info-window",
+  "description": "Snazzier info windows for Google Maps.",
   "version": "0.0.1",
+  "homepage": "https://atmist.github.io/snazzy-info-window/",
+  "bugs": {
+    "url": "https://github.com/atmist/snazzy-info-window/issues"
+  },
+  "repository": {
+    "url": "https://github.com/atmist/snazzy-info-window.git",
+    "type": "git"
+  },
+  "main": "dist/snazzy-info-window.js",
+  "authors": [
+    "Joel Kravets",
+    "Darcy Chan",
+    "Adam Krogh",
+    "Mike Chow"
+  ],
+  "keywords": [
+    "snazzy-maps",
+    "google-maps",
+    "snazzy",
+    "google",
+    "maps",
+    "info",
+    "window"
+  ],
+  "files": [
+    "dist/"
+  ],
+  "license": "Apache-2.0",
   "devDependencies": {
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-transform-es2015-modules-umd": "^6.12.0",
