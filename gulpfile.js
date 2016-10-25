@@ -6,6 +6,9 @@ const autoprefixer = require('gulp-autoprefixer');
 const del = require('del');
 const babel = require('gulp-babel');
 const eslint = require('gulp-eslint');
+const sourcemaps = require('gulp-sourcemaps');
+const uglify = require('gulp-uglify');
+const rename = require('gulp-rename');
 
 const paths = {
     src_sass: './src/scss/**/*.scss',
@@ -40,6 +43,7 @@ gulp.task('build:test:sass', sassTaskBuilder('./test/scss/index.scss', './test')
 // JS
 gulp.task('build:src:js', () => {
     return gulp.src('./src/snazzy-info-window.js')
+        .pipe(sourcemaps.init())
         .pipe(babel({
             presets: ['es2015'],
             plugins: [
@@ -52,6 +56,10 @@ gulp.task('build:src:js', () => {
             console.log('>>> ERROR', e.message);
             this.emit('end');
         })
+        .pipe(gulp.dest('dist'))
+        .pipe(rename({ extname: '.min.js' }))
+        .pipe(uglify())
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('dist'));
 });
 
