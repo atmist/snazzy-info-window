@@ -1,7 +1,8 @@
 {
   "name": "snazzy-info-window",
   "description": "Snazzier info windows for Google Maps.",
-  "homepage": "https://github.com/atmist/snazzy-info-window",
+  "homepage": "https://atmist.github.io/snazzy-info-window/",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
     "url": "git://github.com/atmist/snazzy-info-window.git"
