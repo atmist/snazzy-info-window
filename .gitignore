@@ -1,7 +1,5 @@
 /test/bower_components
-/test/css
 /test/node_modules
-/test/index.css
 /node_modules
 /bower_components
 /test/scripts/snazzy-info-window.min.js.map
