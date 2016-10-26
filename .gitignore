@@ -4,3 +4,7 @@
 /test/index.css
 /node_modules
 /bower_components
+/test/scripts/snazzy-info-window.min.js.map
+/test/scripts/snazzy-info-window.min.js
+/test/css/snazzy-info-window.min.css.map
+/test/css/snazzy-info-window.min.css

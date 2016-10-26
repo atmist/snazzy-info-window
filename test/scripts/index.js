@@ -1,5 +1,4 @@
-require(['SnazzyInfoWindow', 'jquery'], function(SnazzyInfoWindow, $){
-
+$(function() {
     var map = new google.maps.Map($("#map-canvas")[0], {
         zoom: 15,
         center: new google.maps.LatLng(49.47216, -123.77307),
