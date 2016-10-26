@@ -237,12 +237,12 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         }
 
         // 10. Dimensions
-        if (this._opts.maxHeight){
+        if (this._opts.maxHeight) {
             this.eachByClassName('content-wrapper', (e) => {
                 e.style.maxHeight = this._opts.maxHeight;
             });
         }
-        if (this._opts.maxWidth){
+        if (this._opts.maxWidth) {
             this.eachByClassName('content-wrapper', (e) => {
                 e.style.maxWidth = this._opts.maxWidth;
             });
