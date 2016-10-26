@@ -1,5 +1,5 @@
 $(function() {
-    var map = new google.maps.Map($("#map-canvas")[0], {
+    var map = new google.maps.Map($(".map-canvas")[0], {
         zoom: 15,
         center: new google.maps.LatLng(49.47216, -123.77307),
         mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -22,8 +22,9 @@ $(function() {
     });
 
     var infowindow = new SnazzyInfoWindow({
-        content: 'Cookies',
-        position: 'top', // top | left | bottom | right
+        //content: 'Cookies',
+        content: '<div><h1>Snazzy Info Windows</h1><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ex ipsum, porta ut felis sit amet, porttitor laoreet neque. Maecenas vel lacinia quam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ex ipsum, porta ut felis sit amet, porttitor laoreet neque. Maecenas vel lacinia quam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ex ipsum, porta ut felis sit amet, porttitor laoreet neque. Maecenas vel lacinia quam.</p></div>',
+        position: 'top', // top | left | bottom | right,
     });
 
     infowindow.attach(marker);
