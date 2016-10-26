@@ -1,5 +1,5 @@
-/* Snazzy Infowindow */
-@import "_settings";
+// Snazzy Info Window
+@import '_settings';
 
 //////////////////////////////////////////////////
 //
@@ -23,7 +23,7 @@ $si-default-marker-width: 22px !default;
 $si-default-marker-height: 40px !default;
 $si-default-marker-anchor-x: 11px !default;
 $si-default-marker-anchor-y: 40px !default;
-$si-default-marker-margin: 0px !default;
+$si-default-marker-margin: 0 !default;
 
 // Math variable
 $si-root-2: 1.41421356237;
@@ -49,46 +49,45 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
     }
 }
 
-[class*="#{$si-pre}-wrapper"] {
+[class*='#{$si-pre}-wrapper'] {
     display: inline-flex;
-    align-items: center;
     position: relative;
+    align-items: center;
     max-width: 100%;
     max-height: 100%;
-    max-width: 50%;
     color: $si-font-color;
     font-size: $si-font-size;
 }
 
 // Top-positioned infowindow
 .#{$si-pre}-wrapper-top {
-    transform: translate(-50%, -100%);
     flex-direction: column;
     margin-top: -$si-default-marker-anchor-y - $si-default-marker-margin;
-    margin-left: $si-default-marker-width/2 - $si-default-marker-anchor-x;
+    margin-left: $si-default-marker-width / 2 - $si-default-marker-anchor-x;
+    transform: translate(-50%, -100%);
 }
 
 // Bottom-positioned infowindow
 .#{$si-pre}-wrapper-bottom {
-    transform: translate(-50%, 0);
     flex-direction: column-reverse;
     margin-top: $si-default-marker-height - $si-default-marker-anchor-y + $si-default-marker-margin;
-    margin-left: $si-default-marker-width/2 - $si-default-marker-anchor-x;
+    margin-left: $si-default-marker-width / 2 - $si-default-marker-anchor-x;
+    transform: translate(-50%, 0);
 }
 
 // Left-positioned infowindow
 .#{$si-pre}-wrapper-left {
-    transform: translate(-100%, -50%);
-    margin-top: $si-default-marker-height/2 - $si-default-marker-anchor-y;
+    margin-top: $si-default-marker-height / 2 - $si-default-marker-anchor-y;
     margin-left: -$si-default-marker-anchor-x - $si-default-marker-margin;
+    transform: translate(-100%, -50%);
 }
 
 // Right-positioned infowindow
 .#{$si-pre}-wrapper-right {
-    transform: translate(0, -50%);
     flex-direction: row-reverse;
-    margin-top: $si-default-marker-height/2 - $si-default-marker-anchor-y;
+    margin-top: $si-default-marker-height / 2 - $si-default-marker-anchor-y;
     margin-left: $si-default-marker-width - $si-default-marker-anchor-x + $si-default-marker-margin;
+    transform: translate(0, -50%);
 }
 
 
@@ -99,25 +98,25 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 
 // Content styles
 .#{$si-pre}-frame {
-    flex: 1 1 auto;
     position: relative;
-    z-index: 2;
+    flex: 1 1 auto;
     border-radius: $si-border-radius;
+    z-index: 2;
 }
 
 .#{$si-pre}-content-wrapper {
     width: 100%;
     height: 100%;
     padding: $si-content-padding;
-    background-color: $si-content-bg;
     border: $si-border-width solid $si-border-color;
+    background-color: $si-content-bg;
     overflow: hidden;
 }
 
 .#{$si-pre}-content {
     height: 100%;
-    overflow: auto;
     max-height: 200px;
+    overflow: auto;
 }
 
 
@@ -127,18 +126,18 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 //////////////////////////////
 
 
-[class*="#{$si-pre}-pointer-border"] {
-    border: $si-pointer-length solid transparent;
+[class*='#{$si-pre}-pointer-border'] {
     position: absolute;
+    border: $si-pointer-length solid transparent;
     z-index: 3;
 }
 
 
 $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width);
 
-[class*="#{$si-pre}-pointer-bg"] {
-    border: ($si-pointer-length - $si-triangle-difference) solid transparent;
+[class*='#{$si-pre}-pointer-bg'] {
     position: relative;
+    border: ($si-pointer-length - $si-triangle-difference) solid transparent;
     z-index: 4;
 }
 
@@ -156,7 +155,7 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
 
 // Top pointer poisitioning
 .#{$si-pre}-pointer-top {
-    border-bottom: none;
+    border-bottom: 0;
 }
 
 .#{$si-pre}-pointer-border-top {
@@ -173,7 +172,7 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
 
 // Bottom pointer positioning
 .#{$si-pre}-pointer-bottom {
-    border-top: none;
+    border-top: 0;
 }
 
 .#{$si-pre}-pointer-border-bottom {
@@ -189,7 +188,7 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
 
 // Left pointer positioning
 .#{$si-pre}-pointer-left {
-    border-right: none;
+    border-right: 0;
 }
 
 .#{$si-pre}-pointer-border-left {
@@ -205,7 +204,7 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
 
 // Right pointer positioning
 .#{$si-pre}-pointer-right {
-    border-left: none;
+    border-left: 0;
 }
 
 .#{$si-pre}-pointer-border-right {
@@ -226,13 +225,13 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
 //////////////////////////////
 
 // Shadow wrapper
-[class*="#{$si-pre}-shadow-wrapper"] {
+[class*='#{$si-pre}-shadow-wrapper'] {
     display: flex;
     position: absolute;
     top: 0;
-    left: 0;
-    bottom: 0;
     right: 0;
+    bottom: 0;
+    left: 0;
     opacity: $si-shadow-opacity;
     z-index: 1;
 }
@@ -242,6 +241,7 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
 .#{$si-pre}-shadow-wrapper-bottom {
     flex-direction: column;
 }
+
 .#{$si-pre}-shadow-pointer-bottom,
 .#{$si-pre}-shadow-pointer-right {
     order: -1;
@@ -253,14 +253,14 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
 }
 
 // Pointer shadow
-[class*="#{$si-pre}-shadow-pointer"] {
+[class*='#{$si-pre}-shadow-pointer'] {
     position: relative;
-    margin: auto;
     width: $si-pointer-length;
     height: $si-pointer-length;
+    margin: auto;
 }
 
-[class*="#{$si-pre}-shadow-inner-pointer"]{
+[class*='#{$si-pre}-shadow-inner-pointer'] {
     position: absolute;
     width: 141%;
     height: 141%;

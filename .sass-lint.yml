@@ -1,0 +1,12 @@
+rules:
+  indentation:
+    - 1
+    - size: 4
+  property-sort-order:
+    - 1
+    - order: 'smacss'
+  clean-import-paths:
+    - 1
+    - leading-underscore: true
+  leading-zero:
+    - 0
