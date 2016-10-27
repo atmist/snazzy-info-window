@@ -10,6 +10,12 @@ const uglifycss = require('gulp-uglifycss');
 const rename = require('gulp-rename');
 const gulpif = require('gulp-if');
 const sassLint = require('gulp-sass-lint');
+const bump = require('gulp-bump');
+const args = require('yargs').argv;
+const git = require('gulp-git');
+const tag = require('gulp-tag-version');
+const filter = require('gulp-filter');
+const addsrc = require('gulp-add-src');
 
 const transpileSASS = (destFolder, includeUnminified) => {
     return (cb) => {
@@ -80,4 +86,22 @@ gulp.task('lint:sass', () => {
         .pipe(sassLint())
         .pipe(sassLint.format())
         .pipe(sassLint.failOnError());
+});
+
+gulp.task('release', ['build:dist'], () => {
+    const { version, type } = args;
+    const options = {};
+    if (version) {
+        options.version = version;
+    } else {
+        options.type = type;
+    }
+
+    return gulp.src(['./package.json', './bower.json'])
+        .pipe(bump(options))
+        .pipe(gulp.dest('.'))
+        .pipe(addsrc('./dist/**/*'))
+        .pipe(git.commit('Released a new version.'))
+        .pipe(filter('package.json'))
+        .pipe(tag({ prefix: '' }));
 });
