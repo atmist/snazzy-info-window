@@ -236,6 +236,18 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             }
         }
 
+        // 10. Dimensions
+        if (this._opts.maxHeight) {
+            this.eachByClassName('content-wrapper', (e) => {
+                e.style.maxHeight = this._opts.maxHeight;
+            });
+        }
+        if (this._opts.maxWidth) {
+            this.eachByClassName('content-wrapper', (e) => {
+                e.style.maxWidth = this._opts.maxWidth;
+            });
+        }
+
         const markerPos = this.getProjection().fromLatLngToDivPixel(this._marker.position);
         this._floatWrapper.style.top = `${Math.floor(markerPos.y)}px`;
         this._floatWrapper.style.left = `${Math.floor(markerPos.x)}px`;
