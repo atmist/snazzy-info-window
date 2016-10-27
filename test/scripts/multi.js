@@ -55,10 +55,10 @@ $(function() {
             visible: true
         });
         var infowindow = new SnazzyInfoWindow($.extend({}, {
+            marker: marker,
             position: e.type
         }, settings));
 
-        infowindow.attach(marker);
         infowindow.open();
     });
 });
