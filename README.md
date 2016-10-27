@@ -1,5 +1,7 @@
 # Snazzy Info Window
 
+[![npm](https://img.shields.io/npm/v/snazzy-info-window.svg?label=yarn)](https://www.npmjs.com/package/snazzy-info-window) [![npm](https://img.shields.io/npm/v/snazzy-info-window.svg)](https://www.npmjs.com/package/snazzy-info-window) [![Bower](https://img.shields.io/bower/v/snazzy-info-window.svg)](https://github.com/atmist/snazzy-info-window)
+
 Snazzy Info Window is a library for customizable popup windows in the Google Maps JavaScript API.
 
 ## Demos
@@ -36,7 +38,7 @@ bower install --save snazzy-info-window
   ```js
   var infoWindow = new SnazzyInfoWindow({
       marker: marker,
-      content: 'Snazzy!',
+      content: 'Snazzy!'
   });
   infoWindow.open();
   ```
@@ -100,7 +102,7 @@ var options = {
         color: 'black'
     },
     openOnMarkerClick: true,
-    closeOnMapClick: true,    
+    closeOnMapClick: true,
     showCloseButton: true,
     callbacks: {
         beforeOpen: function() {
@@ -119,7 +121,7 @@ var options = {
             console.log('Info window has started closing.');
         },
         afterClose: function() {
-            console.log('Info window has closed.')
+            console.log('Info window has closed.');
         }
     }
 };
