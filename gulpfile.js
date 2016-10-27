@@ -10,7 +10,6 @@ const uglifycss = require('gulp-uglifycss');
 const rename = require('gulp-rename');
 const gulpif = require('gulp-if');
 const sassLint = require('gulp-sass-lint');
-const mochaPhantomJS = require('gulp-mocha-phantomjs');
 
 const transpileSASS = (destFolder, includeUnminified) => {
     return (cb) => {
@@ -56,15 +55,14 @@ gulp.task('build:dist', ['build:dist:sass', 'build:dist:js']);
 gulp.task('build:dist:sass', ['lint:sass'], transpileSASS('./dist', true));
 gulp.task('build:dist:js', ['lint:js'], transpileJS('./dist', true));
 
-gulp.task('build:test', ['build:test:sass', 'build:test:js', 'test']);
+gulp.task('build:test', ['build:test:sass', 'build:test:js']);
 gulp.task('build:test:sass', ['lint:sass'], transpileSASS('./test/css', false));
 gulp.task('build:test:js', ['lint:js'], transpileJS('./test/scripts', false));
 
 gulp.task('watch', () => {
-    gulp.watch('./src/scss/**/*.scss', ['build:test:sass', 'test']);
-    gulp.watch('./src/snazzy-info-window.js', ['build:test:js', 'test']);
+    gulp.watch('./src/scss/**/*.scss', ['build:test:sass']);
+    gulp.watch('./src/snazzy-info-window.js', ['build:test:js']);
     gulp.watch('./gulpfile.js', ['lint:js']);
-    gulp.watch('./test/tests.js', ['test']);
 });
 
 gulp.task('lint', ['lint:js', 'lint:sass']);
@@ -82,12 +80,4 @@ gulp.task('lint:sass', () => {
         .pipe(sassLint())
         .pipe(sassLint.format())
         .pipe(sassLint.failOnError());
-});
-
-gulp.task('test', () => {
-    return gulp.src('./test/test-runner.html')
-        .pipe(mochaPhantomJS({ reporter: 'spec' }))
-        .on('error', function onError() {
-            this.emit('end');
-        });
 });
