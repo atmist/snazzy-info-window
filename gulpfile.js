@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-const gulp = require('gulp');
+const gulp = require('gulp-help')(require('gulp'), { hideDepsMessage: true });
 const sass = require('gulp-sass');
 const autoprefixer = require('gulp-autoprefixer');
 const babel = require('gulp-babel');
@@ -57,22 +57,22 @@ const transpileJS = (destFolder, includeUnminified) => {
     };
 };
 
-gulp.task('build:dist', ['build:dist:sass', 'build:dist:js']);
-gulp.task('build:dist:sass', ['lint:sass'], transpileSASS('./dist', true));
-gulp.task('build:dist:js', ['lint:js'], transpileJS('./dist', true));
+gulp.task('build:dist', 'Builds the JavaScript and SASS for a release to the dist directory.', ['build:dist:sass', 'build:dist:js']);
+gulp.task('build:dist:sass', 'Builds the SASS for a release to the dist directory.', ['lint:sass'], transpileSASS('./dist', true));
+gulp.task('build:dist:js', 'Builds the JavaScript for a release to the dist directory.', ['lint:js'], transpileJS('./dist', true));
 
-gulp.task('build:test', ['build:test:sass', 'build:test:js']);
-gulp.task('build:test:sass', ['lint:sass'], transpileSASS('./test/css', false));
-gulp.task('build:test:js', ['lint:js'], transpileJS('./test/scripts', false));
+gulp.task('build:test', 'Builds the JavaScript and SASS for the test directory.', ['build:test:sass', 'build:test:js']);
+gulp.task('build:test:sass', 'Builds the SASS for the test directory.', ['lint:sass'], transpileSASS('./test/css', false));
+gulp.task('build:test:js', 'Builds the JavaScript for the test directory.', ['lint:js'], transpileJS('./test/scripts', false));
 
-gulp.task('watch', () => {
+gulp.task('watch', 'Watch the project for file changes and trigger linting and building.', () => {
     gulp.watch('./src/scss/**/*.scss', ['build:test:sass']);
     gulp.watch('./src/snazzy-info-window.js', ['build:test:js']);
     gulp.watch('./gulpfile.js', ['lint:js']);
 });
 
-gulp.task('lint', ['lint:js', 'lint:sass']);
-gulp.task('lint:js', () => {
+gulp.task('lint', 'Lint the JavaScript and SASS files.', ['lint:js', 'lint:sass']);
+gulp.task('lint:js', 'Lint the JavaScript files.', () => {
     return gulp.src(['./src/snazzy-info-window.js', './gulpfile.js'])
         .pipe(eslint())
         .pipe(eslint.format())
@@ -81,14 +81,14 @@ gulp.task('lint:js', () => {
         });
 });
 
-gulp.task('lint:sass', () => {
+gulp.task('lint:sass', 'Lint the SASS files.', () => {
     return gulp.src(['./src/scss/**/*.scss'])
         .pipe(sassLint())
         .pipe(sassLint.format())
         .pipe(sassLint.failOnError());
 });
 
-gulp.task('release', ['build:dist'], () => {
+gulp.task('release', 'Increment the version number, then build, commit, and tag the release.', ['build:dist'], () => {
     const { version, type } = args;
     const options = {};
     if (version) {
@@ -104,4 +104,11 @@ gulp.task('release', ['build:dist'], () => {
         .pipe(git.commit('Released a new version.'))
         .pipe(filter('package.json'))
         .pipe(tag({ prefix: '' }));
+}, {
+    options: {
+        'type=patch': 'Eg. bump from 0.1.0 -> 0.1.1',
+        'type=minor': 'Eg. bump from 0.1.1 -> 0.2.0',
+        'type=major': 'Eg. bump from 0.2.1 -> 1.0.0',
+        'version=x.x.x': 'Bump to the given version number'
+    }
 });
