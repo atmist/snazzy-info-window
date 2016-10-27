@@ -102,23 +102,23 @@ var options = {
     openOnMarkerClick: true,
     closeOnMapClick: true,    
     showCloseButton: true,
-    callbacks:{
-        beforeOpen: function(){
+    callbacks: {
+        beforeOpen: function() {
             console.log('Info window will start opening.');
         },
-        open: function(){
+        open: function() {
             console.log('Info window has started opening.');
         },
-        afterOpen: function(){
+        afterOpen: function() {
             console.log('Info window has opened.');
         },
-        beforeClose: function(){
+        beforeClose: function() {
             console.log('Info window will start closing.');
         },
-        close: function(){
+        close: function() {
             console.log('Info window has started closing.');
         },
-        afterClose: function(){
+        afterClose: function() {
             console.log('Info window has closed.')
         }
     }
@@ -288,7 +288,7 @@ to cancel the open.
 - Type: _function_
 - Example:
   ```js
-  function(){
+  function() {
       console.log('Cancel opening the info window.');
       return false;
   }
@@ -303,7 +303,7 @@ to the DOM but is not drawn yet.
 - Type: _function_
 - Example:
   ```js
-  function(){
+  function() {
       console.log('Info window has started opening.');
   }
   ```
@@ -317,7 +317,7 @@ to the DOM and should be visible.
 - Type: _function_
 - Example:
   ```js
-  function(){
+  function() {
       console.log('Info window has opened.');
   }
   ```
@@ -330,7 +330,7 @@ to cancel the close.
 - Type: _function_
 - Example:
   ```js
-  function(){
+  function() {
       console.log('Cancel closing the info window.');
       return false;
   }
@@ -345,7 +345,7 @@ in the DOM.
 - Type: _function_
 - Example:
   ```js
-  function(){
+  function() {
       console.log('Info window has started closing.');
   }
   ```
@@ -359,7 +359,7 @@ be removed from the DOM.
 - Type: _function_
 - Example:
   ```js
-  function(){
+  function() {
       console.log('Info window has closed.');
   }
   ```
