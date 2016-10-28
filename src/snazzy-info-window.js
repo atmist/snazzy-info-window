@@ -145,8 +145,8 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                 this._listeners.onBoundsChanged = google.maps.event.addListener(map, 'bounds_changed', () => {
                     const mb = this.getMap().getDiv().getBoundingClientRect();
                     const pmb = this._previousMapBounds;
-                    if (!pmb || pmb.width() !== mb.width() || pmb.height() !== mb.height()) {
-                        this._previousMapBounds = pmb;
+                    if (!pmb || pmb.width !== mb.width || pmb.height !== mb.height) {
+                        this._previousMapBounds = mb;
                         this.resize();
                     }
                 });
@@ -474,19 +474,12 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             return;
         }
         const mib = this.getMapInnerBounds();
-        const wb = this._html.wrapper.getBoundingClientRect();
-        const cwb = this._html.content.getBoundingClientRect();
-
-        // Calculate the maximum width based on the current edge offset,
-        // padding and border values.
-        let maxWidth = Math.floor(mib.width - (wb.width - cwb.width));
+        let maxWidth = mib.width;
         if (this._opts.maxWidth !== undefined) {
             maxWidth = Math.min(maxWidth, this._opts.maxWidth);
         }
         this._html.contentWrapper.style.maxWidth = `${maxWidth}px`;
-
-        // Do the same for height
-        let maxHeight = Math.floor(mib.height - (wb.height - cwb.height));
+        let maxHeight = mib.height;
         if (this._opts.maxHeight !== undefined) {
             maxHeight = Math.min(maxHeight, this._opts.maxHeight);
         }
