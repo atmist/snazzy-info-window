@@ -77,8 +77,8 @@ var options = {
     marker: marker,
     content: '<div>Hello, World!</div>',
     wrapperClass: 'custom-info-window',
-    maxWidth: '200px',
-    maxHeight: '200px',
+    maxWidth: 200,
+    maxHeight: 200,
     backgroundColor: 'black',
     padding: '40px',
     borderRadius: '2px 20px',
@@ -96,7 +96,7 @@ var options = {
         left: 20
     },
     border: {
-        width: '20px'
+        width: '20px',
         color: '#FF0000'
     },
     shadow: {
@@ -111,6 +111,7 @@ var options = {
     closeOnMapClick: true,
     showCloseButton: true,
     panOnOpen: true,
+    responsiveResizing: true,
     callbacks: {
         beforeOpen: function() {
             console.log('Info window will start opening.');
@@ -157,17 +158,17 @@ used for applying custom CSS to the info window.
 
 #### maxWidth
 
-The max width of the content wrapper excluding padding.
+The max width in pixels of the content wrapper excluding padding and border.
 
-- Type: _string_
-- Example: `'200px'`
+- Type: _numeric_
+- Example: `200`
 
 #### maxHeight
 
-The max height of the content wrapper excluding padding.
+The max height in pixels of the content wrapper excluding padding and border.
 
-- Type: _string_
-- Example: `'200px'`
+- Type: _numeric_
+- Example: `200`
 
 #### offset
 
@@ -186,8 +187,8 @@ By default the offset is configured for the default google maps marker.
 
 #### edgeOffset
 
-The offset from the map edge which is used when panning an info window into
-view. The values must be numeric and are treated as pixels.
+The offset from the map edge in pixels which is used when panning an info window
+into view.
 
 - Type: _object_
 - Example:
@@ -312,6 +313,14 @@ Determines if the info window will be panned into view when opened.
 - Type: _boolean_
 - Default: `true`
 
+#### responsiveResizing
+
+Determines if the info window should resize itself based on changes to the map
+bounds.
+
+- Type: _boolean_
+- Default: `true`
+
 ### callbacks
 
 All callbacks are optional and can access the info window instance via `this`.
@@ -405,3 +414,66 @@ be removed from the DOM.
       console.log('Info window has closed.');
   }
   ```
+
+## HTML Structure
+
+```html
+<div class="si-float-wrapper">
+    <div class="si-wrapper-top">
+        <div class="si-shadow-wrapper-top">
+            <div class="si-shadow-frame"></div>
+            <div class="si-shadow-pointer-top">
+                <div class="si-shadow-inner-pointer-top"></div>
+            </div>
+        </div>
+        <div class="si-content-wrapper">
+            <div class="si-content">
+                <!-- Your content goes here -->
+            </div>
+        </div>
+        <div class="si-pointer-border-top"></div>
+        <div class="si-pointer-bg-top"></div>
+    </div>
+</div>
+```
+
+#### si-float-wrapper
+
+Used to absolute position the info window in the google maps floatPane.
+
+#### si-wrapper-`position`
+
+Used to css translate the info window into `position`. The `wrapperClass`
+is added to this element.
+
+#### si-shadow-wrapper-`position`
+
+Used to blend opacity for all shadow elements.
+
+#### si-shadow-frame
+
+Used to create the box shadow for the content wrapper.
+
+#### si-shadow-pointer-`position`
+
+Used to `position` the pointer shadow.
+
+#### si-shadow-inner-pointer-`position`
+
+Used to create the shadow for the pointer.
+
+#### si-content-wrapper
+
+Used for adding padding and border around the content.
+
+#### si-content
+
+Used for wrapping your content and showing a scroll bar when there is overflow.
+
+#### si-pointer-border-`position`
+
+Used for rendering the tip of the pointer when there is a border present.
+
+#### si-pointer-bg-`position`
+
+Used for rendering the inner tip of the pointer when there is a border present.

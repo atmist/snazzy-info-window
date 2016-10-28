@@ -9,6 +9,7 @@ const _defaultOptions = {
     closeOnMapClick: true,
     showCloseButton: true,
     panOnOpen: true,
+    responsiveResizing: true,
     shadow: {
         h: '0px',
         v: '3px',
@@ -58,7 +59,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
     constructor(opts) {
         super(opts);
         // Private properties
-        this._floatWrapper = null;
+        this._html = null;
         this._opts = mergeDefaultOptions(opts);
         this._callbacks = this._opts.callbacks || {};
         this._marker = this._opts.marker;
@@ -100,15 +101,11 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         return lamda ? lamda.apply(this) : undefined;
     }
 
-    // Go through each element under the wrapper with the provided class name
-    eachByClassName(className, lambda) {
-        if (this._floatWrapper) {
-            const elements = this._floatWrapper.getElementsByClassName(_classPrefix + className);
-            for (let i = 0; i < elements.length; i++) {
-                if (lambda) {
-                    lambda.apply(this, [elements[i]]);
-                }
-            }
+    // Remove a listener from google events
+    removeListener(key) {
+        if (google && this._listeners[key]) {
+            google.maps.event.removeListener(this._listeners[key]);
+            this._listeners[key] = null;
         }
     }
 
@@ -122,11 +119,22 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             const map = this._marker.getMap();
             this.setMap(map);
             if (this._opts.closeOnMapClick) {
-                if (google && this._listeners.closeOnMapClick) {
-                    google.maps.event.removeListener(this._listeners.closeOnMapClick);
-                }
+                this.removeListener('closeOnMapClick');
                 this._listeners.closeOnMapClick = map.addListener('click', () => {
                     this.close();
+                });
+            }
+            if (this._opts.responsiveResizing && google) {
+                // Clear out the previous map bounds
+                this._previousMapBounds = null;
+                this.removeListener('onBoundsChanged');
+                this._listeners.onBoundsChanged = google.maps.event.addListener(map, 'bounds_changed', () => {
+                    const mb = this.getMap().getDiv().getBoundingClientRect();
+                    const pmb = this._previousMapBounds;
+                    if (!pmb || pmb.width() !== mb.width() || pmb.height() !== mb.height()) {
+                        this._previousMapBounds = pmb;
+                        this.resize();
+                    }
                 });
             }
         }
@@ -138,9 +146,11 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         if (result !== undefined && !result) {
             return;
         }
-        if (google && this._listeners.closeOnMapClick) {
-            google.maps.event.removeListener(this._listeners.closeOnMapClick);
-        }
+        Object.keys(this._listeners).forEach((key) => {
+            if (key !== 'openOnMarkerClick') {
+                this.removeListener(key);
+            }
+        });
         this.setMap(null);
     }
 
@@ -149,23 +159,21 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         if (this.getMap()) {
             this.setMap(null);
         }
-        if (google) {
-            Object.keys(this._listeners).forEach((key) => {
-                google.maps.event.removeListener(this._listeners[key]);
-            });
-        }
+        Object.keys(this._listeners).forEach((key) => {
+            this.removeListener(key);
+        });
     }
 
     setContent(content) {
         this._opts.content = content;
-        this.eachByClassName('content', (e) => {
-            e.innerHTML = content;
-        });
+        if (this._html) {
+            this._html.content.innerHTML = content;
+        }
     }
 
     // Implementation of OverlayView draw method.
     draw() {
-        if (!this._marker || !this._floatWrapper) {
+        if (!this._marker || !this._html) {
             return;
         }
 
@@ -178,100 +186,71 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         const offset = this._opts.offset;
         if (offset) {
             if (offset.left) {
-                this.eachByClassName(`wrapper-${this._opts.position}`, (e) => {
-                    e.style.marginLeft = offset.left;
-                });
+                this._html.wrapper.style.marginLeft = offset.left;
             }
             if (offset.top) {
-                this.eachByClassName(`wrapper-${this._opts.position}`, (e) => {
-                    e.style.marginTop = offset.top;
-                });
+                this._html.wrapper.style.marginTop = offset.top;
             }
         }
         // 2. Set the background color
         const bg = this._opts.backgroundColor;
         if (bg) {
-            this.eachByClassName('content', (e) => {
-                e.style.backgroundColor = bg;
-            });
+            this._html.content.style.backgroundColor = bg;
             if (this._opts.pointer) {
-                this.eachByClassName(`pointer-bg-${this._opts.position}`, (e) => {
-                    e.style[`border${capitalizedPosition}Color`] = bg;
-                });
+                this._html.pointerBg.style[`border${capitalizedPosition}Color`] = bg;
             }
         }
         // 3. Padding
         if (this._opts.padding) {
-            this.eachByClassName('frame', (e) => {
-                e.style.padding = this._opts.padding;
-            });
+            this._html.contentWrapper.style.padding = this._opts.padding;
+            this._html.shadowFrame.style.padding = this._opts.padding;
         }
         // 4. Border radius
         if (this._opts.borderRadius) {
-            this.eachByClassName('frame', (e) => {
-                e.style.borderRadius = this._opts.borderRadius;
-            });
+            this._html.contentWrapper.style.borderRadius = this._opts.borderRadius;
+            this._html.shadowFrame.style.borderRadius = this._opts.borderRadius;
         }
         // 5. Font Color
         if (this._opts.fontColor) {
-            this.eachByClassName(`wrapper-${this._opts.position}`, (e) => {
-                e.style.color = this._opts.fontColor;
-            });
+            this._html.wrapper.style.color = this._opts.fontColor;
         }
         // 6. Font Size
         if (this._opts.fontSize) {
-            this.eachByClassName(`wrapper-${this._opts.position}`, (e) => {
-                e.style.fontSize = this._opts.fontSize;
-            });
+            this._html.wrapper.style.fontSize = this._opts.fontSize;
         }
         // 7. Border
         if (this._opts.border) {
             if (this._opts.border.width !== undefined) {
                 const bWidth = parseAttribute(this._opts.border.width, '0px');
-                this.eachByClassName('content', (e) => {
-                    e.style.borderWidth = bWidth.value + bWidth.units;
-                });
+                this._html.contentWrapper.style.borderWidth = bWidth.value + bWidth.units;
                 if (this._opts.pointer) {
-                    this.eachByClassName(`pointer-bg-${this._opts.position}`, (e) => {
-                        e.style[this._opts.position] =
-                            Math.round(-bWidth.value * _root2) + bWidth.units;
-                    });
+                    this._html.pointerBg.style[this._opts.position] =
+                        Math.round(-bWidth.value * _root2) + bWidth.units;
                 }
             }
             const color = this._opts.border.color;
             if (color) {
-                this.eachByClassName('content', (e) => {
-                    e.style.borderColor = color;
-                });
+                this._html.contentWrapper.style.borderColor = color;
                 if (this._opts.pointer) {
-                    this.eachByClassName(`pointer-border-${this._opts.position}`, (e) => {
-                        e.style[`border${capitalizedPosition}Color`] = color;
-                    });
+                    this._html.pointerBorder.style[`border${capitalizedPosition}Color`] = color;
                 }
             }
         } else {
             // Hide the border when border is set to false
-            this.eachByClassName('content', (e) => {
-                e.style.borderWidth = 0;
-            });
+            this._html.content.style.borderWidth = 0;
             if (this._opts.pointer) {
-                this.eachByClassName(`pointer-bg-${this._opts.position}`, (e) => {
-                    e.style[this._opts.position] = 0;
-                });
+                this._html.pointerBg.style[this._opts.position] = 0;
             }
         }
         // 8. Pointer
         // Check if the pointer is enabled. Also make sure the value isn't just the boolean true.
         if (this._opts.pointer && this._opts.pointer !== true) {
             if (this._opts.shadow) {
-                this.eachByClassName(`shadow-pointer-${this._opts.position}`, (e) => {
-                    e.style.width = this._opts.pointer;
-                    e.style.height = this._opts.pointer;
-                });
+                this._html.shadowPointer.style.width = this._opts.pointer;
+                this._html.shadowPointer.style.height = this._opts.pointer;
             }
-            this.eachByClassName(`pointer-${this._opts.position}`, (e) => {
-                e.style.borderWidth = this._opts.pointer;
-            });
+            this._html.pointerBorder.style.borderWidth = this._opts.pointer;
+            this._html.pointerBg.style.borderWidth = this._opts.pointer;
         }
 
         // 9. Shadow
@@ -293,41 +272,34 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                     return `${h} ${v} ${blur.original} ${spread.original} ${color}`;
                 };
 
-                this.eachByClassName('shadow-frame', (e) => {
-                    e.style.boxShadow = formatBoxShadow(hOffset.original, vOffset.original);
-                });
+                this._html.shadowFrame.style.boxShadow =
+                    formatBoxShadow(hOffset.original, vOffset.original);
+
                 // Correctly rotate the shadows before the css transform
                 const hRotated = (_inverseRoot2 * (hOffset.value - vOffset.value)) + hOffset.units;
                 const vRotated = (_inverseRoot2 * (hOffset.value + vOffset.value)) + vOffset.units;
-                this.eachByClassName(`shadow-inner-pointer-${this._opts.position}`, (e) => {
-                    e.style.boxShadow = formatBoxShadow(hRotated, vRotated);
-                });
+                this._html.shadowPointerInner.style.boxShadow = formatBoxShadow(hRotated, vRotated);
             }
             if (this._opts.shadow.opacity) {
-                this.eachByClassName(`shadow-wrapper-${this._opts.position}`, (e) => {
-                    e.style.opacity = this._opts.shadow.opacity;
-                });
+                this._html.shadowWrapper.style.opacity = this._opts.shadow.opacity;
             }
         }
 
         // 10. Dimensions
         if (this._opts.maxHeight) {
-            this.eachByClassName('content-wrapper', (e) => {
-                e.style.maxHeight = this._opts.maxHeight;
-            });
+            this._html.contentWrapper.style.maxHeight = this._opts.maxHeight;
         }
         if (this._opts.maxWidth) {
-            this.eachByClassName('content-wrapper', (e) => {
-                e.style.maxWidth = this._opts.maxWidth;
-            });
+            this._html.contentWrapper.style.maxWidth = this._opts.maxWidth;
         }
 
         const markerPos = this.getProjection().fromLatLngToDivPixel(this._marker.position);
-        this._floatWrapper.style.top = `${Math.floor(markerPos.y)}px`;
-        this._floatWrapper.style.left = `${Math.floor(markerPos.x)}px`;
+        this._html.floatWrapper.style.top = `${Math.floor(markerPos.y)}px`;
+        this._html.floatWrapper.style.left = `${Math.floor(markerPos.x)}px`;
 
         if (!this._isOpen) {
             this._isOpen = true;
+            this.resize();
             this.reposition();
             this.activateCallback('afterOpen');
         }
@@ -335,7 +307,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
     // Implementation of OverlayView onAdd method.
     onAdd() {
-        if (this._floatWrapper) {
+        if (this._html) {
             return;
         }
         // Used for creating new elements
@@ -355,76 +327,77 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             return element;
         };
 
+        this._html = {};
+
         // 1. Create the wrapper
-        const wrapper = newElement(
+        this._html.wrapper = newElement(
             `wrapper-${this._opts.position}`
         );
         if (this._opts.wrapperClass) {
-            wrapper.className += ` ${this._opts.wrapperClass}`;
+            this._html.wrapper.className += ` ${this._opts.wrapperClass}`;
         }
 
         // 2. Create the shadow
         if (this._opts.shadow) {
-            const shadowWrapper = newElement(
+            this._html.shadowWrapper = newElement(
                 `shadow-wrapper-${this._opts.position}`
             );
-            const shadowFrame = newElement(
+            this._html.shadowFrame = newElement(
                 'frame',
                 'shadow-frame'
             );
-            shadowWrapper.appendChild(shadowFrame);
+            this._html.shadowWrapper.appendChild(this._html.shadowFrame);
 
             if (this._opts.pointer) {
-                const shadowPointer = newElement(
+                this._html.shadowPointer = newElement(
                     `shadow-pointer-${this._opts.position}`
                 );
-                const shadowPointerInner = newElement(
+                this._html.shadowPointerInner = newElement(
                     `shadow-inner-pointer-${this._opts.position}`
                 );
-                shadowPointer.appendChild(shadowPointerInner);
-                shadowWrapper.appendChild(shadowPointer);
+                this._html.shadowPointer.appendChild(this._html.shadowPointerInner);
+                this._html.shadowWrapper.appendChild(this._html.shadowPointer);
             }
 
-            wrapper.appendChild(shadowWrapper);
+            this._html.wrapper.appendChild(this._html.shadowWrapper);
         }
 
         // 3. Create the content
-        const contentWrapper = newElement(
+        this._html.contentWrapper = newElement(
             'frame',
             'content-wrapper'
         );
-        const content = newElement(
+        this._html.content = newElement(
             'content'
         );
         if (this._opts.content) {
-            content.innerHTML = this._opts.content;
+            this._html.content.innerHTML = this._opts.content;
         }
-        contentWrapper.appendChild(content);
-        wrapper.appendChild(contentWrapper);
+        this._html.contentWrapper.appendChild(this._html.content);
+        this._html.wrapper.appendChild(this._html.contentWrapper);
 
         // 4. Create the pointer
         if (this._opts.pointer) {
-            const pointerBorder = newElement(
+            this._html.pointerBorder = newElement(
                 `pointer-${this._opts.position}`,
                 `pointer-border-${this._opts.position}`
             );
-            const pointerBg = newElement(
+            this._html.pointerBg = newElement(
                 `pointer-${this._opts.position}`,
                 `pointer-bg-${this._opts.position}`
             );
-            wrapper.appendChild(pointerBorder);
-            wrapper.appendChild(pointerBg);
+            this._html.wrapper.appendChild(this._html.pointerBorder);
+            this._html.wrapper.appendChild(this._html.pointerBg);
         }
 
         // Create an outer wrapper
-        const floatWrapper = newElement(
+        this._html.floatWrapper = newElement(
             'float-wrapper'
         );
-        floatWrapper.appendChild(wrapper);
-        this._floatWrapper = floatWrapper;
+        this._html.floatWrapper.appendChild(this._html.wrapper);
 
         // Add the wrapper to the Google Maps float pane
-        this.getPanes().floatPane.appendChild(this._floatWrapper);
+        this.getPanes().floatPane.appendChild(this._html.floatWrapper);
 
         this.activateCallback('open');
     }
@@ -432,51 +405,77 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
     // Implementation of OverlayView onRemove method
     onRemove() {
         this.activateCallback('close');
-        if (this._floatWrapper) {
-            const parent = this._floatWrapper.parentElement;
+        if (this._html) {
+            const parent = this._html.floatWrapper.parentElement;
             if (parent) {
-                parent.removeChild(this._floatWrapper);
+                parent.removeChild(this._html.floatWrapper);
             }
-            this._floatWrapper = null;
+            this._html = null;
         }
         this._isOpen = false;
         this.activateCallback('afterClose');
     }
 
-    // Pan the google map such that the info window is visible
-    reposition() {
-        if (!this._opts.panOnOpen) {
-            return;
-        }
-        const map = this._marker.getMap();
-        // Map bounds
-        const mb = map.getDiv().getBoundingClientRect();
-        // Map inner bounds
+    // The map inner bounds used for panning and resizing
+    getMapInnerBounds() {
+        const mb = this.getMap().getDiv().getBoundingClientRect();
         const mib = {
             top: mb.top + this._opts.edgeOffset.top,
             right: mb.right - this._opts.edgeOffset.right,
             bottom: mb.bottom - this._opts.edgeOffset.bottom,
             left: mb.left + this._opts.edgeOffset.left
         };
+        mib.width = mib.right - mib.left;
+        mib.height = mib.bottom - mib.top;
+        return mib;
+    }
 
-        this.eachByClassName(`wrapper-${this._opts.position}`, (e) => {
-            // Wrapper bounds
-            const wb = e.getBoundingClientRect();
-            let dx = 0;
-            let dy = 0;
-            if (mib.left >= wb.left) {
-                dx = wb.left - mib.left;
-            } else if (mib.right <= wb.right) {
-                dx = wb.left - (mib.right - wb.width);
-            }
-            if (mib.top >= wb.top) {
-                dy = wb.top - mib.top;
-            } else if (mib.bottom <= wb.bottom) {
-                dy = wb.top - (mib.bottom - wb.height);
-            }
-            if (dx !== 0 || dy !== 0) {
-                map.panBy(dx, dy);
-            }
-        });
+    // Pan the google map such that the info window is visible
+    reposition() {
+        if (!this._opts.panOnOpen || !this._html) {
+            return;
+        }
+        const mib = this.getMapInnerBounds();
+        const wb = this._html.wrapper.getBoundingClientRect();
+        let dx = 0;
+        let dy = 0;
+        if (mib.left >= wb.left) {
+            dx = wb.left - mib.left;
+        } else if (mib.right <= wb.right) {
+            dx = wb.left - (mib.right - wb.width);
+        }
+        if (mib.top >= wb.top) {
+            dy = wb.top - mib.top;
+        } else if (mib.bottom <= wb.bottom) {
+            dy = wb.top - (mib.bottom - wb.height);
+        }
+        if (dx !== 0 || dy !== 0) {
+            this.getMap().panBy(dx, dy);
+        }
+    }
+
+    // Resize the info window to fit within the map bounds and edge offset
+    resize() {
+        if (!this._opts.responsiveResizing || !this._html) {
+            return;
+        }
+        const mib = this.getMapInnerBounds();
+        const wb = this._html.wrapper.getBoundingClientRect();
+        const cwb = this._html.content.getBoundingClientRect();
+
+        // Calculate the maximum width based on the current edge offset,
+        // padding and border values.
+        let maxWidth = Math.floor(mib.width - (wb.width - cwb.width));
+        if (this._opts.maxWidth !== undefined) {
+            maxWidth = Math.min(maxWidth, this._opts.maxWidth);
+        }
+        this._html.contentWrapper.style.maxWidth = `${maxWidth}px`;
+
+        // Do the same for height
+        let maxHeight = Math.floor(mib.height - (wb.height - cwb.height));
+        if (this._opts.maxHeight !== undefined) {
+            maxHeight = Math.min(maxHeight, this._opts.maxHeight);
+        }
+        this._html.contentWrapper.style.maxHeight = `${maxHeight}px`;
     }
 }
