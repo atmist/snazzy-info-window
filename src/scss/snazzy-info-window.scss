@@ -109,11 +109,11 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
     padding: $si-content-padding;
     border: $si-border-width solid $si-border-color;
     background-color: $si-content-bg;
-    box-sizing: content-box;
+    display: flex;
+    flex-direction: column;
 }
 
 .#{$si-pre}-content {
-    max-height: inherit;
     overflow: auto;
 }
 

@@ -25,14 +25,28 @@ const _defaultOptions = {
     }
 };
 
+// Copy keys from the source into the target
+function copyKeys(target, source) {
+    if (target && source){
+        Object.keys(source).forEach((key) => {
+            target[key] = source[key];
+        });
+    }
+}
+
 // We need to safely merge options from the defaults. This will make
 // sure settings like edgeOffset are properly assigned.
 function mergeDefaultOptions(opts) {
-    const copy = Object.assign({}, _defaultOptions, opts);
+    const copy = {};
+    copyKeys(copy, _defaultOptions);
+    copyKeys(copy, opts);
     Object.keys(_defaultOptions).forEach((key) => {
         const obj = _defaultOptions[key];
         if (typeof obj === 'object') {
-            copy[key] = Object.assign({}, obj, copy[key]);
+            const objCopy = {};
+            copyKeys(objCopy, obj);
+            copyKeys(objCopy, copy[key]);
+            copy[key] = objCopy;
         }
     });
     return copy;
