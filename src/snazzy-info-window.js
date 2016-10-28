@@ -8,14 +8,34 @@ const _defaultOptions = {
     openOnMarkerClick: true,
     closeOnMapClick: true,
     showCloseButton: true,
+    panOnOpen: true,
     shadow: {
         h: '0px',
         v: '3px',
         blur: '6px',
         spread: '0px',
         color: '#000'
+    },
+    edgeOffset: {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
     }
 };
+
+// We need to safely merge options from the defaults. This will make
+// sure settings like edgeOffset are properly assigned.
+function mergeDefaultOptions(opts) {
+    const copy = Object.assign({}, _defaultOptions, opts);
+    Object.keys(_defaultOptions).forEach((key) => {
+        const obj = _defaultOptions[key];
+        if (typeof obj === 'object') {
+            copy[key] = Object.assign({}, obj, copy[key]);
+        }
+    });
+    return copy;
+}
 
 // Parse a css attribute into the numeric portion and the units
 function parseAttribute(attribute, defaultValue) {
@@ -39,9 +59,10 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         super(opts);
         // Private properties
         this._floatWrapper = null;
-        this._opts = Object.assign({}, _defaultOptions, opts);
+        this._opts = mergeDefaultOptions(opts);
         this._callbacks = this._opts.callbacks || {};
         this._marker = this._opts.marker;
+        this._isOpen = false;
 
         // All listeners that are attached to google maps
         this._listeners = {};
@@ -116,6 +137,9 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         const result = this.activateCallback('beforeClose');
         if (result !== undefined && !result) {
             return;
+        }
+        if (google && this._listeners.closeOnMapClick) {
+            google.maps.event.removeListener(this._listeners.closeOnMapClick);
         }
         this.setMap(null);
     }
@@ -302,7 +326,11 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         this._floatWrapper.style.top = `${Math.floor(markerPos.y)}px`;
         this._floatWrapper.style.left = `${Math.floor(markerPos.x)}px`;
 
-        this.activateCallback('afterOpen');
+        if (!this._isOpen) {
+            this._isOpen = true;
+            this.reposition();
+            this.activateCallback('afterOpen');
+        }
     }
 
     // Implementation of OverlayView onAdd method.
@@ -411,6 +439,44 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             }
             this._floatWrapper = null;
         }
+        this._isOpen = false;
         this.activateCallback('afterClose');
+    }
+
+    // Pan the google map such that the info window is visible
+    reposition() {
+        if (!this._opts.panOnOpen) {
+            return;
+        }
+        const map = this._marker.getMap();
+        // Map bounds
+        const mb = map.getDiv().getBoundingClientRect();
+        // Map inner bounds
+        const mib = {
+            top: mb.top + this._opts.edgeOffset.top,
+            right: mb.right - this._opts.edgeOffset.right,
+            bottom: mb.bottom - this._opts.edgeOffset.bottom,
+            left: mb.left + this._opts.edgeOffset.left
+        };
+
+        this.eachByClassName(`wrapper-${this._opts.position}`, (e) => {
+            // Wrapper bounds
+            const wb = e.getBoundingClientRect();
+            let dx = 0;
+            let dy = 0;
+            if (mib.left >= wb.left) {
+                dx = wb.left - mib.left;
+            } else if (mib.right <= wb.right) {
+                dx = wb.left - (mib.right - wb.width);
+            }
+            if (mib.top >= wb.top) {
+                dy = wb.top - mib.top;
+            } else if (mib.bottom <= wb.bottom) {
+                dy = wb.top - (mib.bottom - wb.height);
+            }
+            if (dx !== 0 || dy !== 0) {
+                map.panBy(dx, dy);
+            }
+        });
     }
 }

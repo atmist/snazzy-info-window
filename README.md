@@ -87,6 +87,12 @@ var options = {
         top: '10px',
         left: '10px'
     },
+    edgeOffset: {
+        top: 20,
+        right: 20,
+        bottom: 20,
+        left: 20
+    },
     border: {
         width: '20px'
         color: '#FF0000'
@@ -102,6 +108,7 @@ var options = {
     openOnMarkerClick: true,
     closeOnMapClick: true,    
     showCloseButton: true,
+    panOnOpen: true,
     callbacks: {
         beforeOpen: function() {
             console.log('Info window will start opening.');
@@ -162,6 +169,9 @@ The max height of the content wrapper excluding padding.
 
 #### offset
 
+The offset from the marker. This value should be different for each `position`.
+By default the offset is configured for the default google maps marker.
+
 - Type: _object_
 - Example:
 
@@ -169,6 +179,23 @@ The max height of the content wrapper excluding padding.
   offset: {
     top: '10px',
     left: '20px'
+  }
+  ```
+
+#### edgeOffset
+
+The offset from the map edge which is used when panning an info window into
+view. The values must be numeric and are treated as pixels.
+
+- Type: _object_
+- Example:
+
+  ```js
+  edgeOffset: {
+    top: 20,
+    right: 20,
+    bottom: 20,
+    left: 20
   }
   ```
 
@@ -272,6 +299,13 @@ panning the map.
 #### showCloseButton
 
 Determines if the info window will show a close button.
+
+- Type: _boolean_
+- Default: `true`
+
+#### panOnOpen
+
+Determines if the info window will be panned into view when opened.
 
 - Type: _boolean_
 - Default: `true`

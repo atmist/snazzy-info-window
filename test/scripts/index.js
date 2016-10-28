@@ -27,6 +27,6 @@ $(function() {
         maxWidth: '200px',
         maxHeight: '200px'
     });
-    infowindow.open();
+
     window.info = infowindow;
 });
