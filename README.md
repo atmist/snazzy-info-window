@@ -323,6 +323,7 @@ to cancel the open.
 
 - Type: _function_
 - Example:
+
   ```js
   function() {
       console.log('Cancel opening the info window.');
@@ -338,6 +339,7 @@ to the DOM but is not drawn yet.
 
 - Type: _function_
 - Example:
+
   ```js
   function() {
       console.log('Info window has started opening.');
@@ -352,6 +354,7 @@ to the DOM and should be visible.
 
 - Type: _function_
 - Example:
+
   ```js
   function() {
       console.log('Info window has opened.');
@@ -365,6 +368,7 @@ to cancel the close.
 
 - Type: _function_
 - Example:
+
   ```js
   function() {
       console.log('Cancel closing the info window.');
@@ -380,6 +384,7 @@ in the DOM.
 
 - Type: _function_
 - Example:
+
   ```js
   function() {
       console.log('Info window has started closing.');
@@ -394,6 +399,7 @@ be removed from the DOM.
 
 - Type: _function_
 - Example:
+
   ```js
   function() {
       console.log('Info window has closed.');
