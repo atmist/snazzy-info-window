@@ -27,7 +27,7 @@ const _defaultOptions = {
 
 // Copy keys from the source into the target
 function copyKeys(target, source) {
-    if (target && source){
+    if (target && source) {
         Object.keys(source).forEach((key) => {
             target[key] = source[key];
         });
@@ -140,13 +140,18 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             }
             if (this._opts.responsiveResizing && google) {
                 // Clear out the previous map bounds
-                this._previousMapBounds = null;
+                this._previousWidth = null;
+                this._previousHeight = null;
                 this.removeListener('onBoundsChanged');
                 this._listeners.onBoundsChanged = google.maps.event.addListener(map, 'bounds_changed', () => {
-                    const mb = this.getMap().getDiv().getBoundingClientRect();
-                    const pmb = this._previousMapBounds;
-                    if (!pmb || pmb.width !== mb.width || pmb.height !== mb.height) {
-                        this._previousMapBounds = mb;
+                    const d = map.getDiv();
+                    const ow = d.offsetWidth;
+                    const oh = d.offsetHeight;
+                    const pw = this._previousWidth;
+                    const ph = this._previousHeight;
+                    if (pw === null || ph === null || pw !== ow || ph !== oh) {
+                        this._previousWidth = ow;
+                        this._previousHeight = oh;
                         this.resize();
                     }
                 });
