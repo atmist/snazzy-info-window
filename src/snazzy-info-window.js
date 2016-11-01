@@ -16,7 +16,6 @@ const _defaultOptions = {
     closeOnMapClick: true,
     showCloseButton: true,
     panOnOpen: true,
-    responsiveResizing: true,
     edgeOffset: {
         top: 20,
         right: 20,
@@ -138,7 +137,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                     this.close();
                 });
             }
-            if (this._opts.responsiveResizing && google) {
+            if (google) {
                 // Clear out the previous map bounds
                 this._previousWidth = null;
                 this._previousHeight = null;
@@ -304,14 +303,6 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             }
         }
 
-        // 10. Dimensions
-        if (this._opts.maxHeight) {
-            this._html.contentWrapper.style.maxHeight = this._opts.maxHeight;
-        }
-        if (this._opts.maxWidth) {
-            this._html.contentWrapper.style.maxWidth = this._opts.maxWidth;
-        }
-
         const markerPos = this.getProjection().fromLatLngToDivPixel(this._marker.position);
         this._html.floatWrapper.style.top = `${Math.floor(markerPos.y)}px`;
         this._html.floatWrapper.style.left = `${Math.floor(markerPos.x)}px`;
@@ -475,30 +466,24 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
     // Resize the info window to fit within the map bounds and edge offset
     resize() {
-        if (!this._opts.responsiveResizing || !this._html) {
+        if (!this._html) {
             return;
         }
-        const p = this._opts.position;
         const mib = this.getMapInnerBounds();
-
         // Handle the max width
         let maxWidth = mib.width;
         if (this._opts.maxWidth !== undefined) {
             maxWidth = Math.min(maxWidth, this._opts.maxWidth);
         }
-        if ((p === 'left' || p === 'right') && this._html.pointerBorder) {
-            maxWidth -= this._html.pointerBorder.offsetWidth;
-        }
-        this._html.contentWrapper.style.maxWidth = `${maxWidth}px`;
+        maxWidth -= (this._html.wrapper.offsetWidth - this._html.content.offsetWidth);
+        this._html.content.style.maxWidth = `${maxWidth}px`;
 
         // Handle the max height
         let maxHeight = mib.height;
         if (this._opts.maxHeight !== undefined) {
             maxHeight = Math.min(maxHeight, this._opts.maxHeight);
         }
-        if ((p === 'top' || p === 'bottom') && this._html.pointerBorder) {
-            maxHeight -= this._html.pointerBorder.offsetHeight;
-        }
-        this._html.contentWrapper.style.maxHeight = `${maxHeight}px`;
+        maxHeight -= (this._html.wrapper.offsetHeight - this._html.content.offsetHeight);
+        this._html.content.style.maxHeight = `${maxHeight}px`;
     }
 }

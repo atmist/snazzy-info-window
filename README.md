@@ -111,7 +111,6 @@ var options = {
     closeOnMapClick: true,
     showCloseButton: true,
     panOnOpen: true,
-    responsiveResizing: true,
     callbacks: {
         beforeOpen: function() {
             console.log('Info window will start opening.');
@@ -158,14 +157,14 @@ used for applying custom CSS to the info window.
 
 #### maxWidth
 
-The max width in pixels of the content wrapper excluding padding and border.
+The max width in pixels of the info window.
 
 - Type: _numeric_
 - Example: `200`
 
 #### maxHeight
 
-The max height in pixels of the content wrapper excluding padding and border.
+The max height in pixels of the info window.
 
 - Type: _numeric_
 - Example: `200`
@@ -309,14 +308,6 @@ Determines if the info window will show a close button.
 #### panOnOpen
 
 Determines if the info window will be panned into view when opened.
-
-- Type: _boolean_
-- Default: `true`
-
-#### responsiveResizing
-
-Determines if the info window should resize itself based on changes to the map
-bounds.
 
 - Type: _boolean_
 - Default: `true`
