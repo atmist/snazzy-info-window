@@ -99,6 +99,8 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 
 // Content styles
 .#{$si-pre}-frame {
+    display: flex;
+    flex-direction: column;
     position: relative;
     flex: 1 1 auto;
     border-radius: $si-border-radius;
@@ -109,11 +111,10 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
     padding: $si-content-padding;
     border: $si-border-width solid $si-border-color;
     background-color: $si-content-bg;
-    display: flex;
-    flex-direction: column;
 }
 
 .#{$si-pre}-content {
+    flex: 0 1 auto;
     overflow: auto;
 }
 
