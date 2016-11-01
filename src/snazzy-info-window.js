@@ -2,6 +2,13 @@
 const _classPrefix = 'si-';
 const _root2 = 1.41421356237;
 const _inverseRoot2 = 0.7071067811865474;
+const _defaultShadow = {
+    h: '0px',
+    v: '3px',
+    blur: '6px',
+    spread: '0px',
+    color: '#000'
+};
 const _defaultOptions = {
     position: 'top',
     pointer: true,
@@ -10,13 +17,6 @@ const _defaultOptions = {
     showCloseButton: true,
     panOnOpen: true,
     responsiveResizing: true,
-    shadow: {
-        h: '0px',
-        v: '3px',
-        blur: '6px',
-        spread: '0px',
-        color: '#000'
-    },
     edgeOffset: {
         top: 20,
         right: 20,
@@ -282,11 +282,11 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             };
 
             if (isSet('h') || isSet('v') || isSet('blur') || isSet('spread') || isSet('color')) {
-                const hOffset = parseAttribute(shadow.h, _defaultOptions.shadow.h);
-                const vOffset = parseAttribute(shadow.v, _defaultOptions.shadow.v);
-                const blur = parseAttribute(shadow.blur, _defaultOptions.shadow.blur);
-                const spread = parseAttribute(shadow.spread, _defaultOptions.shadow.spread);
-                const color = shadow.color || _defaultOptions.shadow.color;
+                const hOffset = parseAttribute(shadow.h, _defaultShadow.h);
+                const vOffset = parseAttribute(shadow.v, _defaultShadow.v);
+                const blur = parseAttribute(shadow.blur, _defaultShadow.blur);
+                const spread = parseAttribute(shadow.spread, _defaultShadow.spread);
+                const color = shadow.color || _defaultShadow.color;
                 const formatBoxShadow = (h, v) => {
                     return `${h} ${v} ${blur.original} ${spread.original} ${color}`;
                 };
@@ -478,15 +478,26 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         if (!this._opts.responsiveResizing || !this._html) {
             return;
         }
+        const p = this._opts.position;
         const mib = this.getMapInnerBounds();
+
+        // Handle the max width
         let maxWidth = mib.width;
         if (this._opts.maxWidth !== undefined) {
             maxWidth = Math.min(maxWidth, this._opts.maxWidth);
         }
+        if ((p === 'left' || p === 'right') && this._html.pointerBorder) {
+            maxWidth -= this._html.pointerBorder.offsetWidth;
+        }
         this._html.contentWrapper.style.maxWidth = `${maxWidth}px`;
+
+        // Handle the max height
         let maxHeight = mib.height;
         if (this._opts.maxHeight !== undefined) {
             maxHeight = Math.min(maxHeight, this._opts.maxHeight);
+        }
+        if ((p === 'top' || p === 'bottom') && this._html.pointerBorder) {
+            maxHeight -= this._html.pointerBorder.offsetHeight;
         }
         this._html.contentWrapper.style.maxHeight = `${maxHeight}px`;
     }
