@@ -77,11 +77,11 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         this._callbacks = this._opts.callbacks || {};
         this._marker = this._opts.marker;
         this._isOpen = false;
+        this._listeners = [];
 
-        // All listeners that are attached to google maps
-        this._listeners = {};
+        // This listener remains active when the info window is closed.
         if (google && this._marker && this._opts.openOnMarkerClick) {
-            this._listeners.openOnMarkerClick = google.maps.event.addListener(this._marker, 'click', () => {
+            this._openOnMarkerClickListener = google.maps.event.addListener(this._marker, 'click', () => {
                 if (!this.getMap()) {
                     this.open();
                 }
@@ -114,11 +114,15 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         return lamda ? lamda.apply(this) : undefined;
     }
 
-    // Remove a listener from google events
-    removeListener(key) {
-        if (google && this._listeners[key]) {
-            google.maps.event.removeListener(this._listeners[key]);
-            this._listeners[key] = null;
+    // Will clear all listeners that are used during the open state.
+    clearListeners() {
+        if (google) {
+            if (this._listeners) {
+                this._listeners.forEach((listener) => {
+                    google.maps.event.removeListener(listener);
+                });
+            }
+            this._listeners = [];
         }
     }
 
@@ -129,32 +133,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             return;
         }
         if (this._marker) {
-            const map = this._marker.getMap();
-            this.setMap(map);
-            if (this._opts.closeOnMapClick) {
-                this.removeListener('closeOnMapClick');
-                this._listeners.closeOnMapClick = map.addListener('click', () => {
-                    this.close();
-                });
-            }
-            if (google) {
-                // Clear out the previous map bounds
-                this._previousWidth = null;
-                this._previousHeight = null;
-                this.removeListener('onBoundsChanged');
-                this._listeners.onBoundsChanged = google.maps.event.addListener(map, 'bounds_changed', () => {
-                    const d = map.getDiv();
-                    const ow = d.offsetWidth;
-                    const oh = d.offsetHeight;
-                    const pw = this._previousWidth;
-                    const ph = this._previousHeight;
-                    if (pw === null || ph === null || pw !== ow || ph !== oh) {
-                        this._previousWidth = ow;
-                        this._previousHeight = oh;
-                        this.resize();
-                    }
-                });
-            }
+            this.setMap(this._marker.getMap());
         }
     }
 
@@ -164,11 +143,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         if (result !== undefined && !result) {
             return;
         }
-        Object.keys(this._listeners).forEach((key) => {
-            if (key !== 'openOnMarkerClick') {
-                this.removeListener(key);
-            }
-        });
+        this.clearListeners();
         this.setMap(null);
     }
 
@@ -177,9 +152,14 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         if (this.getMap()) {
             this.setMap(null);
         }
-        Object.keys(this._listeners).forEach((key) => {
-            this.removeListener(key);
-        });
+
+        if (google) {
+            if (this._openOnMarkerClickListener) {
+                google.maps.event.removeListener(this._openOnMarkerClickListener);
+                this._openOnMarkerClickListener = null;
+            }
+        }
+        this.clearListeners();
     }
 
     setContent(content) {
@@ -408,6 +388,49 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
         // Add the wrapper to the Google Maps float pane
         this.getPanes().floatPane.appendChild(this._html.floatWrapper);
+
+        // Now add all the event listeners
+        const map = this.getMap();
+        this.clearListeners();
+        if (this._opts.closeOnMapClick) {
+            this._listeners.push(google.maps.event.addListener(map, 'click', () => {
+                this.close();
+            }));
+        }
+        if (google) {
+            // Clear out the previous map bounds
+            this._previousWidth = null;
+            this._previousHeight = null;
+            this._listeners.push(google.maps.event.addListener(map, 'bounds_changed', () => {
+                const d = map.getDiv();
+                const ow = d.offsetWidth;
+                const oh = d.offsetHeight;
+                const pw = this._previousWidth;
+                const ph = this._previousHeight;
+                if (pw === null || ph === null || pw !== ow || ph !== oh) {
+                    this._previousWidth = ow;
+                    this._previousHeight = oh;
+                    this.resize();
+                }
+            }));
+
+            // Stop the mouse event propagation
+            const mouseEvents = ['click', 'dblclick', 'rightclick',
+                'drag', 'dragend', 'dragstart',
+                'mousedown', 'mouseout', 'mouseover', 'mouseup',
+                'touchstart', 'touchend', 'touchmove',
+                'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
+            mouseEvents.forEach((event) => {
+                this._listeners.push(google.maps.event.addDomListener(this._html.wrapper,
+                    event, (e) => {
+                        e.cancelBubble = true;
+                        if (e.stopPropagation) {
+                            e.stopPropagation();
+                        }
+                    }));
+            });
+        }
+
 
         this.activateCallback('open');
     }
