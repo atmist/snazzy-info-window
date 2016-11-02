@@ -432,6 +432,14 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                 }
             }));
 
+            // Marker moves
+            if (this._marker) {
+                this._listeners.push(google.maps.event.addListener(this._marker,
+                    'position_changed', () => {
+                        this.draw();
+                    }));
+            }
+
             // Close button
             if (this._opts.showCloseButton && !this._opts.closeButtonMarkup) {
                 this._listeners.push(google.maps.event.addDomListener(this._html.closeButton,
