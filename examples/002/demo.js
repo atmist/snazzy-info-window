@@ -25,9 +25,7 @@ $(function(){
         var info = new SnazzyInfoWindow($.extend({}, {
             marker: marker,
             position: e.type,
-            content: '<div><h1>Snazzy Info Windows</h1><p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ex ipsum, porta ut felis sit amet, porttitor laoreet neque. Maecenas vel lacinia quam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ex ipsum, porta ut felis sit amet, porttitor laoreet neque. Maecenas vel lacinia quam. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ex ipsum, porta ut felis sit amet, porttitor laoreet neque. Maecenas vel lacinia quam.</p></div>',
-            maxHeight: 200,
-            maxWidth: 200,
+            content: e.type,
             panOnOpen: false
         }));
         info.open();

@@ -1,6 +1,6 @@
 ---
- name: Snazzy Info Window - Simple Example
- description: A simple example of the snazzy info window.
+ name: Snazzy Info Window - 001
+ description: One marker with default settings.
  authors:
    - Atmist
  resources:
