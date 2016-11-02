@@ -433,7 +433,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             }));
 
             // Close button
-            if (this._opts.showCloseButton) {
+            if (this._opts.showCloseButton && !this._opts.closeButtonMarkup) {
                 this._listeners.push(google.maps.event.addDomListener(this._html.closeButton,
                     'click', (e) => {
                         e.cancelBubble = true;

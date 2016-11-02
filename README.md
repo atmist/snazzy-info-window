@@ -72,68 +72,6 @@ Set the content in the info window. This can be called at any time.
 
 ## Options
 
-```js
-var options = {
-    marker: marker,
-    content: '<div>Hello, World!</div>',
-    wrapperClass: 'custom-info-window',
-    maxWidth: 200,
-    maxHeight: 200,
-    backgroundColor: 'black',
-    padding: '40px',
-    borderRadius: '2px 20px',
-    fontColor: '#eee',
-    fontSize: '16px',
-    pointer: '30px',
-    offset: {
-        top: '10px',
-        left: '10px'
-    },
-    edgeOffset: {
-        top: 20,
-        right: 20,
-        bottom: 20,
-        left: 20
-    },
-    border: {
-        width: '20px',
-        color: '#FF0000'
-    },
-    shadow: {
-        h: '10px',
-        v: '10px',
-        blur: '6px',
-        spread: '0px',
-        opacity: 0.5,
-        color: 'black'
-    },
-    openOnMarkerClick: true,
-    closeOnMapClick: true,
-    showCloseButton: true,
-    panOnOpen: true,
-    callbacks: {
-        beforeOpen: function() {
-            console.log('Info window will start opening.');
-        },
-        open: function() {
-            console.log('Info window has started opening.');
-        },
-        afterOpen: function() {
-            console.log('Info window has opened.');
-        },
-        beforeClose: function() {
-            console.log('Info window will start closing.');
-        },
-        close: function() {
-            console.log('Info window has started closing.');
-        },
-        afterClose: function() {
-            console.log('Info window has closed.');
-        }
-    }
-};
-```
-
 #### content
 
 The text or HTML to insert into the info window body.
@@ -305,6 +243,13 @@ Determines if the info window will show a close button.
 - Type: _boolean_
 - Default: `true`
 
+#### closeButtonMarkup
+
+The text or HTML to replace the default close button. No click handler or
+positioning is added to your markup if you use this option.
+
+- Type: _string_
+
 #### panOnOpen
 
 Determines if the info window will be panned into view when opened.
@@ -315,6 +260,20 @@ Determines if the info window will be panned into view when opened.
 ### callbacks
 
 All callbacks are optional and can access the info window instance via `this`.
+
+- Type: _object_
+- Example:
+
+    ```js
+    callbacks: {
+        beforeOpen: function(){},
+        open: function(){},
+        afterOpen: function(){},
+        beforeClose: function(){},
+        close: function(){},
+        afterClose: function(){}
+    }
+    ```
 
 #### beforeOpen
 
@@ -418,6 +377,7 @@ be removed from the DOM.
             </div>
         </div>
         <div class="si-content-wrapper">
+            <button class="si-close-button"></div>
             <div class="si-content">
                 <!-- Your content goes here -->
             </div>
@@ -457,6 +417,10 @@ Used to create the shadow for the pointer.
 
 Used for adding padding and border around the content.
 
+#### si-close-button
+
+Used for showing the default close button in the top right hand corner.
+
 #### si-content
 
 Used for wrapping your content and showing a scroll bar when there is overflow.
@@ -468,3 +432,20 @@ Used for rendering the tip of the pointer when there is a border present.
 #### si-pointer-bg-`position`
 
 Used for rendering the inner tip of the pointer when there is a border present.
+
+
+## Building Source
+
+After you git clone this repository you will need to install the
+development dependencies.
+
+```sh
+npm install
+```
+
+Run the following command to get documentation on the gulp tasks that are used
+during development.
+
+```sh
+gulp help
+```
