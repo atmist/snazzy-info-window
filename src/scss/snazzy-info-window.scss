@@ -44,15 +44,12 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 }
 
 [class*='#{$si-pre}-wrapper'] {
-    display: inline-flex;
-    position: relative;
+    display: flex;
+    position: absolute;
     align-items: center;
-    max-width: 100%;
-    max-height: 100%;
     color: $si-font-color;
     font-size: $si-font-size;
     cursor: default;
-    vertical-align: top;
 }
 
 // Top-positioned infowindow
