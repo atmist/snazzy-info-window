@@ -321,9 +321,8 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             return;
         }
         // Used for creating new elements
-        const newElement = (...args) => {
-            const element = document.createElement('div');
-            if (args) {
+        const applyCss = (element, args) => {
+            if (element && args) {
                 for (let i = 0; i < args.length; i++) {
                     const className = args[i];
                     if (className) {
@@ -334,6 +333,10 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                     }
                 }
             }
+        };
+        const newElement = (...args) => {
+            const element = document.createElement('div');
+            applyCss(element, args);
             return element;
         };
 
@@ -383,10 +386,25 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         if (this._opts.content) {
             this._html.content.innerHTML = this._opts.content;
         }
+
+        // 4. Create the close button
+        if (this._opts.showCloseButton) {
+            if (this._opts.closeButtonMarkup) {
+                const d = document.createElement('div');
+                d.innerHTML = this._opts.closeButtonMarkup;
+                this._html.closeButton = d.firstChild;
+            } else {
+                this._html.closeButton = document.createElement('button');
+                this._html.closeButton.setAttribute('type', 'button');
+                this._html.closeButton.innerHTML = '&#215;';
+                applyCss(this._html.closeButton, ['close-button']);
+            }
+            this._html.contentWrapper.appendChild(this._html.closeButton);
+        }
         this._html.contentWrapper.appendChild(this._html.content);
         this._html.wrapper.appendChild(this._html.contentWrapper);
 
-        // 4. Create the pointer
+        // 5. Create the pointer
         if (this._opts.pointer) {
             this._html.pointerBorder = newElement(
                 `pointer-${this._opts.position}`,
