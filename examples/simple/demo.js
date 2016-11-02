@@ -10,7 +10,7 @@ $(function() {
         position: new google.maps.LatLng(49.47216, -123.77307),
         visible: true
     });
-    var infowindow = new SnazzyInfoWindow({
+    var info = new SnazzyInfoWindow({
         marker: marker,
         position: 'top',
         content: 'Your content goes here',
