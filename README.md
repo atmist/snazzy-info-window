@@ -4,10 +4,10 @@
 
 Snazzy Info Window is a library for customizable popup windows in the Google Maps JavaScript API.
 
-## Demos
+## Examples
 
-- [Simple Example](https://codepen.io/snazzymaps/pen/dpAbGN/)
-- [Advanced Example](https://codepen.io/snazzymaps/pen/vXPBKJ)
+1. [One marker with default settings](http://jsfiddle.net/gh/get/library/pure/atmist/snazzy-info-window/tree/master/examples/001)
+1. [Multiple markers with different positions](http://jsfiddle.net/gh/get/library/pure/atmist/snazzy-info-window/tree/master/examples/002)
 
 ## Installation
 
@@ -434,18 +434,8 @@ Used for rendering the tip of the pointer when there is a border present.
 Used for rendering the inner tip of the pointer when there is a border present.
 
 
-## Building Source
+## Contributing
 
-After you git clone this repository you will need to install the
-development dependencies.
-
-```sh
-npm install
-```
-
-Run the following command to get documentation on the gulp tasks that are used
-during development.
-
-```sh
-gulp help
-```
+If you find a bug with the library, please open an issue. If you would like fix
+an issue or contribute a feature, follow the steps outlined
+[here](./CONTRIBUTING.md).

@@ -65,6 +65,12 @@
         if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
     }
 
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+        return typeof obj;
+    } : function (obj) {
+        return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+
     // Global variables
     var _classPrefix = 'si-';
     var _root2 = 1.41421356237;
@@ -76,6 +82,47 @@
         spread: '0px',
         color: '#000'
     };
+    var _defaultOptions = {
+        position: 'top',
+        pointer: true,
+        openOnMarkerClick: true,
+        closeOnMapClick: true,
+        showCloseButton: true,
+        panOnOpen: true,
+        edgeOffset: {
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 20
+        }
+    };
+
+    // Copy keys from the source into the target
+    function copyKeys(target, source) {
+        if (target && source) {
+            Object.keys(source).forEach(function (key) {
+                target[key] = source[key];
+            });
+        }
+    }
+
+    // We need to safely merge options from the defaults. This will make
+    // sure settings like edgeOffset are properly assigned.
+    function mergeDefaultOptions(opts) {
+        var copy = {};
+        copyKeys(copy, _defaultOptions);
+        copyKeys(copy, opts);
+        Object.keys(_defaultOptions).forEach(function (key) {
+            var obj = _defaultOptions[key];
+            if ((typeof obj === 'undefined' ? 'undefined' : _typeof(obj)) === 'object') {
+                var objCopy = {};
+                copyKeys(objCopy, obj);
+                copyKeys(objCopy, copy[key]);
+                copy[key] = objCopy;
+            }
+        });
+        return copy;
+    }
 
     // Parse a css attribute into the numeric portion and the units
     function parseAttribute(attribute, defaultValue) {
@@ -102,9 +149,21 @@
             var _this = _possibleConstructorReturn(this, (SnazzyInfoWindow.__proto__ || Object.getPrototypeOf(SnazzyInfoWindow)).call(this, opts));
 
             // Private properties
-            _this._marker = null;
-            _this._floatWrapper = null;
-            _this._opts = opts || {};
+            _this._html = null;
+            _this._opts = mergeDefaultOptions(opts);
+            _this._callbacks = _this._opts.callbacks || {};
+            _this._marker = _this._opts.marker;
+            _this._isOpen = false;
+            _this._listeners = [];
+
+            // This listener remains active when the info window is closed.
+            if (google && _this._marker && _this._opts.openOnMarkerClick) {
+                _this._openOnMarkerClickListener = google.maps.event.addListener(_this._marker, 'click', function () {
+                    if (!_this.getMap()) {
+                        _this.open();
+                    }
+                });
+            }
 
             // Validate the options
             var p = _this._opts.position;
@@ -112,13 +171,13 @@
                 p = p.toLowerCase();
             }
             if (p !== 'top' && p !== 'bottom' && p !== 'left' && p !== 'right') {
-                _this._opts.position = 'top';
+                _this._opts.position = _defaultOptions.position;
             }
             if (_this._opts.border === undefined) {
                 _this._opts.border = {};
             }
             if (_this._opts.pointer === undefined) {
-                _this._opts.pointer = true;
+                _this._opts.pointer = _defaultOptions.pointer;
             }
             if (_this._opts.shadow === undefined) {
                 _this._opts.shadow = {};
@@ -126,36 +185,34 @@
             return _this;
         }
 
-        // Go through each element under the wrapper with the provided class name
+        // Activate the specified callback and return the result
 
 
         _createClass(SnazzyInfoWindow, [{
-            key: 'eachByClassName',
-            value: function eachByClassName(className, lambda) {
-                if (this._floatWrapper) {
-                    var elements = this._floatWrapper.getElementsByClassName(_classPrefix + className);
-                    for (var i = 0; i < elements.length; i++) {
-                        if (lambda) {
-                            lambda.apply(this, [elements[i]]);
-                        }
-                    }
-                }
+            key: 'activateCallback',
+            value: function activateCallback(callback) {
+                var lamda = this._callbacks[callback];
+                return lamda ? lamda.apply(this) : undefined;
             }
         }, {
-            key: 'attach',
-            value: function attach(marker) {
-                var _this2 = this;
-
-                if (google && marker !== undefined) {
-                    this._marker = marker;
-                    google.maps.event.addListener(this._marker, 'click', function () {
-                        _this2.open();
-                    });
+            key: 'clearListeners',
+            value: function clearListeners() {
+                if (google) {
+                    if (this._listeners) {
+                        this._listeners.forEach(function (listener) {
+                            google.maps.event.removeListener(listener);
+                        });
+                    }
+                    this._listeners = [];
                 }
             }
         }, {
             key: 'open',
             value: function open() {
+                var result = this.activateCallback('beforeOpen');
+                if (result !== undefined && !result) {
+                    return;
+                }
                 if (this._marker) {
                     this.setMap(this._marker.getMap());
                 }
@@ -163,14 +220,42 @@
         }, {
             key: 'close',
             value: function close() {
+                var result = this.activateCallback('beforeClose');
+                if (result !== undefined && !result) {
+                    return;
+                }
+                this.clearListeners();
                 this.setMap(null);
+            }
+        }, {
+            key: 'destroy',
+            value: function destroy() {
+                if (this.getMap()) {
+                    this.setMap(null);
+                }
+
+                if (google) {
+                    if (this._openOnMarkerClickListener) {
+                        google.maps.event.removeListener(this._openOnMarkerClickListener);
+                        this._openOnMarkerClickListener = null;
+                    }
+                }
+                this.clearListeners();
+            }
+        }, {
+            key: 'setContent',
+            value: function setContent(content) {
+                this._opts.content = content;
+                if (this._html) {
+                    this._html.content.innerHTML = content;
+                }
             }
         }, {
             key: 'draw',
             value: function draw() {
-                var _this3 = this;
+                var _this2 = this;
 
-                if (!this._marker || !this._floatWrapper) {
+                if (!this._marker || !this._html) {
                     return;
                 }
 
@@ -183,110 +268,77 @@
                 var offset = this._opts.offset;
                 if (offset) {
                     if (offset.left) {
-                        this.eachByClassName('wrapper-' + this._opts.position, function (e) {
-                            e.style.marginLeft = offset.left;
-                        });
+                        this._html.wrapper.style.marginLeft = offset.left;
                     }
                     if (offset.top) {
-                        this.eachByClassName('wrapper-' + this._opts.position, function (e) {
-                            e.style.marginTop = offset.top;
-                        });
+                        this._html.wrapper.style.marginTop = offset.top;
                     }
                 }
                 // 2. Set the background color
                 var bg = this._opts.backgroundColor;
                 if (bg) {
-                    this.eachByClassName('content', function (e) {
-                        e.style.backgroundColor = bg;
-                    });
+                    this._html.content.style.backgroundColor = bg;
                     if (this._opts.pointer) {
-                        this.eachByClassName('pointer-bg-' + this._opts.position, function (e) {
-                            e.style['border' + capitalizedPosition + 'Color'] = bg;
-                        });
+                        this._html.pointerBg.style['border' + capitalizedPosition + 'Color'] = bg;
                     }
                 }
                 // 3. Padding
                 if (this._opts.padding) {
-                    this.eachByClassName('frame', function (e) {
-                        e.style.padding = _this3._opts.padding;
-                    });
+                    this._html.contentWrapper.style.padding = this._opts.padding;
+                    this._html.shadowFrame.style.padding = this._opts.padding;
                 }
                 // 4. Border radius
                 if (this._opts.borderRadius) {
-                    this.eachByClassName('frame', function (e) {
-                        e.style.borderRadius = _this3._opts.borderRadius;
-                    });
+                    this._html.contentWrapper.style.borderRadius = this._opts.borderRadius;
+                    this._html.shadowFrame.style.borderRadius = this._opts.borderRadius;
                 }
                 // 5. Font Color
                 if (this._opts.fontColor) {
-                    this.eachByClassName('wrapper-' + this._opts.position, function (e) {
-                        e.style.color = _this3._opts.fontColor;
-                    });
+                    this._html.wrapper.style.color = this._opts.fontColor;
                 }
                 // 6. Font Size
                 if (this._opts.fontSize) {
-                    this.eachByClassName('wrapper-' + this._opts.position, function (e) {
-                        e.style.fontSize = _this3._opts.fontSize;
-                    });
+                    this._html.wrapper.style.fontSize = this._opts.fontSize;
                 }
                 // 7. Border
                 if (this._opts.border) {
-                    (function () {
-                        if (_this3._opts.border.width !== undefined) {
-                            (function () {
-                                var bWidth = parseAttribute(_this3._opts.border.width, '0px');
-                                _this3.eachByClassName('content', function (e) {
-                                    e.style.borderWidth = bWidth.value + bWidth.units;
-                                });
-                                if (_this3._opts.pointer) {
-                                    _this3.eachByClassName('pointer-bg-' + _this3._opts.position, function (e) {
-                                        e.style[_this3._opts.position] = Math.round(-bWidth.value * _root2) + bWidth.units;
-                                    });
-                                }
-                            })();
+                    if (this._opts.border.width !== undefined) {
+                        var bWidth = parseAttribute(this._opts.border.width, '0px');
+                        this._html.contentWrapper.style.borderWidth = bWidth.value + bWidth.units;
+                        if (this._opts.pointer) {
+                            this._html.pointerBg.style[this._opts.position] = Math.round(-bWidth.value * _root2) + bWidth.units;
                         }
-                        var color = _this3._opts.border.color;
-                        if (color) {
-                            _this3.eachByClassName('content', function (e) {
-                                e.style.borderColor = color;
-                            });
-                            if (_this3._opts.pointer) {
-                                _this3.eachByClassName('pointer-border-' + _this3._opts.position, function (e) {
-                                    e.style['border' + capitalizedPosition + 'Color'] = color;
-                                });
-                            }
+                    }
+                    var color = this._opts.border.color;
+                    if (color) {
+                        this._html.contentWrapper.style.borderColor = color;
+                        if (this._opts.pointer) {
+                            this._html.pointerBorder.style['border' + capitalizedPosition + 'Color'] = color;
                         }
-                    })();
+                    }
                 } else {
                     // Hide the border when border is set to false
-                    this.eachByClassName('content', function (e) {
-                        e.style.borderWidth = 0;
-                    });
+                    this._html.content.style.borderWidth = 0;
                     if (this._opts.pointer) {
-                        this.eachByClassName('pointer-bg-' + this._opts.position, function (e) {
-                            e.style[_this3._opts.position] = 0;
-                        });
+                        this._html.pointerBg.style[this._opts.position] = 0;
                     }
                 }
                 // 8. Pointer
                 // Check if the pointer is enabled. Also make sure the value isn't just the boolean true.
                 if (this._opts.pointer && this._opts.pointer !== true) {
                     if (this._opts.shadow) {
-                        this.eachByClassName('shadow-pointer-' + this._opts.position, function (e) {
-                            e.style.width = _this3._opts.pointer;
-                            e.style.height = _this3._opts.pointer;
-                        });
+                        this._html.shadowPointer.style.width = this._opts.pointer;
+                        this._html.shadowPointer.style.height = this._opts.pointer;
                     }
-                    this.eachByClassName('pointer-' + this._opts.position, function (e) {
-                        e.style.borderWidth = _this3._opts.pointer;
-                    });
+                    this._html.pointerBorder.style.borderWidth = this._opts.pointer;
+                    this._html.pointerBg.style.borderWidth = this._opts.pointer;
                 }
 
                 // 9. Shadow
                 if (this._opts.shadow) {
                     (function () {
                         // Check if any of the shadow settings have actually been set
-                        var shadow = _this3._opts.shadow;
+                        var shadow = _this2._opts.shadow;
                         var isSet = function isSet(attribute) {
                             var v = shadow[attribute];
                             return v !== undefined && v != null;
@@ -303,43 +355,42 @@
                                     return h + ' ' + v + ' ' + blur.original + ' ' + spread.original + ' ' + color;
                                 };
 
-                                _this3.eachByClassName('shadow-frame', function (e) {
-                                    e.style.boxShadow = formatBoxShadow(hOffset.original, vOffset.original);
-                                });
+                                _this2._html.shadowFrame.style.boxShadow = formatBoxShadow(hOffset.original, vOffset.original);
+
                                 // Correctly rotate the shadows before the css transform
                                 var hRotated = _inverseRoot2 * (hOffset.value - vOffset.value) + hOffset.units;
                                 var vRotated = _inverseRoot2 * (hOffset.value + vOffset.value) + vOffset.units;
-                                _this3.eachByClassName('shadow-inner-pointer-' + _this3._opts.position, function (e) {
-                                    e.style.boxShadow = formatBoxShadow(hRotated, vRotated);
-                                });
+                                _this2._html.shadowPointerInner.style.boxShadow = formatBoxShadow(hRotated, vRotated);
                             })();
                         }
-                        if (_this3._opts.shadow.opacity) {
-                            _this3.eachByClassName('shadow-wrapper-' + _this3._opts.position, function (e) {
-                                e.style.opacity = _this3._opts.shadow.opacity;
-                            });
+                        if (_this2._opts.shadow.opacity) {
+                            _this2._html.shadowWrapper.style.opacity = _this2._opts.shadow.opacity;
                         }
                     })();
                 }
 
                 var markerPos = this.getProjection().fromLatLngToDivPixel(this._marker.position);
-                this._floatWrapper.style.top = Math.floor(markerPos.y) + 'px';
-                this._floatWrapper.style.left = Math.floor(markerPos.x) + 'px';
+                this._html.floatWrapper.style.top = Math.floor(markerPos.y) + 'px';
+                this._html.floatWrapper.style.left = Math.floor(markerPos.x) + 'px';
+
+                if (!this._isOpen) {
+                    this._isOpen = true;
+                    this.resize();
+                    this.reposition();
+                    this.activateCallback('afterOpen');
+                }
             }
         }, {
             key: 'onAdd',
             value: function onAdd() {
-                if (this._floatWrapper) {
+                var _this3 = this;
+
+                if (this._html) {
                     return;
                 }
                 // Used for creating new elements
-                var newElement = function newElement() {
-                    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                        args[_key] = arguments[_key];
-                    }
-
-                    var element = document.createElement('div');
-                    if (args) {
+                var applyCss = function applyCss(element, args) {
+                    if (element && args) {
                         for (var i = 0; i < args.length; i++) {
                             var className = args[i];
                             if (className) {
@@ -350,66 +401,211 @@
                             }
                         }
                     }
+                };
+                var newElement = function newElement() {
+                    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                        args[_key] = arguments[_key];
+                    }
+
+                    var element = document.createElement('div');
+                    applyCss(element, args);
                     return element;
                 };
 
+                this._html = {};
+
                 // 1. Create the wrapper
-                var wrapper = newElement('wrapper-' + this._opts.position);
+                this._html.wrapper = newElement('wrapper-' + this._opts.position);
                 if (this._opts.wrapperClass) {
-                    wrapper.className += ' ' + this._opts.wrapperClass;
+                    this._html.wrapper.className += ' ' + this._opts.wrapperClass;
                 }
 
                 // 2. Create the shadow
                 if (this._opts.shadow) {
-                    var shadowWrapper = newElement('shadow-wrapper-' + this._opts.position);
-                    var shadowFrame = newElement('frame', 'shadow-frame');
-                    shadowWrapper.appendChild(shadowFrame);
+                    this._html.shadowWrapper = newElement('shadow-wrapper-' + this._opts.position);
+                    this._html.shadowFrame = newElement('frame', 'shadow-frame');
+                    this._html.shadowWrapper.appendChild(this._html.shadowFrame);
 
                     if (this._opts.pointer) {
-                        var shadowPointer = newElement('shadow-pointer-' + this._opts.position);
-                        var shadowPointerInner = newElement('shadow-inner-pointer-' + this._opts.position);
-                        shadowPointer.appendChild(shadowPointerInner);
-                        shadowWrapper.appendChild(shadowPointer);
+                        this._html.shadowPointer = newElement('shadow-pointer-' + this._opts.position);
+                        this._html.shadowPointerInner = newElement('shadow-inner-pointer-' + this._opts.position);
+                        this._html.shadowPointer.appendChild(this._html.shadowPointerInner);
+                        this._html.shadowWrapper.appendChild(this._html.shadowPointer);
                     }
 
-                    wrapper.appendChild(shadowWrapper);
+                    this._html.wrapper.appendChild(this._html.shadowWrapper);
                 }
 
                 // 3. Create the content
-                var contentWrapper = newElement('frame', 'content-wrapper');
-                var content = newElement('content');
+                this._html.contentWrapper = newElement('frame', 'content-wrapper');
+                this._html.content = newElement('content');
                 if (this._opts.content) {
-                    content.innerHTML = this._opts.content;
+                    this._html.content.innerHTML = this._opts.content;
                 }
-                contentWrapper.appendChild(content);
-                wrapper.appendChild(contentWrapper);
 
-                // 4. Create the pointer
+                // 4. Create the close button
+                if (this._opts.showCloseButton) {
+                    if (this._opts.closeButtonMarkup) {
+                        var d = document.createElement('div');
+                        d.innerHTML = this._opts.closeButtonMarkup;
+                        this._html.closeButton = d.firstChild;
+                    } else {
+                        this._html.closeButton = document.createElement('button');
+                        this._html.closeButton.setAttribute('type', 'button');
+                        this._html.closeButton.innerHTML = '&#215;';
+                        applyCss(this._html.closeButton, ['close-button']);
+                    }
+                    this._html.contentWrapper.appendChild(this._html.closeButton);
+                }
+                this._html.contentWrapper.appendChild(this._html.content);
+                this._html.wrapper.appendChild(this._html.contentWrapper);
+
+                // 5. Create the pointer
                 if (this._opts.pointer) {
-                    var pointerBorder = newElement('pointer-' + this._opts.position, 'pointer-border-' + this._opts.position);
-                    var pointerBg = newElement('pointer-' + this._opts.position, 'pointer-bg-' + this._opts.position);
-                    wrapper.appendChild(pointerBorder);
-                    wrapper.appendChild(pointerBg);
+                    this._html.pointerBorder = newElement('pointer-' + this._opts.position, 'pointer-border-' + this._opts.position);
+                    this._html.pointerBg = newElement('pointer-' + this._opts.position, 'pointer-bg-' + this._opts.position);
+                    this._html.wrapper.appendChild(this._html.pointerBorder);
+                    this._html.wrapper.appendChild(this._html.pointerBg);
                 }
 
                 // Create an outer wrapper
-                var floatWrapper = newElement('float-wrapper');
-                floatWrapper.appendChild(wrapper);
-                this._floatWrapper = floatWrapper;
+                this._html.floatWrapper = newElement('float-wrapper');
+                this._html.floatWrapper.appendChild(this._html.wrapper);
 
                 // Add the wrapper to the Google Maps float pane
-                this.getPanes().floatPane.appendChild(this._floatWrapper);
+                this.getPanes().floatPane.appendChild(this._html.floatWrapper);
+
+                // Now add all the event listeners
+                var map = this.getMap();
+                this.clearListeners();
+                if (this._opts.closeOnMapClick) {
+                    this._listeners.push(google.maps.event.addListener(map, 'click', function () {
+                        _this3.close();
+                    }));
+                }
+                if (google) {
+                    // Clear out the previous map bounds
+                    this._previousWidth = null;
+                    this._previousHeight = null;
+                    this._listeners.push(google.maps.event.addListener(map, 'bounds_changed', function () {
+                        var d = map.getDiv();
+                        var ow = d.offsetWidth;
+                        var oh = d.offsetHeight;
+                        var pw = _this3._previousWidth;
+                        var ph = _this3._previousHeight;
+                        if (pw === null || ph === null || pw !== ow || ph !== oh) {
+                            _this3._previousWidth = ow;
+                            _this3._previousHeight = oh;
+                            _this3.resize();
+                        }
+                    }));
+
+                    // Marker moves
+                    if (this._marker) {
+                        this._listeners.push(google.maps.event.addListener(this._marker, 'position_changed', function () {
+                            _this3.draw();
+                        }));
+                    }
+
+                    // Close button
+                    if (this._opts.showCloseButton && !this._opts.closeButtonMarkup) {
+                        this._listeners.push(google.maps.event.addDomListener(this._html.closeButton, 'click', function (e) {
+                            e.cancelBubble = true;
+                            if (e.stopPropagation) {
+                                e.stopPropagation();
+                            }
+                            _this3.close();
+                        }));
+                    }
+
+                    // Stop the mouse event propagation
+                    var mouseEvents = ['click', 'dblclick', 'rightclick', 'drag', 'dragend', 'dragstart', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'touchstart', 'touchend', 'touchmove', 'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
+                    mouseEvents.forEach(function (event) {
+                        _this3._listeners.push(google.maps.event.addDomListener(_this3._html.wrapper, event, function (e) {
+                            e.cancelBubble = true;
+                            if (e.stopPropagation) {
+                                e.stopPropagation();
+                            }
+                        }));
+                    });
+                }
+
+                this.activateCallback('open');
             }
         }, {
             key: 'onRemove',
             value: function onRemove() {
-                if (this._floatWrapper) {
-                    var parent = this._floatWrapper.parentElement;
+                this.activateCallback('close');
+                if (this._html) {
+                    var parent = this._html.floatWrapper.parentElement;
                     if (parent) {
-                        parent.removeChild(this._floatWrapper);
+                        parent.removeChild(this._html.floatWrapper);
                     }
-                    this._floatWrapper = null;
+                    this._html = null;
                 }
+                this._isOpen = false;
+                this.activateCallback('afterClose');
+            }
+        }, {
+            key: 'getMapInnerBounds',
+            value: function getMapInnerBounds() {
+                var mb = this.getMap().getDiv().getBoundingClientRect();
+                var mib = {
+                    top: mb.top + this._opts.edgeOffset.top,
+                    right: mb.right - this._opts.edgeOffset.right,
+                    bottom: mb.bottom - this._opts.edgeOffset.bottom,
+                    left: mb.left + this._opts.edgeOffset.left
+                };
+                mib.width = mib.right - mib.left;
+                mib.height = mib.bottom - mib.top;
+                return mib;
+            }
+        }, {
+            key: 'reposition',
+            value: function reposition() {
+                if (!this._opts.panOnOpen || !this._html) {
+                    return;
+                }
+                var mib = this.getMapInnerBounds();
+                var wb = this._html.wrapper.getBoundingClientRect();
+                var dx = 0;
+                var dy = 0;
+                if (mib.left >= wb.left) {
+                    dx = wb.left - mib.left;
+                } else if (mib.right <= wb.right) {
+                    dx = wb.left - (mib.right - wb.width);
+                }
+                if (mib.top >= wb.top) {
+                    dy = wb.top - mib.top;
+                } else if (mib.bottom <= wb.bottom) {
+                    dy = wb.top - (mib.bottom - wb.height);
+                }
+                if (dx !== 0 || dy !== 0) {
+                    this.getMap().panBy(dx, dy);
+                }
+            }
+        }, {
+            key: 'resize',
+            value: function resize() {
+                if (!this._html) {
+                    return;
+                }
+                var mib = this.getMapInnerBounds();
+                // Handle the max width
+                var maxWidth = mib.width;
+                if (this._opts.maxWidth !== undefined) {
+                    maxWidth = Math.min(maxWidth, this._opts.maxWidth);
+                }
+                maxWidth -= this._html.wrapper.offsetWidth - this._html.content.offsetWidth;
+                this._html.content.style.maxWidth = maxWidth + 'px';
+
+                // Handle the max height
+                var maxHeight = mib.height;
+                if (this._opts.maxHeight !== undefined) {
+                    maxHeight = Math.min(maxHeight, this._opts.maxHeight);
+                }
+                maxHeight -= this._html.wrapper.offsetHeight - this._html.content.offsetHeight;
+                this._html.content.style.maxHeight = maxHeight + 'px';
             }
         }]);
 

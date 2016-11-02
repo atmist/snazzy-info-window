@@ -1,0 +1,12 @@
+---
+ name: Snazzy Info Window - 001
+ description: One marker with default settings.
+ authors:
+   - Atmist
+ resources:
+   - https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
+   - https://maps.googleapis.com/maps/api/js?v=3
+   - https://rawgit.com/atmist/snazzy-info-window/master/dist/snazzy-info-window.min.css
+   - https://rawgit.com/atmist/snazzy-info-window/master/dist/snazzy-info-window.min.js
+ normalize_css: no
+ ...
