@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Snazzy Info Window</title>
+        <link rel="stylesheet" type="text/css" href="../dist/snazzy-info-window.min.css">
+        <style>
+            html{
+              height: 100%;
+            }
+            body {
+              height: 100%;
+              margin: 0;
+            }
+            .map-canvas {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3"></script>
+        <script src="../dist/snazzy-info-window.min.js"></script>
+        <script>
+            $(function() {
+                var map = new google.maps.Map($(".map-canvas")[0], {
+                    zoom: 15,
+                    center: new google.maps.LatLng(49.47216, -123.77307),
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                });
+                var marker = new google.maps.Marker({
+                    map: map,
+                    draggable: true,
+                    position: new google.maps.LatLng(49.47216, -123.77307),
+                    visible: true
+                });
+                var info = new SnazzyInfoWindow({
+                    marker: marker,
+                    position: 'top',
+                    content: 'Your content goes here',
+                    maxWidth: 200,
+                    maxHeight: 200
+                });
+                info.open();
+            });
+        </script>
+    </head>
+    <body>
+        <div class="map-canvas">
+        </div>
+    </body>
+</html>
