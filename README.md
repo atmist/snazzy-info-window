@@ -438,4 +438,4 @@ Used for rendering the inner tip of the pointer when there is a border present.
 
 If you find a bug with the library, please open an issue. If you would like fix
 an issue or contribute a feature, follow the steps outlined
-[here](https://github.com/atmist/snazzy-info-window/blob/master/CONTRIBUTING.md).
+[here](./CONTRIBUTING.md).
