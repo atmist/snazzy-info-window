@@ -1,14 +1,6 @@
 // Snazzy Info Window
 @import '_settings';
 
-//////////////////////////////////////////////////
-//
-// Contents:
-//
-// 1.
-//
-//////////////////////////////////////////////////
-
 
 
 //////////////////////////////
@@ -34,6 +26,8 @@ $si-rotation: -45deg;
 $si-rotated-shadow-h: $si-inverse-root-2 * ($si-shadow-h - $si-shadow-v);     // Only applies to a -45deg rotation
 $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only applies to a -45deg rotation
 
+
+
 //////////////////////////////
 // 1. Wrapper Styles
 //////////////////////////////
@@ -50,14 +44,12 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 }
 
 [class*='#{$si-pre}-wrapper'] {
-    display: inline-flex;
-    position: relative;
+    display: flex;
+    position: absolute;
     align-items: center;
-    max-width: 100%;
-    max-height: 100%;
     color: $si-font-color;
     font-size: $si-font-size;
-    vertical-align: top;
+    cursor: default;
 }
 
 // Top-positioned infowindow
@@ -94,7 +86,79 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 
 
 //////////////////////////////
-// 2. Content Styles
+// 2. Infowindow Shadow
+//////////////////////////////
+
+// Shadow wrapper
+[class*='#{$si-pre}-shadow-wrapper'] {
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: $si-shadow-opacity;
+    z-index: 1;
+}
+
+// Shadow position
+.#{$si-pre}-shadow-wrapper-top,
+.#{$si-pre}-shadow-wrapper-bottom {
+    flex-direction: column;
+}
+
+.#{$si-pre}-shadow-pointer-bottom,
+.#{$si-pre}-shadow-pointer-right {
+    order: -1;
+}
+
+// Box shadow
+.#{$si-pre}-shadow-frame {
+    box-shadow: $si-shadow-h $si-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
+}
+
+// Pointer shadow
+[class*='#{$si-pre}-shadow-pointer'] {
+    position: relative;
+    width: $si-pointer-length;
+    height: $si-pointer-length;
+    margin: auto;
+}
+
+[class*='#{$si-pre}-shadow-inner-pointer'] {
+    position: absolute;
+    width: 141%;
+    height: 141%;
+    box-shadow: $si-rotated-shadow-h $si-rotated-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
+}
+
+
+.#{$si-pre}-shadow-inner-pointer-top {
+    left: 50%;
+    transform: translate(-50%, -50%) rotate($si-rotation);
+}
+
+.#{$si-pre}-shadow-inner-pointer-bottom {
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 50%) rotate($si-rotation);
+}
+
+.#{$si-pre}-shadow-inner-pointer-left {
+    top: 50%;
+    transform: translate(-50%, -50%) rotate($si-rotation);
+}
+
+.#{$si-pre}-shadow-inner-pointer-right {
+    top: 50%;
+    right: 0;
+    transform: translate(50%, -50%) rotate($si-rotation);
+}
+
+
+
+//////////////////////////////
+// 3. Content Styles
 //////////////////////////////
 
 // Content styles
@@ -122,7 +186,32 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 
 
 //////////////////////////////
-// 3. Pointer Styles
+// 4. Close Button
+//////////////////////////////
+
+.#{$si-pre}-close-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 0;
+    outline: none;
+    background-color: transparent;
+    font-family: Arial, Baskerville, monospace;
+    font-size: $si-close-font-size;
+    cursor: pointer;
+    opacity: $si-close-opacity;
+    appearance: none;
+
+    &:hover,
+    &:focus {
+        opacity: $si-close-hover-opacity;
+    }
+}
+
+
+
+//////////////////////////////
+// 5. Pointer Styles
 //////////////////////////////
 
 
@@ -216,76 +305,4 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
     right: -$si-border-width;
     margin-left: $si-triangle-difference;
     border-right-color: $si-content-bg;
-}
-
-
-
-//////////////////////////////
-// 3. Infowindow Shadow
-//////////////////////////////
-
-// Shadow wrapper
-[class*='#{$si-pre}-shadow-wrapper'] {
-    display: flex;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    opacity: $si-shadow-opacity;
-    z-index: 1;
-}
-
-// Shadow position
-.#{$si-pre}-shadow-wrapper-top,
-.#{$si-pre}-shadow-wrapper-bottom {
-    flex-direction: column;
-}
-
-.#{$si-pre}-shadow-pointer-bottom,
-.#{$si-pre}-shadow-pointer-right {
-    order: -1;
-}
-
-// Box shadow
-.#{$si-pre}-shadow-frame {
-    box-shadow: $si-shadow-h $si-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
-}
-
-// Pointer shadow
-[class*='#{$si-pre}-shadow-pointer'] {
-    position: relative;
-    width: $si-pointer-length;
-    height: $si-pointer-length;
-    margin: auto;
-}
-
-[class*='#{$si-pre}-shadow-inner-pointer'] {
-    position: absolute;
-    width: 141%;
-    height: 141%;
-    box-shadow: $si-rotated-shadow-h $si-rotated-shadow-v $si-shadow-blur $si-shadow-spread $si-shadow-color;
-}
-
-
-.#{$si-pre}-shadow-inner-pointer-top {
-    left: 50%;
-    transform: translate(-50%, -50%) rotate($si-rotation);
-}
-
-.#{$si-pre}-shadow-inner-pointer-bottom {
-    bottom: 0;
-    left: 50%;
-    transform: translate(-50%, 50%) rotate($si-rotation);
-}
-
-.#{$si-pre}-shadow-inner-pointer-left {
-    top: 50%;
-    transform: translate(-50%, -50%) rotate($si-rotation);
-}
-
-.#{$si-pre}-shadow-inner-pointer-right {
-    top: 50%;
-    right: 0;
-    transform: translate(50%, -50%) rotate($si-rotation);
 }
