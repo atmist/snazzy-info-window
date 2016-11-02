@@ -432,6 +432,18 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                 }
             }));
 
+            // Close button
+            if (this._opts.showCloseButton) {
+                this._listeners.push(google.maps.event.addDomListener(this._html.closeButton,
+                    'click', (e) => {
+                        e.cancelBubble = true;
+                        if (e.stopPropagation) {
+                            e.stopPropagation();
+                        }
+                        this.close();
+                    }));
+            }
+
             // Stop the mouse event propagation
             const mouseEvents = ['click', 'dblclick', 'rightclick',
                 'drag', 'dragend', 'dragstart',
