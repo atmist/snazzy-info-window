@@ -436,18 +436,8 @@ Used for rendering the tip of the pointer when there is a border present.
 Used for rendering the inner tip of the pointer when there is a border present.
 
 
-## Building Source
+## Contributing
 
-After you git clone this repository you will need to install the
-development dependencies.
-
-```sh
-npm install
-```
-
-Run the following command to get documentation on the gulp tasks that are used
-during development.
-
-```sh
-gulp help
-```
+If you find a bug with the library, please open an issue. If you would like fix
+an issue or contribute a feature, follow the steps outlined
+[here](./CONTRIBUTING.md).
