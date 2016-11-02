@@ -6,7 +6,7 @@ Snazzy Info Window is a library for customizable popup windows in the Google Map
 
 ## Examples
 
-1. [One marker with default settings](http://jsfiddle.net/gh/get/library/pure/atmist/snazzy-info-window/tree/master/examples/001)
+1. [One marker with default settings](https://rawgit.com/atmist/snazzy-info-window/master/dist/examples/simple.html)
 1. [Multiple markers with different positions](http://jsfiddle.net/gh/get/library/pure/atmist/snazzy-info-window/tree/master/examples/002)
 
 ## Installation
