@@ -51,6 +51,7 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
     max-height: 100%;
     color: $si-font-color;
     font-size: $si-font-size;
+    cursor: default;
     vertical-align: top;
 }
 
