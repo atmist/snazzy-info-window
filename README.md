@@ -9,6 +9,8 @@ Snazzy Info Window is a library for customizable popup windows in the Google Map
 - [Simple Example](https://codepen.io/snazzymaps/pen/dpAbGN/)
 - [Advanced Example](https://codepen.io/snazzymaps/pen/vXPBKJ)
 
+- [Simple Example (JSFiddle)](http://jsfiddle.net/gh/get/atmist/snazzy-info-window/tree/master/examples/simple)
+
 ## Installation
 
 You can install Snazzy Info Window from the following package managers:
