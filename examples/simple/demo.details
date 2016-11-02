@@ -1,0 +1,12 @@
+---
+ name: Snazzy Info Window - Simple Example
+ description: A simple example of the snazzy info window.
+ authors:
+   - Atmist
+ resources:
+   - https://rawgit.com/atmist/snazzy-info-window/master/dist/snazzy-info-window.css
+   - https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js
+   - https://maps.googleapis.com/maps/api/js?v=3
+   - https://rawgit.com/atmist/snazzy-info-window/master/dist/snazzy-info-window.js
+ normalize_css: no
+ ...
