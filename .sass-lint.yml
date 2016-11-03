@@ -6,7 +6,6 @@ rules:
     - 1
     - order: 'smacss'
   clean-import-paths:
-    - 1
-    - leading-underscore: true
+    - 0
   leading-zero:
     - 0

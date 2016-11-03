@@ -1,7 +1,7 @@
-$(function(){
-    var center = {lat: 49.47216, lng: -123.77307};
-    var offsetCenter = function(dx, dy){
-        return {lat: center.lat + dx, lng: center.lng + dy};
+$(function() {
+    var center = { lat: 49.47216, lng: -123.77307 };
+    var offsetCenter = function(dx, dy) {
+        return { lat: center.lat + dx, lng: center.lng + dy };
     };
     var map = new google.maps.Map($('.map-canvas')[0], {
         zoom: 15,
@@ -15,7 +15,7 @@ $(function(){
         { type: 'bottom', LatLng: offsetCenter(-dx, 0) },
         { type: 'left', LatLng: offsetCenter(0, -dx) }
     ];
-    $.each(positions, function(i, e){
+    $.each(positions, function(i, e) {
         var marker = new google.maps.Marker({
             map: map,
             draggable: true,

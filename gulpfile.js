@@ -20,10 +20,20 @@ const fs = require('fs');
 const path = require('path');
 const merge = require('merge-stream');
 
+const paths = {
+    allSrcJs: './src/**/*.js',
+    allSrcSass: './src/scss/**/*.scss',
+    mainSrcSass: './src/scss/snazzy-info-window.scss',
+    allExampleJs: './examples/**/*.js',
+    allExampleSass: './examples/**/*.scss',
+    rootExamples: './examples',
+    gulpfile: './gulpfile.js'
+};
+
 const transpileSASS = (destFolder, includeUnminified) => {
     return (cb) => {
         setTimeout(() => {
-            gulp.src('./src/scss/snazzy-info-window.scss')
+            gulp.src(paths.mainSrcSass)
                 .pipe(sourcemaps.init())
                 .pipe(sass().on('error', sass.logError))
                 .pipe(autoprefixer())
@@ -39,7 +49,7 @@ const transpileSASS = (destFolder, includeUnminified) => {
 
 const transpileJS = (destFolder, includeUnminified) => {
     return () => {
-        return gulp.src('./src/snazzy-info-window.js')
+        return gulp.src(paths.allSrcJs)
             .pipe(sourcemaps.init())
             .pipe(babel({
                 presets: ['es2015'],
@@ -68,36 +78,33 @@ gulp.task('build:test', 'Builds the JavaScript and SASS for the test directory.'
 gulp.task('build:test:sass', 'Builds the SASS for the test directory.', ['lint:sass'], transpileSASS('./test/css', false));
 gulp.task('build:test:js', 'Builds the JavaScript for the test directory.', ['lint:js'], transpileJS('./test/scripts', false));
 
-function getFolders(dir) {
-    return fs.readdirSync(dir)
+gulp.task('build:examples', 'Builds the SASS for the examples directory.', ['lint:sass'], () => {
+    const folders = fs
+        .readdirSync(paths.rootExamples)
         .filter((file) => {
-            return fs.statSync(path.join(dir, file)).isDirectory();
+            return fs.statSync(path.join(paths.rootExamples, file)).isDirectory();
         });
-}
-
-gulp.task('build:examples', 'Builds the SASS for the examples directory', () => {
-    const examplesPath = './examples';
-    const folders = getFolders(examplesPath);
 
     return merge(folders.map((folder) => {
-        return gulp.src(path.join(examplesPath, folder, '/**/*.scss'))
+        return gulp.src(path.join(paths.rootExamples, folder, '/**/*.scss'))
             .pipe(sourcemaps.init())
             .pipe(sass().on('error', sass.logError))
             .pipe(autoprefixer())
             .pipe(sourcemaps.write('.'))
-            .pipe(gulp.dest(path.join(examplesPath, folder)));
+            .pipe(gulp.dest(path.join(paths.rootExamples, folder)));
     }));
 });
 
 gulp.task('watch', 'Watch the project for file changes and trigger linting and building.', () => {
-    gulp.watch('./src/scss/**/*.scss', ['build:test:sass']);
-    gulp.watch('./src/snazzy-info-window.js', ['build:test:js']);
-    gulp.watch('./gulpfile.js', ['lint:js']);
+    gulp.watch(paths.allSrcSass, ['build:test:sass']);
+    gulp.watch(paths.allSrcJs, ['build:test:js']);
+    gulp.watch([paths.allExampleJs, paths.gulpfile], ['lint:js']);
+    gulp.watch(paths.allExampleSass, ['build:examples']);
 });
 
 gulp.task('lint', 'Lint the JavaScript and SASS files.', ['lint:js', 'lint:sass']);
 gulp.task('lint:js', 'Lint the JavaScript files.', () => {
-    return gulp.src(['./src/snazzy-info-window.js', './gulpfile.js'])
+    return gulp.src([paths.allSrcJs, paths.allExampleJs, paths.gulpfile])
         .pipe(eslint())
         .pipe(eslint.format())
         .on('error', function onError() {
@@ -106,7 +113,7 @@ gulp.task('lint:js', 'Lint the JavaScript files.', () => {
 });
 
 gulp.task('lint:sass', 'Lint the SASS files.', () => {
-    return gulp.src(['./src/scss/**/*.scss'])
+    return gulp.src([paths.allSrcSass, paths.allExampleSass])
         .pipe(sassLint())
         .pipe(sassLint.format())
         .pipe(sassLint.failOnError());
