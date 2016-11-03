@@ -16,6 +16,9 @@ const git = require('gulp-git');
 const tag = require('gulp-tag-version');
 const filter = require('gulp-filter');
 const addsrc = require('gulp-add-src');
+const fs = require('fs');
+const path = require('path');
+const merge = require('merge-stream');
 
 const transpileSASS = (destFolder, includeUnminified) => {
     return (cb) => {
@@ -64,6 +67,27 @@ gulp.task('build:dist:js', 'Builds the JavaScript for a release to the dist dire
 gulp.task('build:test', 'Builds the JavaScript and SASS for the test directory.', ['build:test:sass', 'build:test:js']);
 gulp.task('build:test:sass', 'Builds the SASS for the test directory.', ['lint:sass'], transpileSASS('./test/css', false));
 gulp.task('build:test:js', 'Builds the JavaScript for the test directory.', ['lint:js'], transpileJS('./test/scripts', false));
+
+function getFolders(dir) {
+    return fs.readdirSync(dir)
+        .filter((file) => {
+            return fs.statSync(path.join(dir, file)).isDirectory();
+        });
+}
+
+gulp.task('build:examples', 'Builds the SASS for the examples directory', () => {
+    const examplesPath = './examples';
+    const folders = getFolders(examplesPath);
+
+    return merge(folders.map((folder) => {
+        return gulp.src(path.join(examplesPath, folder, '/**/*.scss'))
+            .pipe(sourcemaps.init())
+            .pipe(sass().on('error', sass.logError))
+            .pipe(autoprefixer())
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest(path.join(examplesPath, folder)));
+    }));
+});
 
 gulp.task('watch', 'Watch the project for file changes and trigger linting and building.', () => {
     gulp.watch('./src/scss/**/*.scss', ['build:test:sass']);
