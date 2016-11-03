@@ -15,6 +15,7 @@ Snazzy Info Window is a library for customizable popup windows in the Google Map
 
 - [Simple](/examples#simple)
 - [Multiple markers](/examples#multiple-markers)
+- [Dynamic content](/examples#dynamic-content)
 
 ## Installation
 
@@ -74,9 +75,9 @@ Set the content in the info window. This can be called at any time.
 
 #### content
 
-The text or HTML to insert into the info window body.
+The text or DOM Element to insert into the info window body.
 
-- Type: _string_
+- Type: _string_ or _DOM Element_
 
 #### position
 
@@ -245,10 +246,10 @@ Determines if the info window will show a close button.
 
 #### closeButtonMarkup
 
-The text or HTML to replace the default close button. No click handler or
+The text or DOM Element to replace the default close button. No click handler or
 positioning is added to your markup if you use this option.
 
-- Type: _string_
+- Type: _string_ or _DOM Element_
 
 #### panOnOpen
 

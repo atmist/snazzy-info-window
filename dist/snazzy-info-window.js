@@ -140,6 +140,24 @@
         return { original: defaultValue };
     }
 
+    // Set the html of a container. Should support both raw text and a single
+    // DOM Element.
+    function setHTML(container, content) {
+        if (container) {
+            // Clear out everything in the container
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+            if (content) {
+                if (typeof content === 'string') {
+                    container.innerHTML = content;
+                } else {
+                    container.appendChild(content);
+                }
+            }
+        }
+    }
+
     var SnazzyInfoWindow = function (_google$maps$OverlayV) {
         _inherits(SnazzyInfoWindow, _google$maps$OverlayV);
 
@@ -246,8 +264,8 @@
             key: 'setContent',
             value: function setContent(content) {
                 this._opts.content = content;
-                if (this._html) {
-                    this._html.content.innerHTML = content;
+                if (this._html && this._html.content) {
+                    setHTML(this._html.content, content);
                 }
             }
         }, {
@@ -440,14 +458,14 @@
                 this._html.contentWrapper = newElement('frame', 'content-wrapper');
                 this._html.content = newElement('content');
                 if (this._opts.content) {
-                    this._html.content.innerHTML = this._opts.content;
+                    setHTML(this._html.content, this._opts.content);
                 }
 
                 // 4. Create the close button
                 if (this._opts.showCloseButton) {
                     if (this._opts.closeButtonMarkup) {
                         var d = document.createElement('div');
-                        d.innerHTML = this._opts.closeButtonMarkup;
+                        setHTML(d, this._opts.closeButtonMarkup);
                         this._html.closeButton = d.firstChild;
                     } else {
                         this._html.closeButton = document.createElement('button');
