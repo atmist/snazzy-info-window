@@ -1,14 +1,14 @@
 $(function(){
-	var center = {lat: 49.47216, lng: -123.77307};
+	var center = {lat: 40.72, lng: -74};
     var offsetCenter = function(dx, dy){
     	return {lat: center.lat + dx, lng: center.lng + dy};
     };
     var map = new google.maps.Map($('.map-canvas')[0], {
-        zoom: 15,
+        zoom: 14,
         center: center,
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
-    var dx = 0.0015;
+    var dx = 0.003;
     var positions = [
         { type: 'top', LatLng: offsetCenter(dx, 0) },
         { type: 'right', LatLng: offsetCenter(0, dx) },

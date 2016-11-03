@@ -1,14 +1,14 @@
 $(function() {
     var map = new google.maps.Map($(".map-canvas")[0], {
-        zoom: 15,
-        center: new google.maps.LatLng(49.47216, -123.77307),
+        zoom: 14,
+        center: new google.maps.LatLng(40.72, -74),
         mapTypeId: google.maps.MapTypeId.ROADMAP
     });
 
     var marker = new google.maps.Marker({
         map: map,
         draggable: true,
-        position: new google.maps.LatLng(49.47216, -123.77307),
+        position: new google.maps.LatLng(40.72, -74),
         visible: true
     });
 
