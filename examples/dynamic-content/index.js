@@ -1,5 +1,5 @@
 $(function() {
-    var map = new google.maps.Map($(".map-canvas")[0], {
+    var map = new google.maps.Map($('.map-canvas')[0], {
         zoom: 15,
         center: new google.maps.LatLng(49.47216, -123.77307),
         mapTypeId: google.maps.MapTypeId.ROADMAP
@@ -12,10 +12,10 @@ $(function() {
     });
 
     // Setup handle bars
-    Handlebars.registerHelper("formatDate", function(date){
+    Handlebars.registerHelper('formatDate', function(date) {
         return date && date.toLocaleTimeString();
     });
-    var template = Handlebars.compile($("#marker-content-template").html());
+    var template = Handlebars.compile($('#marker-content-template').html());
 
     var interval = null;
     var info = new SnazzyInfoWindow({
@@ -24,19 +24,19 @@ $(function() {
         maxWidth: 300,
         maxHeight: 400,
         callbacks: {
-            beforeOpen: function(){
+            beforeOpen: function() {
                 this.setContent('loading...');
             },
-            afterOpen: function(){
+            afterOpen: function() {
                 var me = this;
-                interval = setInterval(function(){
+                interval = setInterval(function() {
                     me.setContent(template({
                         date: new Date()
                     }));
                 }, 1000);
             },
-            afterClose: function(){
-                if (interval){
+            afterClose: function() {
+                if (interval) {
                     clearInterval(interval);
                 }
             }

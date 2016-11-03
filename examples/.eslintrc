@@ -1,0 +1,20 @@
+{
+    "extends": [
+        "eslint-config-airbnb-es5"
+    ],
+    "env": {
+        "browser": true
+    },
+    rules: {
+        "indent": [2, 4],
+        "func-names": 0,
+        "space-before-function-paren": 0
+    },
+    globals: {
+        "google": false,
+        "$": false,
+        "SnazzyInfoWindow": false,
+        "Handlebars": false,
+    },
+    root: true
+}
