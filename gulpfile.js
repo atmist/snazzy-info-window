@@ -30,7 +30,7 @@ const paths = {
     gulpfile: './gulpfile.js'
 };
 
-const transpileSASS = (destFolder, includeUnminified) => {
+const transpileSASS = (destFolder, includeUnminified, includeSass) => {
     return (cb) => {
         setTimeout(() => {
             gulp.src(paths.mainSrcSass)
@@ -41,7 +41,9 @@ const transpileSASS = (destFolder, includeUnminified) => {
                 .pipe(rename({ extname: '.min.css' }))
                 .pipe(uglifycss())
                 .pipe(sourcemaps.write('.'))
-                .pipe(gulp.dest(destFolder));
+                .pipe(gulp.dest(destFolder))
+                .pipe(addsrc(paths.allSrcSass))
+                .pipe(gulpif(includeSass, gulp.dest(destFolder)));
             cb();
         }, 100);
     };
@@ -71,14 +73,14 @@ const transpileJS = (destFolder, includeUnminified) => {
 };
 
 gulp.task('build:dist', 'Builds the JavaScript and SASS for a release to the dist directory.', ['build:dist:sass', 'build:dist:js']);
-gulp.task('build:dist:sass', 'Builds the SASS for a release to the dist directory.', ['lint:sass'], transpileSASS('./dist', true));
+gulp.task('build:dist:sass', 'Builds the SASS for a release to the dist directory.', ['lint:sass'], transpileSASS('./dist', true, true));
 gulp.task('build:dist:js', 'Builds the JavaScript for a release to the dist directory.', ['lint:js'], transpileJS('./dist', true));
 
 gulp.task('build:test', 'Builds the JavaScript and SASS for the test directory.', ['build:test:sass', 'build:test:js']);
-gulp.task('build:test:sass', 'Builds the SASS for the test directory.', ['lint:sass'], transpileSASS('./test/css', false));
+gulp.task('build:test:sass', 'Builds the SASS for the test directory.', ['lint:sass'], transpileSASS('./test/css', false, false));
 gulp.task('build:test:js', 'Builds the JavaScript for the test directory.', ['lint:js'], transpileJS('./test/scripts', false));
 
-gulp.task('build:examples', 'Builds the SASS for the examples directory.', ['lint:sass'], () => {
+gulp.task('build:examples', 'Builds the SASS for the examples directory.', ['lint'], () => {
     const folders = fs
         .readdirSync(paths.rootExamples)
         .filter((file) => {
