@@ -3,13 +3,19 @@
 [![npm](https://img.shields.io/npm/v/snazzy-info-window.svg?label=yarn)](https://www.npmjs.com/package/snazzy-info-window) [![npm](https://img.shields.io/npm/v/snazzy-info-window.svg)](https://www.npmjs.com/package/snazzy-info-window) [![Bower](https://img.shields.io/bower/v/snazzy-info-window.svg)](https://github.com/atmist/snazzy-info-window) [![Dependencies](https://david-dm.org/atmist/snazzy-info-window.svg)](https://david-dm.org/atmist/snazzy-info-window) [![devDependencies](https://david-dm.org/atmist/snazzy-info-window/dev-status.svg)](https://david-dm.org/atmist/snazzy-info-window#info=devDependencies)
 
 Snazzy Info Window is a library for customizable popup windows in the Google Maps JavaScript API.
+Open sourced by the people that created [Snazzy Maps](https://snazzymaps.com).
 
 ## Features
 
-- **Custom position**
-  - Position the info window to the top, bottom, right, or left of the marker.
+- **Responsive sizing**
+  - The info window will size properly for a variety of screen and map sizes.
 - **Custom styling**
   - Customize the border radius, shadow, background color, border, and much more.
+  - Supports SCSS styling.
+- **Dynamic content**
+  - Supports dynamic content after initialization with proper resizing.
+- **Multiple positions**
+  - Position the info window to the top, bottom, right, or left of the marker.
 
 ## Examples
 
@@ -37,18 +43,17 @@ bower install --save snazzy-info-window
 1. Include all the required files.
 
   ```html
+  <link rel="stylesheet" href="snazzy-info-window.min.css">
   <script src="https://maps.googleapis.com/maps/api/js?key={{YOUR KEY HERE}}"></script>
-  <script src="snazzy-info-window.js"></script>
-  <script src="snazzy-info-window.css"></script>
+  <script src="snazzy-info-window.min.js"></script>
   ```
 
-1. Create a new `SnazzyInfoWindow` and open it.
+1. Create a new `SnazzyInfoWindow` object with a marker.
   ```js
   var infoWindow = new SnazzyInfoWindow({
       marker: marker,
       content: 'Snazzy!'
   });
-  infoWindow.open();
   ```
 
 ## Public Methods
