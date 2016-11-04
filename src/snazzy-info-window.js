@@ -264,33 +264,34 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
         // 8. Border
         if (this._opts.border) {
+
+            // Calculate the border width
+            let bWidth = 0;
             if (this._opts.border.width !== undefined) {
-                const bWidth = parseAttribute(this._opts.border.width, '0px');
+                bWidth = parseAttribute(this._opts.border.width, '0px');
                 this._html.contentWrapper.style.borderWidth = bWidth.value + bWidth.units;
+            }
+            bWidth = Math.round((this._html.contentWrapper.offsetWidth -
+                     this._html.contentWrapper.clientWidth) / 2.0);
+            bWidth = parseAttribute(`${bWidth}px`, '0px');
 
-                if (this._opts.pointer) {
-                    // Determine the pointer length
-                    let pLength = 0;
-                    if (this._html.pointerBorder.style.borderWidth) {
-                        pLength = parseAttribute(this._html.pointerBorder.style.borderWidth, '0px');
-                    } else {
-                        pLength = Math.min(this._html.pointerBorder.offsetHeight,
-                                           this._html.pointerBorder.offsetWidth);
-                        pLength = parseAttribute(`${pLength}px`, '0px');
-                    }
-                    this._html.pointerBorder.style.borderWidth =
-                        pLength.value + pLength.units;
+            if (this._opts.pointer) {
+                // Calculate the pointer length
+                let pLength = Math.min(this._html.pointerBorder.offsetHeight,
+                                       this._html.pointerBorder.offsetWidth);
+                pLength = parseAttribute(`${pLength}px`, '0px');
 
-                    const triangleDiff = Math.round(bWidth.value * (_root2 - 1));
-                    this._html.pointerBg.style.borderWidth =
-                        Math.max(pLength.value - triangleDiff, 0) + pLength.units;
+                let triangleDiff = Math.round(bWidth.value * (_root2 - 1));
+                triangleDiff = Math.min(triangleDiff, pLength.value);
 
-                    const reverseP = capitalizePosition(oppositePosition(this._opts.position));
-                    this._html.pointerBg.style[`margin${reverseP}`] =
-                        triangleDiff + bWidth.units;
-                    this._html.pointerBg.style[this._opts.position] =
-                        -bWidth.value + bWidth.units;
-                }
+                this._html.pointerBg.style.borderWidth =
+                    (pLength.value - triangleDiff) + pLength.units;
+
+                const reverseP = capitalizePosition(oppositePosition(this._opts.position));
+                this._html.pointerBg.style[`margin${reverseP}`] =
+                    triangleDiff + bWidth.units;
+                this._html.pointerBg.style[this._opts.position] =
+                    -bWidth.value + bWidth.units;
             }
             const color = this._opts.border.color;
             if (color) {

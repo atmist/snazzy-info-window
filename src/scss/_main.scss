@@ -221,7 +221,7 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 }
 
 
-$si-triangle-difference: round($si-border-width * ($si-root-2 - 1));
+$si-triangle-difference: min(round($si-border-width * ($si-root-2 - 1)), $si-pointer-length);
 
 [class*='#{$si-pre}-pointer-bg'] {
     position: relative;
@@ -229,7 +229,7 @@ $si-triangle-difference: round($si-border-width * ($si-root-2 - 1));
     z-index: 4;
 
     .#{$si-pre}-has-border & {
-        border-width: max($si-pointer-length - $si-triangle-difference, 0);
+        border-width: $si-pointer-length - $si-triangle-difference;
     }
 }
 
