@@ -264,7 +264,6 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
         // 8. Border
         if (this._opts.border) {
-
             // Calculate the border width
             let bWidth = 0;
             if (this._opts.border.width !== undefined) {
@@ -508,7 +507,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             }
 
             // Stop the mouse event propagation
-            const mouseEvents = ['click', 'dblclick', 'rightclick',
+            const mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu',
                 'drag', 'dragend', 'dragstart',
                 'mousedown', 'mouseout', 'mouseover', 'mouseup',
                 'touchstart', 'touchend', 'touchmove',
