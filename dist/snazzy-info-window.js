@@ -158,6 +158,25 @@
         }
     }
 
+    // Get the opposite of a given position
+    function oppositePosition(p) {
+        if (p === 'top') {
+            return 'bottom';
+        } else if (p === 'bottom') {
+            return 'top';
+        } else if (p === 'left') {
+            return 'right';
+        } else if (p === 'right') {
+            return 'left';
+        }
+        return p;
+    }
+
+    // Return the position with the first letter capitalized
+    function capitalizePosition(p) {
+        return p.charAt(0).toUpperCase() + p.slice(1);
+    }
+
     var SnazzyInfoWindow = function (_google$maps$OverlayV) {
         _inherits(SnazzyInfoWindow, _google$maps$OverlayV);
 
@@ -191,13 +210,13 @@
             if (p !== 'top' && p !== 'bottom' && p !== 'left' && p !== 'right') {
                 _this._opts.position = _defaultOptions.position;
             }
-            if (_this._opts.border === undefined) {
+            if (_this._opts.border === undefined || _this._opts.border === true) {
                 _this._opts.border = {};
             }
             if (_this._opts.pointer === undefined) {
                 _this._opts.pointer = _defaultOptions.pointer;
             }
-            if (_this._opts.shadow === undefined) {
+            if (_this._opts.shadow === undefined || _this._opts.shadow === true) {
                 _this._opts.shadow = {};
             }
             return _this;
@@ -277,11 +296,6 @@
                     return;
                 }
 
-                // Returns a capitalized position for assigning styles
-                var p = this._opts.position;
-                p = p.charAt(0).toUpperCase() + p.slice(1);
-                var capitalizedPosition = p;
-
                 // 1. Assign offset
                 var offset = this._opts.offset;
                 if (offset) {
@@ -297,7 +311,7 @@
                 if (bg) {
                     this._html.content.style.backgroundColor = bg;
                     if (this._opts.pointer) {
-                        this._html.pointerBg.style['border' + capitalizedPosition + 'Color'] = bg;
+                        this._html.pointerBg.style['border' + capitalizePosition(this._opts.position) + 'Color'] = bg;
                     }
                 }
                 // 3. Padding
@@ -318,40 +332,53 @@
                 if (this._opts.fontSize) {
                     this._html.wrapper.style.fontSize = this._opts.fontSize;
                 }
-                // 7. Border
-                if (this._opts.border) {
-                    if (this._opts.border.width !== undefined) {
-                        var bWidth = parseAttribute(this._opts.border.width, '0px');
-                        this._html.contentWrapper.style.borderWidth = bWidth.value + bWidth.units;
-                        if (this._opts.pointer) {
-                            this._html.pointerBg.style[this._opts.position] = Math.round(-bWidth.value * _root2) + bWidth.units;
-                        }
-                    }
-                    var color = this._opts.border.color;
-                    if (color) {
-                        this._html.contentWrapper.style.borderColor = color;
-                        if (this._opts.pointer) {
-                            this._html.pointerBorder.style['border' + capitalizedPosition + 'Color'] = color;
-                        }
-                    }
-                } else {
-                    // Hide the border when border is set to false
-                    this._html.content.style.borderWidth = 0;
-                    if (this._opts.pointer) {
-                        this._html.pointerBg.style[this._opts.position] = 0;
-                    }
-                }
-                // 8. Pointer
+
+                // 7. Pointer
                 // Check if the pointer is enabled. Also make sure the value isn't just the boolean true.
                 if (this._opts.pointer && this._opts.pointer !== true) {
                     if (this._opts.shadow) {
                         this._html.shadowPointer.style.width = this._opts.pointer;
                         this._html.shadowPointer.style.height = this._opts.pointer;
                     }
-                    this._html.pointerBorder.style.borderWidth = this._opts.pointer;
+                    if (this._html.pointerBorder) {
+                        this._html.pointerBorder.style.borderWidth = this._opts.pointer;
+                    }
                     this._html.pointerBg.style.borderWidth = this._opts.pointer;
                 }
 
+                // 8. Border
+                if (this._opts.border) {
+                    if (this._opts.border.width !== undefined) {
+                        var bWidth = parseAttribute(this._opts.border.width, '0px');
+                        this._html.contentWrapper.style.borderWidth = bWidth.value + bWidth.units;
+
+                        if (this._opts.pointer) {
+                            // Determine the pointer length
+                            var pLength = 0;
+                            if (this._html.pointerBorder.style.borderWidth) {
+                                pLength = parseAttribute(this._html.pointerBorder.style.borderWidth, '0px');
+                            } else {
+                                pLength = Math.min(this._html.pointerBorder.offsetHeight, this._html.pointerBorder.offsetWidth);
+                                pLength = parseAttribute(pLength + 'px', '0px');
+                            }
+                            this._html.pointerBorder.style.borderWidth = pLength.value + pLength.units;
+
+                            var triangleDiff = Math.round(bWidth.value * (_root2 - 1));
+                            this._html.pointerBg.style.borderWidth = Math.max(pLength.value - triangleDiff, 0) + pLength.units;
+
+                            var reverseP = capitalizePosition(oppositePosition(this._opts.position));
+                            this._html.pointerBg.style['margin' + reverseP] = triangleDiff + bWidth.units;
+                            this._html.pointerBg.style[this._opts.position] = -bWidth.value + bWidth.units;
+                        }
+                    }
+                    var color = this._opts.border.color;
+                    if (color) {
+                        this._html.contentWrapper.style.borderColor = color;
+                        if (this._html.pointerBorder) {
+                            this._html.pointerBorder.style['border' + capitalizePosition(this._opts.position) + 'Color'] = color;
+                        }
+                    }
+                }
                 // 9. Shadow
                 if (this._opts.shadow) {
                     (function () {
@@ -435,7 +462,10 @@
                 // 1. Create the wrapper
                 this._html.wrapper = newElement('wrapper-' + this._opts.position);
                 if (this._opts.wrapperClass) {
-                    this._html.wrapper.className += ' ' + this._opts.wrapperClass;
+                    applyCss(this._html.wrapper, ['' + this._opts.wrapperClass]);
+                }
+                if (this._opts.border) {
+                    applyCss(this._html.wrapper, ['has-border']);
                 }
 
                 // 2. Create the shadow
@@ -480,9 +510,11 @@
 
                 // 5. Create the pointer
                 if (this._opts.pointer) {
-                    this._html.pointerBorder = newElement('pointer-' + this._opts.position, 'pointer-border-' + this._opts.position);
+                    if (this._opts.border) {
+                        this._html.pointerBorder = newElement('pointer-' + this._opts.position, 'pointer-border-' + this._opts.position);
+                        this._html.wrapper.appendChild(this._html.pointerBorder);
+                    }
                     this._html.pointerBg = newElement('pointer-' + this._opts.position, 'pointer-bg-' + this._opts.position);
-                    this._html.wrapper.appendChild(this._html.pointerBorder);
                     this._html.wrapper.appendChild(this._html.pointerBg);
                 }
 

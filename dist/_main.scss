@@ -21,11 +21,6 @@ $si-rotation: -45deg;
 $si-rotated-shadow-h: $si-inverse-root-2 * ($si-shadow-h - $si-shadow-v);     // Only applies to a -45deg rotation
 $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     // Only applies to a -45deg rotation
 
-// Reset the border width if the border is disabled
-@if not $si-border-included {
-    $si-border-width: 0;
-}
-
 
 
 //////////////////////////////
@@ -175,10 +170,11 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
     max-width: 100%;
     max-height: 100%;
     padding: $si-content-padding;
-    @if $si-border-included {
+    background-color: $si-content-bg;
+
+    .#{$si-pre}-has-border & {
         border: $si-border-width solid $si-border-color;
     }
-    background-color: $si-content-bg;
 }
 
 .#{$si-pre}-content {
@@ -217,6 +213,7 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 //////////////////////////////
 
 
+
 [class*='#{$si-pre}-pointer-border'] {
     position: absolute;
     border: $si-pointer-length solid transparent;
@@ -224,12 +221,16 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 }
 
 
-$si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width);
+$si-triangle-difference: round($si-border-width * ($si-root-2 - 1));
 
 [class*='#{$si-pre}-pointer-bg'] {
     position: relative;
-    border: ($si-pointer-length - $si-triangle-difference) solid transparent;
+    border: $si-pointer-length solid transparent;
     z-index: 4;
+
+    .#{$si-pre}-has-border & {
+        border-width: max($si-pointer-length - $si-triangle-difference, 0);
+    }
 }
 
 .#{$si-pre}-pointer-border-top,
@@ -255,11 +256,12 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
 }
 
 .#{$si-pre}-pointer-bg-top {
-    @if $si-border-included {
-        top: -$si-border-width;
-    }
-    margin-bottom: $si-triangle-difference;
     border-top-color: $si-content-bg;
+
+    .#{$si-pre}-has-border & {
+        top: -$si-border-width;
+        margin-bottom: $si-triangle-difference;
+    }
 }
 
 
@@ -274,11 +276,12 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
 }
 
 .#{$si-pre}-pointer-bg-bottom {
-    @if $si-border-included {
-        bottom: -$si-border-width;
-    }
-    margin-top: $si-triangle-difference;
     border-bottom-color: $si-content-bg;
+
+    .#{$si-pre}-has-border & {
+        bottom: -$si-border-width;
+        margin-top: $si-triangle-difference;
+    }
 }
 
 // Left pointer positioning
@@ -292,11 +295,12 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
 }
 
 .#{$si-pre}-pointer-bg-left {
-    @if $si-border-included {
-        left: -$si-border-width;
-    }
-    margin-right: $si-triangle-difference;
     border-left-color: $si-content-bg;
+
+    .#{$si-pre}-has-border & {
+        left: -$si-border-width;
+        margin-right: $si-triangle-difference;
+    }
 }
 
 // Right pointer positioning
@@ -310,9 +314,10 @@ $si-triangle-difference: round($si-root-2 * $si-border-width - $si-border-width)
 }
 
 .#{$si-pre}-pointer-bg-right {
-    @if $si-border-included {
-        right: -$si-border-width;
-    }
-    margin-left: $si-triangle-difference;
     border-right-color: $si-content-bg;
+
+    .#{$si-pre}-has-border & {
+        right: -$si-border-width;
+        margin-left: $si-triangle-difference;
+    }
 }
