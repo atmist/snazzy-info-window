@@ -503,7 +503,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             }
 
             // Stop the mouse event propagation
-            const mouseEvents = ['click', 'dblclick', 'rightclick',
+            const mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu',
                 'drag', 'dragend', 'dragstart',
                 'mousedown', 'mouseout', 'mouseover', 'mouseup',
                 'touchstart', 'touchend', 'touchmove',
