@@ -565,7 +565,7 @@
                     }
 
                     // Stop the mouse event propagation
-                    var mouseEvents = ['click', 'dblclick', 'rightclick', 'drag', 'dragend', 'dragstart', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'touchstart', 'touchend', 'touchmove', 'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
+                    var mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu', 'drag', 'dragend', 'dragstart', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'touchstart', 'touchend', 'touchmove', 'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
                     mouseEvents.forEach(function (event) {
                         _this3._listeners.push(google.maps.event.addDomListener(_this3._html.wrapper, event, function (e) {
                             e.cancelBubble = true;
