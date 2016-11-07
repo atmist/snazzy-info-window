@@ -85,6 +85,25 @@ function setHTML(container, content) {
     }
 }
 
+// Get the opposite of a given position
+function oppositePosition(p) {
+    if (p === 'top') {
+        return 'bottom';
+    } else if (p === 'bottom') {
+        return 'top';
+    } else if (p === 'left') {
+        return 'right';
+    } else if (p === 'right') {
+        return 'left';
+    }
+    return p;
+}
+
+// Return the position with the first letter capitalized
+function capitalizePosition(p) {
+    return p.charAt(0).toUpperCase() + p.slice(1);
+}
+
 export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
     constructor(opts) {
@@ -115,13 +134,13 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             p !== 'left' && p !== 'right') {
             this._opts.position = _defaultOptions.position;
         }
-        if (this._opts.border === undefined) {
+        if (this._opts.border === undefined || this._opts.border === true) {
             this._opts.border = {};
         }
         if (this._opts.pointer === undefined) {
             this._opts.pointer = _defaultOptions.pointer;
         }
-        if (this._opts.shadow === undefined) {
+        if (this._opts.shadow === undefined || this._opts.shadow === true) {
             this._opts.shadow = {};
         }
     }
@@ -193,11 +212,6 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             return;
         }
 
-        // Returns a capitalized position for assigning styles
-        let p = this._opts.position;
-        p = p.charAt(0).toUpperCase() + p.slice(1);
-        const capitalizedPosition = p;
-
         // 1. Assign offset
         const offset = this._opts.offset;
         if (offset) {
@@ -213,7 +227,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         if (bg) {
             this._html.content.style.backgroundColor = bg;
             if (this._opts.pointer) {
-                this._html.pointerBg.style[`border${capitalizedPosition}Color`] = bg;
+                this._html.pointerBg.style[`border${capitalizePosition(this._opts.position)}Color`] = bg;
             }
         }
         // 3. Padding
@@ -234,41 +248,58 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         if (this._opts.fontSize) {
             this._html.wrapper.style.fontSize = this._opts.fontSize;
         }
-        // 7. Border
-        if (this._opts.border) {
-            if (this._opts.border.width !== undefined) {
-                const bWidth = parseAttribute(this._opts.border.width, '0px');
-                this._html.contentWrapper.style.borderWidth = bWidth.value + bWidth.units;
-                if (this._opts.pointer) {
-                    this._html.pointerBg.style[this._opts.position] =
-                        Math.round(-bWidth.value * _root2) + bWidth.units;
-                }
-            }
-            const color = this._opts.border.color;
-            if (color) {
-                this._html.contentWrapper.style.borderColor = color;
-                if (this._opts.pointer) {
-                    this._html.pointerBorder.style[`border${capitalizedPosition}Color`] = color;
-                }
-            }
-        } else {
-            // Hide the border when border is set to false
-            this._html.content.style.borderWidth = 0;
-            if (this._opts.pointer) {
-                this._html.pointerBg.style[this._opts.position] = 0;
-            }
-        }
-        // 8. Pointer
+
+        // 7. Pointer
         // Check if the pointer is enabled. Also make sure the value isn't just the boolean true.
         if (this._opts.pointer && this._opts.pointer !== true) {
             if (this._opts.shadow) {
                 this._html.shadowPointer.style.width = this._opts.pointer;
                 this._html.shadowPointer.style.height = this._opts.pointer;
             }
-            this._html.pointerBorder.style.borderWidth = this._opts.pointer;
+            if (this._html.pointerBorder) {
+                this._html.pointerBorder.style.borderWidth = this._opts.pointer;
+            }
             this._html.pointerBg.style.borderWidth = this._opts.pointer;
         }
 
+        // 8. Border
+        if (this._opts.border) {
+            // Calculate the border width
+            let bWidth = 0;
+            if (this._opts.border.width !== undefined) {
+                bWidth = parseAttribute(this._opts.border.width, '0px');
+                this._html.contentWrapper.style.borderWidth = bWidth.value + bWidth.units;
+            }
+            bWidth = Math.round((this._html.contentWrapper.offsetWidth -
+                     this._html.contentWrapper.clientWidth) / 2.0);
+            bWidth = parseAttribute(`${bWidth}px`, '0px');
+
+            if (this._opts.pointer) {
+                // Calculate the pointer length
+                let pLength = Math.min(this._html.pointerBorder.offsetHeight,
+                                       this._html.pointerBorder.offsetWidth);
+                pLength = parseAttribute(`${pLength}px`, '0px');
+
+                let triangleDiff = Math.round(bWidth.value * (_root2 - 1));
+                triangleDiff = Math.min(triangleDiff, pLength.value);
+
+                this._html.pointerBg.style.borderWidth =
+                    (pLength.value - triangleDiff) + pLength.units;
+
+                const reverseP = capitalizePosition(oppositePosition(this._opts.position));
+                this._html.pointerBg.style[`margin${reverseP}`] =
+                    triangleDiff + bWidth.units;
+                this._html.pointerBg.style[this._opts.position] =
+                    -bWidth.value + bWidth.units;
+            }
+            const color = this._opts.border.color;
+            if (color) {
+                this._html.contentWrapper.style.borderColor = color;
+                if (this._html.pointerBorder) {
+                    this._html.pointerBorder.style[`border${capitalizePosition(this._opts.position)}Color`] = color;
+                }
+            }
+        }
         // 9. Shadow
         if (this._opts.shadow) {
             // Check if any of the shadow settings have actually been set
@@ -345,7 +376,10 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             `wrapper-${this._opts.position}`
         );
         if (this._opts.wrapperClass) {
-            this._html.wrapper.className += ` ${this._opts.wrapperClass}`;
+            applyCss(this._html.wrapper, [`${this._opts.wrapperClass}`]);
+        }
+        if (this._opts.border) {
+            applyCss(this._html.wrapper, ['has-border']);
         }
 
         // 2. Create the shadow
@@ -404,15 +438,17 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
         // 5. Create the pointer
         if (this._opts.pointer) {
-            this._html.pointerBorder = newElement(
-                `pointer-${this._opts.position}`,
-                `pointer-border-${this._opts.position}`
-            );
+            if (this._opts.border) {
+                this._html.pointerBorder = newElement(
+                    `pointer-${this._opts.position}`,
+                    `pointer-border-${this._opts.position}`
+                );
+                this._html.wrapper.appendChild(this._html.pointerBorder);
+            }
             this._html.pointerBg = newElement(
                 `pointer-${this._opts.position}`,
                 `pointer-bg-${this._opts.position}`
             );
-            this._html.wrapper.appendChild(this._html.pointerBorder);
             this._html.wrapper.appendChild(this._html.pointerBg);
         }
 
@@ -471,7 +507,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             }
 
             // Stop the mouse event propagation
-            const mouseEvents = ['click', 'dblclick', 'rightclick',
+            const mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu',
                 'drag', 'dragend', 'dragstart',
                 'mousedown', 'mouseout', 'mouseover', 'mouseup',
                 'touchstart', 'touchend', 'touchmove',

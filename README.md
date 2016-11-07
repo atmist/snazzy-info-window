@@ -161,6 +161,21 @@ A custom padding size around the content of the info window.
 - Possible Values: Any valid CSS size value.
 - Examples: `'10px'`, `'2em'`, `'5%'`
 
+#### border
+
+A custom border around the info window. Set to `false` to completely remove
+the border. The units used for `border` should be the same as `pointer`.
+
+- Type: _object_ or _boolean_
+- Example:
+
+  ```js
+  border: {
+    width: '10px',
+    color: '#FF0000'
+  }
+  ```
+
 #### borderRadius
 
 A custom CSS border radius property to specify the rounded corners of the info window.
@@ -183,33 +198,22 @@ The font size to use for the content inside the body of the info window.
 - Type: _string_
 - Possible Values: Any valid CSS font size value.
 
-#### border
-
-A custom border around the info window.
-
-- Type: _object_
-- Example:
-
-  ```js
-  border: {
-    width: '10px',
-    color: '#FF0000'
-  }
-  ```
-
 #### pointer
 
-The height of the pointer from the info window to the marker.
+The height of the pointer from the info window to the marker. Set to `false`
+to completely remove the pointer. The units used for `pointer` should be the
+same as `border`.
 
-- Type: _string_
+- Type: _string_ or _boolean_
 - Possible Values: Any valid CSS size value.
 - Example: `'10px'`
 
 #### shadow
 
-The CSS properties for the shadow of the info window.
+The CSS properties for the shadow of the info window. Set to `false` to
+completely remove the shadow.
 
-- Type: _object_
+- Type: _object_ or _boolean_
 - Default:
 
   ```js
@@ -401,23 +405,27 @@ Used to absolute position the info window in the google maps floatPane.
 #### si-wrapper-`position`
 
 Used to css translate the info window into `position`. The `wrapperClass`
-is added to this element.
+is added to this element's class list.
 
 #### si-shadow-wrapper-`position`
 
-Used to blend opacity for all shadow elements.
+Used to blend opacity for all shadow elements. This div will not be included if
+`shadow` is `false`.
 
 #### si-shadow-frame
 
-Used to create the box shadow for the content wrapper.
+Used to create the box shadow for the content wrapper. This element will not be
+included if `shadow` is `false`.
 
 #### si-shadow-pointer-`position`
 
-Used to `position` the pointer shadow.
+Used to `position` the pointer shadow. This element will not be included if
+`shadow` or `pointer` is `false`.
 
 #### si-shadow-inner-pointer-`position`
 
-Used to create the shadow for the pointer.
+Used to create the shadow for the pointer. This element will not be included if
+`shadow` or `pointer` is `false`.
 
 #### si-content-wrapper
 
@@ -425,7 +433,8 @@ Used for adding padding and border around the content.
 
 #### si-close-button
 
-Used for showing the default close button in the top right hand corner.
+Used for showing the default close button in the top right hand corner. This
+element will not be included if `showCloseButton` is `false`.
 
 #### si-content
 
@@ -434,10 +443,12 @@ Used for wrapping your content and showing a scroll bar when there is overflow.
 #### si-pointer-border-`position`
 
 Used for rendering the tip of the pointer when there is a border present.
+This element will not be included if `pointer` or `border` is `false`.
 
 #### si-pointer-bg-`position`
 
 Used for rendering the inner tip of the pointer when there is a border present.
+This element will not be included if `pointer` is `false`.
 
 
 ## Contributing
