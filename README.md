@@ -22,6 +22,8 @@ Open sourced by the people that created [Snazzy Maps](https://snazzymaps.com).
 - [Simple](/examples#simple)
 - [Multiple markers](/examples#multiple-markers)
 - [Dynamic content](/examples#dynamic-content)
+- [Styling with SCSS](/examples#scss-styles)
+- [Styling with javascript](/examples#js-styles)
 
 ## Installation
 

@@ -19,8 +19,7 @@ $(function() {
     var info = new SnazzyInfoWindow({
         marker: marker,
         content: '<h1>Styling with SCSS</h1>' +
-                 '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce id urna eu sem fringilla ultrices. Pellentesque tempor mattis mollis. Etiam nec commodo sapien, quis iaculis nibh.</p>' +
-                 '<p>Fusce egestas eu quam dignissim pellentesque.</p>' +
+                 '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce id urna eu sem fringilla ultrices.</p>' +
                  '<hr>' +
                  '<em>Snazzy Info Window</em>',
         closeOnMapClick: false
