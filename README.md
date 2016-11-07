@@ -183,6 +183,15 @@ A custom CSS border radius property to specify the rounded corners of the info w
 - Type: _string_
 - Example: `'2px 20px'`
 
+#### fontColor
+
+The font color to use for the content inside the body of the info window.
+
+- Type: _string_
+- Possible Values: Any valid CSS color value.
+- Examples: `'#FF0000'`, `'blue'`
+
+
 #### fontSize
 
 The font size to use for the content inside the body of the info window.

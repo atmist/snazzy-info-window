@@ -225,7 +225,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         // 2. Set the background color
         const bg = this._opts.backgroundColor;
         if (bg) {
-            this._html.content.style.backgroundColor = bg;
+            this._html.contentWrapper.style.backgroundColor = bg;
             if (this._opts.pointer) {
                 this._html.pointerBg.style[`border${capitalizePosition(this._opts.position)}Color`] = bg;
             }
@@ -233,19 +233,26 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         // 3. Padding
         if (this._opts.padding) {
             this._html.contentWrapper.style.padding = this._opts.padding;
-            this._html.shadowFrame.style.padding = this._opts.padding;
+            if (this._opts.shadow) {
+                this._html.shadowFrame.style.padding = this._opts.padding;
+            }
         }
         // 4. Border radius
         if (this._opts.borderRadius) {
             this._html.contentWrapper.style.borderRadius = this._opts.borderRadius;
-            this._html.shadowFrame.style.borderRadius = this._opts.borderRadius;
+            if (this._opts.shadow) {
+                this._html.shadowFrame.style.borderRadius = this._opts.borderRadius;
+            }
         }
         // 5. Font Size
         if (this._opts.fontSize) {
             this._html.wrapper.style.fontSize = this._opts.fontSize;
         }
-
-        // 6. Pointer
+        // 6. Font Color
+        if (this._opts.fontColor) {
+            this._html.contentWrapper.style.color = this._opts.fontColor;
+        }
+        // 7. Pointer
         // Check if the pointer is enabled. Also make sure the value isn't just the boolean true.
         if (this._opts.pointer && this._opts.pointer !== true) {
             if (this._opts.shadow) {
@@ -258,7 +265,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             this._html.pointerBg.style.borderWidth = this._opts.pointer;
         }
 
-        // 7. Border
+        // 8. Border
         if (this._opts.border) {
             // Calculate the border width
             let bWidth = 0;
@@ -296,7 +303,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                 }
             }
         }
-        // 8. Shadow
+        // 9. Shadow
         if (this._opts.shadow) {
             // Check if any of the shadow settings have actually been set
             const shadow = this._opts.shadow;

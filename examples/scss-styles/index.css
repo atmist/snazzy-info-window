@@ -142,6 +142,7 @@
   border: 0;
   outline: none;
   background-color: transparent;
+  color: inherit;
   font-family: Arial, Baskerville, monospace;
   font-size: 2em;
   cursor: pointer;

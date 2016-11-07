@@ -198,6 +198,7 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
     border: 0;
     outline: none;
     background-color: transparent;
+    color: inherit;
     font-family: Arial, Baskerville, monospace;
     font-size: $si-close-font-size;
     cursor: pointer;
@@ -216,14 +217,11 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 // 5. Pointer Styles
 //////////////////////////////
 
-
-
 [class*='#{$si-pre}-pointer-border'] {
     position: absolute;
     border: $si-pointer-length solid transparent;
     z-index: 3;
 }
-
 
 $si-triangle-difference: min(round($si-border-width * ($si-root-2 - 1)), $si-pointer-length);
 
