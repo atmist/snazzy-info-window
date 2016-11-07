@@ -1,7 +1,6 @@
 // Content
 $si-content-bg:         	#fff !default;					// Background color of the infowindow
 $si-content-padding:    	30px !default;					// Padding of the infowindow
-$si-font-color:				#333 !default;					// Color of the infowindow content
 $si-font-size:				14px !default;					// Font size of the infowindow content
 
 // Border
@@ -21,6 +20,6 @@ $si-shadow-color:       	#000 !default;					// Shadow color
 $si-shadow-opacity:     	0.298039 !default;				// Shadow opacity
 
 // Close button
-$si-close-font-size:		24px;							// Size of the close button text
-$si-close-opacity:			0.5;							// Initial opacity of the close button
-$si-close-hover-opacity:	0.7;							// Hover and focus opacity of the close button
+$si-close-font-size:		24px !default;					// Size of the close button text
+$si-close-opacity:			0.5 !default;					// Initial opacity of the close button
+$si-close-hover-opacity:	0.7 !default;					// Hover and focus opacity of the close button

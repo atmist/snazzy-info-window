@@ -240,16 +240,12 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             this._html.contentWrapper.style.borderRadius = this._opts.borderRadius;
             this._html.shadowFrame.style.borderRadius = this._opts.borderRadius;
         }
-        // 5. Font Color
-        if (this._opts.fontColor) {
-            this._html.wrapper.style.color = this._opts.fontColor;
-        }
-        // 6. Font Size
+        // 5. Font Size
         if (this._opts.fontSize) {
             this._html.wrapper.style.fontSize = this._opts.fontSize;
         }
 
-        // 7. Pointer
+        // 6. Pointer
         // Check if the pointer is enabled. Also make sure the value isn't just the boolean true.
         if (this._opts.pointer && this._opts.pointer !== true) {
             if (this._opts.shadow) {
@@ -262,7 +258,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             this._html.pointerBg.style.borderWidth = this._opts.pointer;
         }
 
-        // 8. Border
+        // 7. Border
         if (this._opts.border) {
             // Calculate the border width
             let bWidth = 0;
@@ -300,7 +296,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                 }
             }
         }
-        // 9. Shadow
+        // 8. Shadow
         if (this._opts.shadow) {
             // Check if any of the shadow settings have actually been set
             const shadow = this._opts.shadow;

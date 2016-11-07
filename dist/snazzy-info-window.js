@@ -324,16 +324,12 @@
                     this._html.contentWrapper.style.borderRadius = this._opts.borderRadius;
                     this._html.shadowFrame.style.borderRadius = this._opts.borderRadius;
                 }
-                // 5. Font Color
-                if (this._opts.fontColor) {
-                    this._html.wrapper.style.color = this._opts.fontColor;
-                }
-                // 6. Font Size
+                // 5. Font Size
                 if (this._opts.fontSize) {
                     this._html.wrapper.style.fontSize = this._opts.fontSize;
                 }
 
-                // 7. Pointer
+                // 6. Pointer
                 // Check if the pointer is enabled. Also make sure the value isn't just the boolean true.
                 if (this._opts.pointer && this._opts.pointer !== true) {
                     if (this._opts.shadow) {
@@ -346,30 +342,30 @@
                     this._html.pointerBg.style.borderWidth = this._opts.pointer;
                 }
 
-                // 8. Border
+                // 7. Border
                 if (this._opts.border) {
+                    // Calculate the border width
+                    var bWidth = 0;
                     if (this._opts.border.width !== undefined) {
-                        var bWidth = parseAttribute(this._opts.border.width, '0px');
+                        bWidth = parseAttribute(this._opts.border.width, '0px');
                         this._html.contentWrapper.style.borderWidth = bWidth.value + bWidth.units;
+                    }
+                    bWidth = Math.round((this._html.contentWrapper.offsetWidth - this._html.contentWrapper.clientWidth) / 2.0);
+                    bWidth = parseAttribute(bWidth + 'px', '0px');
 
-                        if (this._opts.pointer) {
-                            // Determine the pointer length
-                            var pLength = 0;
-                            if (this._html.pointerBorder.style.borderWidth) {
-                                pLength = parseAttribute(this._html.pointerBorder.style.borderWidth, '0px');
-                            } else {
-                                pLength = Math.min(this._html.pointerBorder.offsetHeight, this._html.pointerBorder.offsetWidth);
-                                pLength = parseAttribute(pLength + 'px', '0px');
-                            }
-                            this._html.pointerBorder.style.borderWidth = pLength.value + pLength.units;
+                    if (this._opts.pointer) {
+                        // Calculate the pointer length
+                        var pLength = Math.min(this._html.pointerBorder.offsetHeight, this._html.pointerBorder.offsetWidth);
+                        pLength = parseAttribute(pLength + 'px', '0px');
 
-                            var triangleDiff = Math.round(bWidth.value * (_root2 - 1));
-                            this._html.pointerBg.style.borderWidth = Math.max(pLength.value - triangleDiff, 0) + pLength.units;
+                        var triangleDiff = Math.round(bWidth.value * (_root2 - 1));
+                        triangleDiff = Math.min(triangleDiff, pLength.value);
 
-                            var reverseP = capitalizePosition(oppositePosition(this._opts.position));
-                            this._html.pointerBg.style['margin' + reverseP] = triangleDiff + bWidth.units;
-                            this._html.pointerBg.style[this._opts.position] = -bWidth.value + bWidth.units;
-                        }
+                        this._html.pointerBg.style.borderWidth = pLength.value - triangleDiff + pLength.units;
+
+                        var reverseP = capitalizePosition(oppositePosition(this._opts.position));
+                        this._html.pointerBg.style['margin' + reverseP] = triangleDiff + bWidth.units;
+                        this._html.pointerBg.style[this._opts.position] = -bWidth.value + bWidth.units;
                     }
                     var color = this._opts.border.color;
                     if (color) {
@@ -379,7 +375,7 @@
                         }
                     }
                 }
-                // 9. Shadow
+                // 8. Shadow
                 if (this._opts.shadow) {
                     (function () {
                         // Check if any of the shadow settings have actually been set
@@ -569,7 +565,7 @@
                     }
 
                     // Stop the mouse event propagation
-                    var mouseEvents = ['click', 'dblclick', 'rightclick', 'drag', 'dragend', 'dragstart', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'touchstart', 'touchend', 'touchmove', 'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
+                    var mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu', 'drag', 'dragend', 'dragstart', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'touchstart', 'touchend', 'touchmove', 'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
                     mouseEvents.forEach(function (event) {
                         _this3._listeners.push(google.maps.event.addDomListener(_this3._html.wrapper, event, function (e) {
                             e.cancelBubble = true;

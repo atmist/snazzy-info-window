@@ -35,3 +35,14 @@ Content which is loaded using a handlebars template and updated through an inter
 
 [dynamic-content-screenshot]: dynamic-content/screenshot.png "Screenshot"
 [dynamic-content]: https://rawgit.com/atmist/snazzy-info-window/master/examples/dynamic-content/index.html
+
+## scss-styles
+
+Styling the Snazzy Info Window with SCSS.
+
+![Screenshot][scss-styles-screenshot]
+
+[View live example][scss-styles]
+
+[scss-styles-screenshot]: scss-styles/screenshot.png "Screenshot"
+[scss-styles]: https://rawgit.com/atmist/snazzy-info-window/master/examples/scss-styles/index.html

@@ -1,0 +1,117 @@
+
+//////////////////////////////
+// Variables
+//////////////////////////////
+
+// Set the Snazzy Info Window SCSS variables before
+// the plugin's SCSS is imported. Check the /dist/_settings.scss
+// for the available variables.
+
+$si-content-padding:        60px;
+$si-border-width:           8px;
+$si-border-color:           #2b3031;
+$si-font-size:	            18px;
+$si-shadow-h:           	20px;
+$si-shadow-v:           	20px;
+$si-shadow-blur:        	0;
+$si-shadow-spread:          0;
+$si-shadow-opacity:         0.4;
+$si-close-font-size:        2em;
+$si-close-opacity:          0.7;
+$si-close-hover-opacity:    1;
+
+
+
+//////////////////////////////
+// Imports
+//////////////////////////////
+
+// Import the Snazzy Info Window SCSS.
+
+@import '../../dist/snazzy-info-window.scss';
+
+
+
+//////////////////////////////
+// Page Scaffolding
+//////////////////////////////
+
+// Make the map fill the page.
+
+html {
+    height: 100%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+}
+
+.map-canvas {
+    width: 100%;
+    height: 100%;
+}
+
+
+
+//////////////////////////////
+// Custom Snazzy Info Window CSS
+//////////////////////////////
+
+// Adjust the Snazzy Info Window styles using
+// the existing classes. Check the Readme for
+// the full markup and available classes.
+
+.si-wrapper-top {
+    max-width: 300px;
+
+    @media (min-width: 600px) {
+        max-width: 400px;
+    }
+
+    @media (min-width: 992px) {
+        max-width: 500px;
+    }
+}
+
+.si-frame {
+    @media (max-width: 991px) {
+        padding: 50px;
+    }
+
+    @media (max-width: 599px) {
+        padding: 40px;
+    }
+}
+
+.si-close-button {
+    width: 40px;
+    height: 40px;
+}
+
+
+
+//////////////////////////////
+// Info Window Content Styles
+//////////////////////////////
+
+// Add styles to the content set in index.js.
+
+.si-content {
+    h1 {
+        margin: 0 0 50px;
+        padding: 10px 0;
+        border-top: 2px solid $si-border-color;
+        border-bottom: 2px solid $si-border-color;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    hr {
+        margin: 50px 0 0;
+        border-color: $si-border-color;
+    }
+
+    em {
+        font-size: 0.85em;
+    }
+}
