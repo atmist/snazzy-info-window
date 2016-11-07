@@ -11,7 +11,7 @@ One marker with default settings.
 
 [View live example][simple]
 
-[simple-screenshot]: simple/screenshot.png "Screenshot"
+[simple-screenshot]: simple/screenshot.png "Simple Example Screenshot"
 [simple]: https://rawgit.com/atmist/snazzy-info-window/master/examples/simple/index.html
 
 ## multiple-markers
@@ -22,7 +22,7 @@ Multiple markers with different positions.
 
 [View live example][multiple]
 
-[multiple-screenshot]: multiple-markers/screenshot.png "Screenshot"
+[multiple-screenshot]: multiple-markers/screenshot.png "Multiple Markers Screenshot"
 [multiple]: https://rawgit.com/atmist/snazzy-info-window/master/examples/multiple-markers/index.html
 
 ## dynamic-content
@@ -33,7 +33,7 @@ Content which is loaded using a handlebars template and updated through an inter
 
 [View live example][dynamic-content]
 
-[dynamic-content-screenshot]: dynamic-content/screenshot.png "Dynamic COntent Screenshot"
+[dynamic-content-screenshot]: dynamic-content/screenshot.png "Dynamic Content Screenshot"
 [dynamic-content]: https://rawgit.com/atmist/snazzy-info-window/master/examples/dynamic-content/index.html
 
 ## scss-styles
@@ -55,5 +55,5 @@ Styling the Snazzy Info Window with javascript options.
 
 [View live example][js-styles]
 
-[js-styles-screenshot]: js-styles/screenshot.png "SCSS Styles Screenshot"
+[js-styles-screenshot]: js-styles/screenshot.png "Javascript Options Screenshot"
 [js-styles]: https://rawgit.com/atmist/snazzy-info-window/master/examples/js-styles/index.html
