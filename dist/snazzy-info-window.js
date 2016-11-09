@@ -288,6 +288,14 @@
                 }
             }
         }, {
+            key: 'getWrapper',
+            value: function getWrapper() {
+                if (this._html) {
+                    return this._html.wrapper;
+                }
+                return null;
+            }
+        }, {
             key: 'draw',
             value: function draw() {
                 var _this2 = this;
@@ -465,7 +473,7 @@
                 // 1. Create the wrapper
                 this._html.wrapper = newElement('wrapper-' + this._opts.position);
                 if (this._opts.wrapperClass) {
-                    applyCss(this._html.wrapper, ['' + this._opts.wrapperClass]);
+                    this._html.wrapper.className += ' ' + this._opts.wrapperClass;
                 }
                 if (this._opts.border) {
                     applyCss(this._html.wrapper, ['has-border']);

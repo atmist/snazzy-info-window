@@ -206,6 +206,13 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         }
     }
 
+    getWrapper() {
+        if (this._html) {
+            return this._html.wrapper;
+        }
+        return null;
+    }
+
     // Implementation of OverlayView draw method.
     draw() {
         if (!this._marker || !this._html) {
@@ -379,7 +386,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             `wrapper-${this._opts.position}`
         );
         if (this._opts.wrapperClass) {
-            applyCss(this._html.wrapper, [`${this._opts.wrapperClass}`]);
+            this._html.wrapper.className += ` ${this._opts.wrapperClass}`;
         }
         if (this._opts.border) {
             applyCss(this._html.wrapper, ['has-border']);

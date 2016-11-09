@@ -49,11 +49,11 @@ Styling the Snazzy Info Window with SCSS.
 
 ## js-styles
 
-Styling the Snazzy Info Window with javascript options.
+Styling the Snazzy Info Window with JavaScript options.
 
 ![Screenshot][js-styles-screenshot]
 
 [View live example][js-styles]
 
-[js-styles-screenshot]: js-styles/screenshot.png "Javascript Options Screenshot"
+[js-styles-screenshot]: js-styles/screenshot.png "JavaScript Options Screenshot"
 [js-styles]: https://rawgit.com/atmist/snazzy-info-window/master/examples/js-styles/index.html

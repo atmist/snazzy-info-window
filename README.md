@@ -23,7 +23,7 @@ Open sourced by the people that created [Snazzy Maps](https://snazzymaps.com).
 - [Multiple markers](/examples#multiple-markers)
 - [Dynamic content](/examples#dynamic-content)
 - [Styling with SCSS](/examples#scss-styles)
-- [Styling with javascript](/examples#js-styles)
+- [Styling with JavaScript](/examples#js-styles)
 
 ## Installation
 
@@ -77,6 +77,10 @@ listeners associated to this info window will be removed.
 #### setContent(content)
 
 Set the content in the info window. This can be called at any time.
+
+#### getWrapper()
+
+Will return the DOM Element for the wrapper container of the info window.
 
 ## Options
 
