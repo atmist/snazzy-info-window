@@ -2,7 +2,7 @@
 
 [![npm](https://img.shields.io/npm/v/snazzy-info-window.svg?label=yarn)](https://www.npmjs.com/package/snazzy-info-window) [![npm](https://img.shields.io/npm/v/snazzy-info-window.svg)](https://www.npmjs.com/package/snazzy-info-window) [![Bower](https://img.shields.io/bower/v/snazzy-info-window.svg)](https://github.com/atmist/snazzy-info-window) [![Dependencies](https://david-dm.org/atmist/snazzy-info-window.svg)](https://david-dm.org/atmist/snazzy-info-window) [![devDependencies](https://david-dm.org/atmist/snazzy-info-window/dev-status.svg)](https://david-dm.org/atmist/snazzy-info-window#info=devDependencies)
 
-Snazzy Info Window is a library for customizable popup windows in the Google Maps JavaScript API.
+Snazzy Info Window is a plugin for customizable info windows using the Google Maps JavaScript API.
 Open sourced by the people that created [Snazzy Maps](https://snazzymaps.com).
 
 ## Features
