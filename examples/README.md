@@ -57,3 +57,14 @@ Styling the Snazzy Info Window with JavaScript options.
 
 [js-styles-screenshot]: js-styles/screenshot.png "JavaScript Options Screenshot"
 [js-styles]: https://rawgit.com/atmist/snazzy-info-window/master/examples/js-styles/index.html
+
+## complex-styles
+
+Complex styling with a mix of SCSS and Javascript.
+
+![Screenshot][complex-styles-screenshot]
+
+[View live example][complex-styles]
+
+[complex-styles-screenshot]: complex-styles/screenshot.png "JavaScript Options Screenshot"
+[complex-styles]: https://rawgit.com/atmist/snazzy-info-window/master/examples/complex-styles/index.html

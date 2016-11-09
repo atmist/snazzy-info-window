@@ -1,0 +1,199 @@
+
+//////////////////////////////
+// Variables
+//////////////////////////////
+
+// Custom variables specific to this example
+
+$cus-header-bg:             #44433e;
+$cus-header-color:          #fff;
+$cus-content-bg:            #fff;
+$cus-drop-shadow:           0 1px 3px 0 rgba(0, 0, 0, 0.3);
+$cus-close-size:            36px;
+$cus-close-bg:              rgba($cus-header-bg, 0.8);
+$cus-close-color:           #fff;
+$cus-link-color:            #60a295;
+$grid-gutter-width:         30px;
+$grid-gutter-width-md:      40px;
+
+// Set the Snazzy Info Window SCSS variables before
+// the plugin's SCSS is imported. Check the /dist/_settings.scss
+// for the available variables.
+
+$si-content-bg:             #eee;
+$si-content-padding:        0;
+$si-border-radius:          0;
+$si-shadow-v:           	4px;
+$si-shadow-blur:            6px;
+$si-shadow-opacity:         0.4;
+$si-font-size:              1.4rem;
+
+
+
+
+//////////////////////////////
+// Imports
+//////////////////////////////
+
+// Import the Snazzy Info Window SCSS.
+
+@import '../../dist/snazzy-info-window.scss';
+
+
+
+//////////////////////////////
+// Page Scaffolding
+//////////////////////////////
+
+// Make the map fill the page.
+
+html {
+    height: 100%;
+    font-size: 62.5%;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+.map-canvas {
+    width: 100%;
+    height: 100%;
+}
+
+
+
+//////////////////////////////
+// Info Window Content Styles
+//////////////////////////////
+
+// Custom styles specific to this example.
+
+.custom-window {
+    top: 30px;
+    max-width: 400px;
+    transition: top 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    visibility: hidden;
+
+    &.open {
+        .si-frame {
+            overflow: visible;
+        }
+    }
+
+    &.active {
+        top: 0;
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .si-content-wrapper {
+        padding-bottom: 10px;
+    }
+
+    .si-content {
+        overflow: visible;
+    }
+}
+
+.custom-content {
+    position: relative;
+    max-height: inherit;
+    padding-top: $grid-gutter-width * 4;
+    overflow: auto;
+    z-index: 2;
+}
+
+.custom-img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: ($grid-gutter-width * 4);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    z-index: 1;
+}
+
+.custom-header {
+    position: relative;
+    margin: 0;
+    padding: $grid-gutter-width;
+    background-color: $cus-header-bg;
+    color: $cus-header-color;
+    box-shadow: $cus-drop-shadow;
+
+    small {
+        display: block;
+        font-size: 0.55em;
+        font-weight: 400;
+        opacity: 0.75;
+    }
+}
+
+.custom-body {
+    padding: $grid-gutter-width;
+    background-color: $cus-content-bg;
+
+    p {
+        margin: 0;
+    }
+
+    * + p {
+        margin-top: 1em;
+    }
+
+    a {
+        color: $cus-link-color;
+
+        &:hover,
+        &:focus,
+        &:active {
+            color: darken($cus-link-color, 15%);
+        }
+    }
+}
+
+.custom-close {
+    position: absolute;
+    top: 0;
+    right: -$cus-close-size;
+    width: $cus-close-size;
+    height: $cus-close-size;
+    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 0;
+    background-color: $cus-close-bg;
+    color: $cus-close-color;
+    font-size: 1.5em;
+    box-shadow: $cus-drop-shadow;
+    cursor: pointer;
+
+    &:hover,
+    &:focus,
+    &:active {
+        background-color: darken($cus-close-bg, 15%);
+    }
+}
+
+@media (min-width: 992px) {
+    .custom-window {
+        max-width: 500px;
+    }
+
+    .custom-content {
+        padding-top: $grid-gutter-width-md * 4;
+    }
+
+    .custom-img {
+        height: $grid-gutter-width-md * 4;
+    }
+
+    .custom-header,
+    .custom-body {
+        padding: $grid-gutter-width-md;
+    }
+}
