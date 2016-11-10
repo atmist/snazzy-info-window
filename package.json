@@ -1,8 +1,8 @@
 {
   "name": "snazzy-info-window",
-  "description": "Snazzier info windows for Google Maps.",
+  "description": "Customizable info windows using the Google Maps JavaScript API.",
   "version": "0.0.1",
-  "homepage": "https://atmist.github.io/snazzy-info-window/",
+  "homepage": "https://github.com/atmist/snazzy-info-window",
   "bugs": {
     "url": "https://github.com/atmist/snazzy-info-window/issues"
   },
@@ -10,7 +10,7 @@
     "url": "https://github.com/atmist/snazzy-info-window.git",
     "type": "git"
   },
-  "main": "dist/snazzy-info-window.js",
+  "main": "dist/snazzy-info-window.min.js",
   "authors": [
     "Joel Kravets",
     "Darcy Chan",
