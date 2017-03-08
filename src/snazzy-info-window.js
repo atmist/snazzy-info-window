@@ -10,7 +10,7 @@ const _defaultShadow = {
     color: '#000'
 };
 const _defaultOptions = {
-    position: 'top',
+    placement: 'top',
     pointer: true,
     openOnMarkerClick: true,
     closeOnMapClick: true,
@@ -85,8 +85,8 @@ function setHTML(container, content) {
     }
 }
 
-// Get the opposite of a given position
-function oppositePosition(p) {
+// Get the opposite of a given placement
+function oppositePlacement(p) {
     if (p === 'top') {
         return 'bottom';
     } else if (p === 'bottom') {
@@ -99,8 +99,8 @@ function oppositePosition(p) {
     return p;
 }
 
-// Return the position with the first letter capitalized
-function capitalizePosition(p) {
+// Return the placement with the first letter capitalized
+function capitalizePlacement(p) {
     return p.charAt(0).toUpperCase() + p.slice(1);
 }
 
@@ -125,15 +125,27 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             });
         }
 
-        // Validate the options
-        let p = this._opts.position;
-        if (p) {
+        // Validate the placement option
+        let p = opts.placement || this._opts.position;
+        // The position variable was renamed to placement so we must type check
+        if (typeof p === 'string' || p instanceof String) {
             p = p.toLowerCase();
         }
         if (p !== 'top' && p !== 'bottom' &&
             p !== 'left' && p !== 'right') {
-            this._opts.position = _defaultOptions.position;
+            this._opts.placement = _defaultOptions.placement;
+        } else {
+            this._opts.placement = p;
         }
+
+        // Validate the position option
+        p = this._opts.position;
+        if (p !== undefined && p !== null &&
+            typeof p !== 'string' && !(p instanceof String)) {
+            this._opts.position = p;
+        }
+
+        // Validate the other options
         if (this._opts.border === undefined || this._opts.border === true) {
             this._opts.border = {};
         }
@@ -147,8 +159,8 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
     // Activate the specified callback and return the result
     activateCallback(callback) {
-        const lamda = this._callbacks[callback];
-        return lamda ? lamda.apply(this) : undefined;
+        const lambda = this._callbacks[callback];
+        return lambda ? lambda.apply(this) : undefined;
     }
 
     // Will clear all listeners that are used during the open state.
@@ -234,7 +246,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         if (bg) {
             this._html.contentWrapper.style.backgroundColor = bg;
             if (this._opts.pointer) {
-                this._html.pointerBg.style[`border${capitalizePosition(this._opts.position)}Color`] = bg;
+                this._html.pointerBg.style[`border${capitalizePlacement(this._opts.placement)}Color`] = bg;
             }
         }
         // 3. Padding
@@ -296,17 +308,17 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                 this._html.pointerBg.style.borderWidth =
                     (pLength.value - triangleDiff) + pLength.units;
 
-                const reverseP = capitalizePosition(oppositePosition(this._opts.position));
+                const reverseP = capitalizePlacement(oppositePlacement(this._opts.placement));
                 this._html.pointerBg.style[`margin${reverseP}`] =
                     triangleDiff + bWidth.units;
-                this._html.pointerBg.style[this._opts.position] =
+                this._html.pointerBg.style[this._opts.placement] =
                     -bWidth.value + bWidth.units;
             }
             const color = this._opts.border.color;
             if (color) {
                 this._html.contentWrapper.style.borderColor = color;
                 if (this._html.pointerBorder) {
-                    this._html.pointerBorder.style[`border${capitalizePosition(this._opts.position)}Color`] = color;
+                    this._html.pointerBorder.style[`border${capitalizePlacement(this._opts.placement)}Color`] = color;
                 }
             }
         }
@@ -383,7 +395,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
         // 1. Create the wrapper
         this._html.wrapper = newElement(
-            `wrapper-${this._opts.position}`
+            `wrapper-${this._opts.placement}`
         );
         if (this._opts.wrapperClass) {
             this._html.wrapper.className += ` ${this._opts.wrapperClass}`;
@@ -395,7 +407,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         // 2. Create the shadow
         if (this._opts.shadow) {
             this._html.shadowWrapper = newElement(
-                `shadow-wrapper-${this._opts.position}`
+                `shadow-wrapper-${this._opts.placement}`
             );
             this._html.shadowFrame = newElement(
                 'frame',
@@ -405,10 +417,10 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
             if (this._opts.pointer) {
                 this._html.shadowPointer = newElement(
-                    `shadow-pointer-${this._opts.position}`
+                    `shadow-pointer-${this._opts.placement}`
                 );
                 this._html.shadowPointerInner = newElement(
-                    `shadow-inner-pointer-${this._opts.position}`
+                    `shadow-inner-pointer-${this._opts.placement}`
                 );
                 this._html.shadowPointer.appendChild(this._html.shadowPointerInner);
                 this._html.shadowWrapper.appendChild(this._html.shadowPointer);
@@ -450,14 +462,14 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         if (this._opts.pointer) {
             if (this._opts.border) {
                 this._html.pointerBorder = newElement(
-                    `pointer-${this._opts.position}`,
-                    `pointer-border-${this._opts.position}`
+                    `pointer-${this._opts.placement}`,
+                    `pointer-border-${this._opts.placement}`
                 );
                 this._html.wrapper.appendChild(this._html.pointerBorder);
             }
             this._html.pointerBg = newElement(
-                `pointer-${this._opts.position}`,
-                `pointer-bg-${this._opts.position}`
+                `pointer-${this._opts.placement}`,
+                `pointer-bg-${this._opts.placement}`
             );
             this._html.wrapper.appendChild(this._html.pointerBg);
         }
@@ -565,7 +577,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         return mib;
     }
 
-    // Pan the google map such that the info window is visible
+    // Pan the Google Map such that the info window is visible
     reposition() {
         if (!this._opts.panOnOpen || !this._html) {
             return;

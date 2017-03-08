@@ -16,7 +16,7 @@ One marker with default settings.
 
 ## multiple-markers
 
-Multiple markers with different positions.
+Multiple markers with different placements.
 
 ![Screenshot][multiple-screenshot]
 

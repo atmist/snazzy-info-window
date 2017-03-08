@@ -14,8 +14,8 @@ Open sourced by the people that created [Snazzy Maps](https://snazzymaps.com).
   - Supports SCSS styling.
 - **Dynamic content**
   - Supports dynamic content after initialization with proper resizing.
-- **Multiple positions**
-  - Position the info window to the top, bottom, right, or left of the marker.
+- **Multiple placements**
+  - Place the info window to the top, bottom, right, or left of the marker.
 
 ## Examples
 
@@ -72,7 +72,7 @@ Will attempt to close the info window.
 #### destroy()
 
 Will destroy the info window. If the info window is open it will be forced
-closed bypassing the regular `beforeClose` callback. All google map event
+closed bypassing the regular `beforeClose` callback. All Google Map event
 listeners associated to this info window will be removed.
 
 #### setContent(content)
@@ -91,7 +91,7 @@ The text or DOM Element to insert into the info window body.
 
 - Type: _string_ or _DOM Element_
 
-#### position
+#### placement
 
 Choose where you want the info window to be displayed, relative to the marker.
 
@@ -122,8 +122,8 @@ The max height in pixels of the info window.
 
 #### offset
 
-The offset from the marker. This value should be different for each `position`.
-By default the offset is configured for the default google maps marker.
+The offset from the marker. This value should be different for each `placement`.
+By default the offset is configured for the default Google Maps marker.
 
 - Type: _object_
 - Example:
@@ -238,7 +238,7 @@ completely remove the shadow.
 #### openOnMarkerClick
 
 Determines if the info window will open when the marker is clicked. An internal
-listener is added to the google maps `click` event which calls the `open()`
+listener is added to the Google Maps `click` event which calls the `open()`
 method.
 
 - Type: _boolean_
@@ -247,8 +247,8 @@ method.
 #### closeOnMapClick
 
 Determines if the info window will close when the map is clicked. An internal
-listener is added to the google maps `click` event which calls the `close()`
-method. This will not activate on the google maps `drag` event when the user is
+listener is added to the Google Maps `click` event which calls the `close()`
+method. This will not activate on the Google Maps `drag` event when the user is
 panning the map.
 
 - Type: _boolean_
@@ -408,14 +408,14 @@ be removed from the DOM.
 
 #### si-float-wrapper
 
-Used to absolute position the info window in the google maps floatPane.
+Used to absolute position the info window in the Google Maps floatPane.
 
-#### si-wrapper-`position`
+#### si-wrapper-`placement`
 
-Used to css translate the info window into `position`. The `wrapperClass`
+Used to css translate the info window into the `placement`. The `wrapperClass`
 is added to this element's class list.
 
-#### si-shadow-wrapper-`position`
+#### si-shadow-wrapper-`placement`
 
 Used to blend opacity for all shadow elements. This div will not be included if
 `shadow` is `false`.
@@ -425,12 +425,12 @@ Used to blend opacity for all shadow elements. This div will not be included if
 Used to create the box shadow for the content wrapper. This element will not be
 included if `shadow` is `false`.
 
-#### si-shadow-pointer-`position`
+#### si-shadow-pointer-`placement`
 
-Used to `position` the pointer shadow. This element will not be included if
+Used to show the pointer shadow in the `placement`. This element will not be included if
 `shadow` or `pointer` is `false`.
 
-#### si-shadow-inner-pointer-`position`
+#### si-shadow-inner-pointer-`placement`
 
 Used to create the shadow for the pointer. This element will not be included if
 `shadow` or `pointer` is `false`.
@@ -448,12 +448,12 @@ element will not be included if `showCloseButton` is `false`.
 
 Used for wrapping your content and showing a scroll bar when there is overflow.
 
-#### si-pointer-border-`position`
+#### si-pointer-border-`placement`
 
 Used for rendering the tip of the pointer when there is a border present.
 This element will not be included if `pointer` or `border` is `false`.
 
-#### si-pointer-bg-`position`
+#### si-pointer-bg-`placement`
 
 Used for rendering the inner tip of the pointer when there is a border present.
 This element will not be included if `pointer` is `false`.

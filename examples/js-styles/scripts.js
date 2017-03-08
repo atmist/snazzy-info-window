@@ -18,7 +18,7 @@ $(function() {
     // Add a Snazzy Info Window to the marker
     var info = new SnazzyInfoWindow({
         marker: marker,
-        position: 'right',
+        placement: 'right',
         offset: {
             left: '20px'
         },
