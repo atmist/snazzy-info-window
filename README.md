@@ -22,6 +22,7 @@ Open sourced by the people that created [Snazzy Maps](https://snazzymaps.com).
 - [Simple](/examples#simple)
 - [Multiple markers](/examples#multiple-markers)
 - [Dynamic content](/examples#dynamic-content)
+- [Set position](/examples#set-position)
 - [Styling with SCSS](/examples#scss-styles)
 - [Styling with JavaScript](/examples#js-styles)
 - [Complex styling](/examples#complex-styles)
@@ -69,6 +70,10 @@ Will attempt to open the info window.
 
 Will attempt to close the info window.
 
+#### isOpen()
+
+Determines if the info window is open.
+
 #### destroy()
 
 Will destroy the info window. If the info window is open it will be forced
@@ -79,11 +84,27 @@ listeners associated to this info window will be removed.
 
 Set the content in the info window. This can be called at any time.
 
+- Parameter: `content`
+  - _string_ or _DOM Element_
+
+#### setPosition(latLng)
+
+Set the `position` of the info window. A valid Google Map instance must be associated to the info window. This could be either through the `marker` or `map` option.
+
+- Parameter: `latLng`
+  - _[LatLng]_ or _[LatLngLiteral]_
+
 #### getWrapper()
 
 Will return the DOM Element for the wrapper container of the info window.
 
 ## Options
+
+#### marker
+
+The Google Maps marker associated to this info window.
+
+- Type: _[Marker]_
 
 #### content
 
@@ -98,6 +119,18 @@ Choose where you want the info window to be displayed, relative to the marker.
 - Type: _string_
 - Default: `'top'`
 - Possible Values: `'top'`, `'bottom'`, `'left'`, `'right'`
+
+#### map
+
+The Google Map associated to this info window. Only required if you are not using a `marker`.
+
+- Type: _[Map]_
+
+#### position
+
+The latitude and longitude where the info window is anchored. The `offset` will default to `0px` when using this option. Only required if you are not using a `marker`.
+
+- Type: _[LatLng]_ or _[LatLngLiteral]_
 
 #### wrapperClass
 
@@ -464,3 +497,9 @@ This element will not be included if `pointer` is `false`.
 If you find a bug with the library, please open an issue. If you would like fix
 an issue or contribute a feature, follow the steps outlined
 [here](./CONTRIBUTING.md).
+
+
+[LatLng]: https://developers.google.com/maps/documentation/javascript/reference#LatLng
+[LatLngLiteral]: https://developers.google.com/maps/documentation/javascript/reference#LatLngLiteral
+[Marker]: https://developers.google.com/maps/documentation/javascript/reference#Marker
+[Map]: https://developers.google.com/maps/documentation/javascript/reference#Map

@@ -104,6 +104,18 @@ function capitalizePlacement(p) {
     return p.charAt(0).toUpperCase() + p.slice(1);
 }
 
+// Convert the value into a Google Map LatLng
+function toLatLng(v) {
+    if (v !== undefined && v !== null && google) {
+        if (v instanceof google.maps.LatLng) {
+            return v;
+        } else if (v.lat !== undefined && v.lng !== undefined) {
+            return new google.maps.LatLng(v);
+        }
+    }
+    return null;
+}
+
 export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
     constructor(opts) {
@@ -113,6 +125,8 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         this._opts = mergeDefaultOptions(opts);
         this._callbacks = this._opts.callbacks || {};
         this._marker = this._opts.marker;
+        this._map = this._opts.map;
+        this._position = toLatLng(this._opts.position);
         this._isOpen = false;
         this._listeners = [];
 
@@ -123,6 +137,14 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                     this.open();
                 }
             });
+        }
+
+        // When using a position the default option for the offset is 0
+        if (this._position && !this._opts.offset) {
+            this._opts.offset = {
+                top: '0px',
+                left: '0px'
+            };
         }
 
         // Validate the placement option
@@ -175,6 +197,10 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         }
     }
 
+    isOpen() {
+        return this._isOpen;
+    }
+
     // Open the info window after attaching to a specific marker.
     open() {
         const result = this.activateCallback('beforeOpen');
@@ -183,6 +209,8 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         }
         if (this._marker) {
             this.setMap(this._marker.getMap());
+        } else if (this._map && this._position) {
+            this.setMap(this._map);
         }
     }
 
@@ -218,6 +246,15 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         }
     }
 
+    setPosition(latLng) {
+        this._position = toLatLng(latLng);
+        if (this._isOpen && this._position) {
+            this.draw();
+            this.resize();
+            this.reposition();
+        }
+    }
+
     getWrapper() {
         if (this._html) {
             return this._html.wrapper;
@@ -227,7 +264,10 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
     // Implementation of OverlayView draw method.
     draw() {
-        if (!this._marker || !this._html) {
+        if (!this.getMap() || !this._html) {
+            return;
+        }
+        if (!this._marker && !this._position) {
             return;
         }
 
@@ -354,10 +394,12 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             }
         }
 
-        const markerPos = this.getProjection().fromLatLngToDivPixel(this._marker.position);
-        this._html.floatWrapper.style.top = `${Math.floor(markerPos.y)}px`;
-        this._html.floatWrapper.style.left = `${Math.floor(markerPos.x)}px`;
-
+        const divPixel = this.getProjection()
+            .fromLatLngToDivPixel(this._position || this._marker.position);
+        if (divPixel) {
+            this._html.floatWrapper.style.top = `${Math.floor(divPixel.y)}px`;
+            this._html.floatWrapper.style.left = `${Math.floor(divPixel.x)}px`;
+        }
         if (!this._isOpen) {
             this._isOpen = true;
             this.resize();
