@@ -9,14 +9,14 @@ $(function() {
         return { lat: center.lat + dx, lng: center.lng + dy };
     };
     var dx = 0.003;
-    var positions = [
+    var placements = [
         { type: 'top', LatLng: offsetCenter(dx, 0) },
         { type: 'right', LatLng: offsetCenter(0, dx) },
         { type: 'bottom', LatLng: offsetCenter(-dx, 0) },
         { type: 'left', LatLng: offsetCenter(0, -dx) }
     ];
 
-    $.each(positions, function(i, e) {
+    $.each(placements, function(i, e) {
         var marker = new google.maps.Marker({
             map: map,
             draggable: true,
@@ -24,7 +24,7 @@ $(function() {
         });
         var info = new SnazzyInfoWindow($.extend({}, {
             marker: marker,
-            position: e.type,
+            placement: e.type,
             content: e.type,
             panOnOpen: false
         }));

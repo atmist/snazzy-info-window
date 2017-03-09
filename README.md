@@ -14,14 +14,15 @@ Open sourced by the people that created [Snazzy Maps](https://snazzymaps.com).
   - Supports SCSS styling.
 - **Dynamic content**
   - Supports dynamic content after initialization with proper resizing.
-- **Multiple positions**
-  - Position the info window to the top, bottom, right, or left of the marker.
+- **Multiple placements**
+  - Place the info window to the top, bottom, right, or left of the marker.
 
 ## Examples
 
 - [Simple](/examples#simple)
 - [Multiple markers](/examples#multiple-markers)
 - [Dynamic content](/examples#dynamic-content)
+- [Set position](/examples#set-position)
 - [Styling with SCSS](/examples#scss-styles)
 - [Styling with JavaScript](/examples#js-styles)
 - [Complex styling](/examples#complex-styles)
@@ -69,15 +70,29 @@ Will attempt to open the info window.
 
 Will attempt to close the info window.
 
+#### isOpen()
+
+Determines if the info window is open.
+
 #### destroy()
 
 Will destroy the info window. If the info window is open it will be forced
-closed bypassing the regular `beforeClose` callback. All google map event
+closed bypassing the regular `beforeClose` callback. All Google Map event
 listeners associated to this info window will be removed.
 
 #### setContent(content)
 
 Set the content in the info window. This can be called at any time.
+
+- Parameter: `content`
+  - _string_ or _DOM Element_
+
+#### setPosition(latLng)
+
+Set the `position` of the info window. A valid Google Map instance must be associated to the info window. This could be either through the `marker` or `map` option.
+
+- Parameter: `latLng`
+  - _[LatLng]_ or _[LatLngLiteral]_
 
 #### getWrapper()
 
@@ -85,19 +100,37 @@ Will return the DOM Element for the wrapper container of the info window.
 
 ## Options
 
+#### marker
+
+The Google Maps marker associated to this info window.
+
+- Type: _[Marker]_
+
 #### content
 
 The text or DOM Element to insert into the info window body.
 
 - Type: _string_ or _DOM Element_
 
-#### position
+#### placement
 
 Choose where you want the info window to be displayed, relative to the marker.
 
 - Type: _string_
 - Default: `'top'`
 - Possible Values: `'top'`, `'bottom'`, `'left'`, `'right'`
+
+#### map
+
+The Google Map associated to this info window. Only required if you are not using a `marker`.
+
+- Type: _[Map]_
+
+#### position
+
+The latitude and longitude where the info window is anchored. The `offset` will default to `0px` when using this option. Only required if you are not using a `marker`.
+
+- Type: _[LatLng]_ or _[LatLngLiteral]_
 
 #### wrapperClass
 
@@ -122,8 +155,8 @@ The max height in pixels of the info window.
 
 #### offset
 
-The offset from the marker. This value should be different for each `position`.
-By default the offset is configured for the default google maps marker.
+The offset from the marker. This value should be different for each `placement`.
+By default the offset is configured for the default Google Maps marker.
 
 - Type: _object_
 - Example:
@@ -238,7 +271,7 @@ completely remove the shadow.
 #### openOnMarkerClick
 
 Determines if the info window will open when the marker is clicked. An internal
-listener is added to the google maps `click` event which calls the `open()`
+listener is added to the Google Maps `click` event which calls the `open()`
 method.
 
 - Type: _boolean_
@@ -247,12 +280,19 @@ method.
 #### closeOnMapClick
 
 Determines if the info window will close when the map is clicked. An internal
-listener is added to the google maps `click` event which calls the `close()`
-method. This will not activate on the google maps `drag` event when the user is
+listener is added to the Google Maps `click` event which calls the `close()`
+method. This will not activate on the Google Maps `drag` event when the user is
 panning the map.
 
 - Type: _boolean_
 - Default: `true`
+
+#### closeWhenOthersOpen
+
+Determines if the info window will close when any other Snazzy Info Window is opened.
+
+- Type: _boolean_
+- Default: `false`
 
 #### showCloseButton
 
@@ -408,14 +448,14 @@ be removed from the DOM.
 
 #### si-float-wrapper
 
-Used to absolute position the info window in the google maps floatPane.
+Used to absolute position the info window in the Google Maps floatPane.
 
-#### si-wrapper-`position`
+#### si-wrapper-`placement`
 
-Used to css translate the info window into `position`. The `wrapperClass`
+Used to css translate the info window into the `placement`. The `wrapperClass`
 is added to this element's class list.
 
-#### si-shadow-wrapper-`position`
+#### si-shadow-wrapper-`placement`
 
 Used to blend opacity for all shadow elements. This div will not be included if
 `shadow` is `false`.
@@ -425,12 +465,12 @@ Used to blend opacity for all shadow elements. This div will not be included if
 Used to create the box shadow for the content wrapper. This element will not be
 included if `shadow` is `false`.
 
-#### si-shadow-pointer-`position`
+#### si-shadow-pointer-`placement`
 
-Used to `position` the pointer shadow. This element will not be included if
+Used to show the pointer shadow in the `placement`. This element will not be included if
 `shadow` or `pointer` is `false`.
 
-#### si-shadow-inner-pointer-`position`
+#### si-shadow-inner-pointer-`placement`
 
 Used to create the shadow for the pointer. This element will not be included if
 `shadow` or `pointer` is `false`.
@@ -448,12 +488,12 @@ element will not be included if `showCloseButton` is `false`.
 
 Used for wrapping your content and showing a scroll bar when there is overflow.
 
-#### si-pointer-border-`position`
+#### si-pointer-border-`placement`
 
 Used for rendering the tip of the pointer when there is a border present.
 This element will not be included if `pointer` or `border` is `false`.
 
-#### si-pointer-bg-`position`
+#### si-pointer-bg-`placement`
 
 Used for rendering the inner tip of the pointer when there is a border present.
 This element will not be included if `pointer` is `false`.
@@ -464,3 +504,9 @@ This element will not be included if `pointer` is `false`.
 If you find a bug with the library, please open an issue. If you would like fix
 an issue or contribute a feature, follow the steps outlined
 [here](./CONTRIBUTING.md).
+
+
+[LatLng]: https://developers.google.com/maps/documentation/javascript/reference#LatLng
+[LatLngLiteral]: https://developers.google.com/maps/documentation/javascript/reference#LatLngLiteral
+[Marker]: https://developers.google.com/maps/documentation/javascript/reference#Marker
+[Map]: https://developers.google.com/maps/documentation/javascript/reference#Map

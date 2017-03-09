@@ -16,7 +16,7 @@ One marker with default settings.
 
 ## multiple-markers
 
-Multiple markers with different positions.
+Multiple markers with different placements.
 
 ![Screenshot][multiple-screenshot]
 
@@ -35,6 +35,17 @@ Content which is loaded using a handlebars template and updated through an inter
 
 [dynamic-content-screenshot]: dynamic-content/screenshot.png "Dynamic Content Screenshot"
 [dynamic-content]: https://rawgit.com/atmist/snazzy-info-window/master/examples/dynamic-content/index.html
+
+## set-position
+
+Change the position of the info window by clicking on the map.
+
+![Screenshot][set-position-screenshot]
+
+[View live example][set-position]
+
+[set-position-screenshot]: set-position/screenshot.png "Set Position Screenshot"
+[set-position]: https://rawgit.com/atmist/snazzy-info-window/master/examples/set-position/index.html
 
 ## scss-styles
 
