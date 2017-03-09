@@ -1,7 +1,7 @@
 {
   "name": "snazzy-info-window",
   "description": "Customizable info windows using the Google Maps JavaScript API.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "homepage": "https://github.com/atmist/snazzy-info-window",
   "repository": {
     "url": "https://github.com/atmist/snazzy-info-window.git",

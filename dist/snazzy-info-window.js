@@ -75,6 +75,7 @@
     var _classPrefix = 'si-';
     var _root2 = 1.41421356237;
     var _inverseRoot2 = 0.7071067811865474;
+    var _eventPrefix = 'snazzy-info-window-';
     var _defaultShadow = {
         h: '0px',
         v: '3px',
@@ -83,10 +84,11 @@
         color: '#000'
     };
     var _defaultOptions = {
-        position: 'top',
+        placement: 'top',
         pointer: true,
         openOnMarkerClick: true,
         closeOnMapClick: true,
+        closeWhenOthersOpen: false,
         showCloseButton: true,
         panOnOpen: true,
         edgeOffset: {
@@ -158,8 +160,8 @@
         }
     }
 
-    // Get the opposite of a given position
-    function oppositePosition(p) {
+    // Get the opposite of a given placement
+    function oppositePlacement(p) {
         if (p === 'top') {
             return 'bottom';
         } else if (p === 'bottom') {
@@ -172,9 +174,21 @@
         return p;
     }
 
-    // Return the position with the first letter capitalized
-    function capitalizePosition(p) {
+    // Return the placement with the first letter capitalized
+    function capitalizePlacement(p) {
         return p.charAt(0).toUpperCase() + p.slice(1);
+    }
+
+    // Convert the value into a Google Map LatLng
+    function toLatLng(v) {
+        if (v !== undefined && v !== null && google) {
+            if (v instanceof google.maps.LatLng) {
+                return v;
+            } else if (v.lat !== undefined && v.lng !== undefined) {
+                return new google.maps.LatLng(v);
+            }
+        }
+        return null;
     }
 
     var SnazzyInfoWindow = function (_google$maps$OverlayV) {
@@ -190,26 +204,47 @@
             _this._opts = mergeDefaultOptions(opts);
             _this._callbacks = _this._opts.callbacks || {};
             _this._marker = _this._opts.marker;
+            _this._map = _this._opts.map;
+            _this._position = toLatLng(_this._opts.position);
             _this._isOpen = false;
             _this._listeners = [];
 
             // This listener remains active when the info window is closed.
             if (google && _this._marker && _this._opts.openOnMarkerClick) {
-                _this._openOnMarkerClickListener = google.maps.event.addListener(_this._marker, 'click', function () {
+                _this.trackListener(google.maps.event.addListener(_this._marker, 'click', function () {
                     if (!_this.getMap()) {
                         _this.open();
                     }
-                });
+                }), true);
             }
 
-            // Validate the options
-            var p = _this._opts.position;
-            if (p) {
+            // When using a position the default option for the offset is 0
+            if (_this._position && !_this._opts.offset) {
+                _this._opts.offset = {
+                    top: '0px',
+                    left: '0px'
+                };
+            }
+
+            // Validate the placement option
+            var p = opts.placement || _this._opts.position;
+            // The position variable was renamed to placement so we must type check
+            if (typeof p === 'string' || p instanceof String) {
                 p = p.toLowerCase();
             }
             if (p !== 'top' && p !== 'bottom' && p !== 'left' && p !== 'right') {
-                _this._opts.position = _defaultOptions.position;
+                _this._opts.placement = _defaultOptions.placement;
+            } else {
+                _this._opts.placement = p;
             }
+
+            // Validate the position option
+            p = _this._opts.position;
+            if (p !== undefined && p !== null && typeof p !== 'string' && !(p instanceof String)) {
+                _this._opts.position = p;
+            }
+
+            // Validate the other options
             if (_this._opts.border === undefined || _this._opts.border === true) {
                 _this._opts.border = {};
             }
@@ -228,20 +263,35 @@
         _createClass(SnazzyInfoWindow, [{
             key: 'activateCallback',
             value: function activateCallback(callback) {
-                var lamda = this._callbacks[callback];
-                return lamda ? lamda.apply(this) : undefined;
+                var lambda = this._callbacks[callback];
+                return lambda ? lambda.apply(this) : undefined;
+            }
+        }, {
+            key: 'trackListener',
+            value: function trackListener(listener, persistent) {
+                this._listeners.push({ listener: listener, persistent: persistent });
             }
         }, {
             key: 'clearListeners',
-            value: function clearListeners() {
+            value: function clearListeners(clearPersistent) {
                 if (google) {
                     if (this._listeners) {
-                        this._listeners.forEach(function (listener) {
-                            google.maps.event.removeListener(listener);
+                        this._listeners.forEach(function (e) {
+                            if (clearPersistent || !e.persistent) {
+                                google.maps.event.removeListener(e.listener);
+                                e.listener = null;
+                            }
+                        });
+                        this._listeners = this._listeners.filter(function (e) {
+                            return e.listener != null;
                         });
                     }
-                    this._listeners = [];
                 }
+            }
+        }, {
+            key: 'isOpen',
+            value: function isOpen() {
+                return this._isOpen;
             }
         }, {
             key: 'open',
@@ -252,6 +302,8 @@
                 }
                 if (this._marker) {
                     this.setMap(this._marker.getMap());
+                } else if (this._map && this._position) {
+                    this.setMap(this._map);
                 }
             }
         }, {
@@ -270,14 +322,8 @@
                 if (this.getMap()) {
                     this.setMap(null);
                 }
-
-                if (google) {
-                    if (this._openOnMarkerClickListener) {
-                        google.maps.event.removeListener(this._openOnMarkerClickListener);
-                        this._openOnMarkerClickListener = null;
-                    }
-                }
-                this.clearListeners();
+                // Make sure to clear all persistent listeners
+                this.clearListeners(true);
             }
         }, {
             key: 'setContent',
@@ -285,6 +331,16 @@
                 this._opts.content = content;
                 if (this._html && this._html.content) {
                     setHTML(this._html.content, content);
+                }
+            }
+        }, {
+            key: 'setPosition',
+            value: function setPosition(latLng) {
+                this._position = toLatLng(latLng);
+                if (this._isOpen && this._position) {
+                    this.draw();
+                    this.resize();
+                    this.reposition();
                 }
             }
         }, {
@@ -298,9 +354,10 @@
         }, {
             key: 'draw',
             value: function draw() {
-                var _this2 = this;
-
-                if (!this._marker || !this._html) {
+                if (!this.getMap() || !this._html) {
+                    return;
+                }
+                if (!this._marker && !this._position) {
                     return;
                 }
 
@@ -319,7 +376,7 @@
                 if (bg) {
                     this._html.contentWrapper.style.backgroundColor = bg;
                     if (this._opts.pointer) {
-                        this._html.pointerBg.style['border' + capitalizePosition(this._opts.position) + 'Color'] = bg;
+                        this._html.pointerBg.style['border' + capitalizePlacement(this._opts.placement) + 'Color'] = bg;
                     }
                 }
                 // 3. Padding
@@ -378,68 +435,68 @@
 
                         this._html.pointerBg.style.borderWidth = pLength.value - triangleDiff + pLength.units;
 
-                        var reverseP = capitalizePosition(oppositePosition(this._opts.position));
+                        var reverseP = capitalizePlacement(oppositePlacement(this._opts.placement));
                         this._html.pointerBg.style['margin' + reverseP] = triangleDiff + bWidth.units;
-                        this._html.pointerBg.style[this._opts.position] = -bWidth.value + bWidth.units;
+                        this._html.pointerBg.style[this._opts.placement] = -bWidth.value + bWidth.units;
                     }
                     var color = this._opts.border.color;
                     if (color) {
                         this._html.contentWrapper.style.borderColor = color;
                         if (this._html.pointerBorder) {
-                            this._html.pointerBorder.style['border' + capitalizePosition(this._opts.position) + 'Color'] = color;
+                            this._html.pointerBorder.style['border' + capitalizePlacement(this._opts.placement) + 'Color'] = color;
                         }
                     }
                 }
                 // 9. Shadow
                 if (this._opts.shadow) {
-                    (function () {
-                        // Check if any of the shadow settings have actually been set
-                        var shadow = _this2._opts.shadow;
-                        var isSet = function isSet(attribute) {
-                            var v = shadow[attribute];
-                            return v !== undefined && v != null;
+                    // Check if any of the shadow settings have actually been set
+                    var shadow = this._opts.shadow;
+                    var isSet = function isSet(attribute) {
+                        var v = shadow[attribute];
+                        return v !== undefined && v != null;
+                    };
+
+                    if (isSet('h') || isSet('v') || isSet('blur') || isSet('spread') || isSet('color')) {
+                        var hOffset = parseAttribute(shadow.h, _defaultShadow.h);
+                        var vOffset = parseAttribute(shadow.v, _defaultShadow.v);
+                        var blur = parseAttribute(shadow.blur, _defaultShadow.blur);
+                        var spread = parseAttribute(shadow.spread, _defaultShadow.spread);
+                        var _color = shadow.color || _defaultShadow.color;
+                        var formatBoxShadow = function formatBoxShadow(h, v) {
+                            return h + ' ' + v + ' ' + blur.original + ' ' + spread.original + ' ' + _color;
                         };
 
-                        if (isSet('h') || isSet('v') || isSet('blur') || isSet('spread') || isSet('color')) {
-                            (function () {
-                                var hOffset = parseAttribute(shadow.h, _defaultShadow.h);
-                                var vOffset = parseAttribute(shadow.v, _defaultShadow.v);
-                                var blur = parseAttribute(shadow.blur, _defaultShadow.blur);
-                                var spread = parseAttribute(shadow.spread, _defaultShadow.spread);
-                                var color = shadow.color || _defaultShadow.color;
-                                var formatBoxShadow = function formatBoxShadow(h, v) {
-                                    return h + ' ' + v + ' ' + blur.original + ' ' + spread.original + ' ' + color;
-                                };
+                        this._html.shadowFrame.style.boxShadow = formatBoxShadow(hOffset.original, vOffset.original);
 
-                                _this2._html.shadowFrame.style.boxShadow = formatBoxShadow(hOffset.original, vOffset.original);
-
-                                // Correctly rotate the shadows before the css transform
-                                var hRotated = _inverseRoot2 * (hOffset.value - vOffset.value) + hOffset.units;
-                                var vRotated = _inverseRoot2 * (hOffset.value + vOffset.value) + vOffset.units;
-                                _this2._html.shadowPointerInner.style.boxShadow = formatBoxShadow(hRotated, vRotated);
-                            })();
-                        }
-                        if (_this2._opts.shadow.opacity) {
-                            _this2._html.shadowWrapper.style.opacity = _this2._opts.shadow.opacity;
-                        }
-                    })();
+                        // Correctly rotate the shadows before the css transform
+                        var hRotated = _inverseRoot2 * (hOffset.value - vOffset.value) + hOffset.units;
+                        var vRotated = _inverseRoot2 * (hOffset.value + vOffset.value) + vOffset.units;
+                        this._html.shadowPointerInner.style.boxShadow = formatBoxShadow(hRotated, vRotated);
+                    }
+                    if (this._opts.shadow.opacity) {
+                        this._html.shadowWrapper.style.opacity = this._opts.shadow.opacity;
+                    }
                 }
 
-                var markerPos = this.getProjection().fromLatLngToDivPixel(this._marker.position);
-                this._html.floatWrapper.style.top = Math.floor(markerPos.y) + 'px';
-                this._html.floatWrapper.style.left = Math.floor(markerPos.x) + 'px';
-
+                var divPixel = this.getProjection().fromLatLngToDivPixel(this._position || this._marker.position);
+                if (divPixel) {
+                    this._html.floatWrapper.style.top = Math.floor(divPixel.y) + 'px';
+                    this._html.floatWrapper.style.left = Math.floor(divPixel.x) + 'px';
+                }
                 if (!this._isOpen) {
                     this._isOpen = true;
                     this.resize();
                     this.reposition();
                     this.activateCallback('afterOpen');
+                    if (google) {
+                        google.maps.event.trigger(this.getMap(), _eventPrefix + 'opened', this);
+                    }
                 }
             }
         }, {
             key: 'onAdd',
             value: function onAdd() {
-                var _this3 = this;
+                var _this2 = this;
 
                 if (this._html) {
                     return;
@@ -471,7 +528,7 @@
                 this._html = {};
 
                 // 1. Create the wrapper
-                this._html.wrapper = newElement('wrapper-' + this._opts.position);
+                this._html.wrapper = newElement('wrapper-' + this._opts.placement);
                 if (this._opts.wrapperClass) {
                     this._html.wrapper.className += ' ' + this._opts.wrapperClass;
                 }
@@ -481,13 +538,13 @@
 
                 // 2. Create the shadow
                 if (this._opts.shadow) {
-                    this._html.shadowWrapper = newElement('shadow-wrapper-' + this._opts.position);
+                    this._html.shadowWrapper = newElement('shadow-wrapper-' + this._opts.placement);
                     this._html.shadowFrame = newElement('frame', 'shadow-frame');
                     this._html.shadowWrapper.appendChild(this._html.shadowFrame);
 
                     if (this._opts.pointer) {
-                        this._html.shadowPointer = newElement('shadow-pointer-' + this._opts.position);
-                        this._html.shadowPointerInner = newElement('shadow-inner-pointer-' + this._opts.position);
+                        this._html.shadowPointer = newElement('shadow-pointer-' + this._opts.placement);
+                        this._html.shadowPointerInner = newElement('shadow-inner-pointer-' + this._opts.placement);
                         this._html.shadowPointer.appendChild(this._html.shadowPointerInner);
                         this._html.shadowWrapper.appendChild(this._html.shadowPointer);
                     }
@@ -522,10 +579,10 @@
                 // 5. Create the pointer
                 if (this._opts.pointer) {
                     if (this._opts.border) {
-                        this._html.pointerBorder = newElement('pointer-' + this._opts.position, 'pointer-border-' + this._opts.position);
+                        this._html.pointerBorder = newElement('pointer-' + this._opts.placement, 'pointer-border-' + this._opts.placement);
                         this._html.wrapper.appendChild(this._html.pointerBorder);
                     }
-                    this._html.pointerBg = newElement('pointer-' + this._opts.position, 'pointer-bg-' + this._opts.position);
+                    this._html.pointerBg = newElement('pointer-' + this._opts.placement, 'pointer-bg-' + this._opts.placement);
                     this._html.wrapper.appendChild(this._html.pointerBg);
                 }
 
@@ -540,49 +597,56 @@
                 var map = this.getMap();
                 this.clearListeners();
                 if (this._opts.closeOnMapClick) {
-                    this._listeners.push(google.maps.event.addListener(map, 'click', function () {
-                        _this3.close();
+                    this.trackListener(google.maps.event.addListener(map, 'click', function () {
+                        _this2.close();
+                    }));
+                }
+                if (this._opts.closeWhenOthersOpen) {
+                    this.trackListener(google.maps.event.addListener(map, _eventPrefix + 'opened', function (other) {
+                        if (_this2 !== other) {
+                            _this2.close();
+                        }
                     }));
                 }
                 if (google) {
                     // Clear out the previous map bounds
                     this._previousWidth = null;
                     this._previousHeight = null;
-                    this._listeners.push(google.maps.event.addListener(map, 'bounds_changed', function () {
+                    this.trackListener(google.maps.event.addListener(map, 'bounds_changed', function () {
                         var d = map.getDiv();
                         var ow = d.offsetWidth;
                         var oh = d.offsetHeight;
-                        var pw = _this3._previousWidth;
-                        var ph = _this3._previousHeight;
+                        var pw = _this2._previousWidth;
+                        var ph = _this2._previousHeight;
                         if (pw === null || ph === null || pw !== ow || ph !== oh) {
-                            _this3._previousWidth = ow;
-                            _this3._previousHeight = oh;
-                            _this3.resize();
+                            _this2._previousWidth = ow;
+                            _this2._previousHeight = oh;
+                            _this2.resize();
                         }
                     }));
 
                     // Marker moves
                     if (this._marker) {
-                        this._listeners.push(google.maps.event.addListener(this._marker, 'position_changed', function () {
-                            _this3.draw();
+                        this.trackListener(google.maps.event.addListener(this._marker, 'position_changed', function () {
+                            _this2.draw();
                         }));
                     }
 
                     // Close button
                     if (this._opts.showCloseButton && !this._opts.closeButtonMarkup) {
-                        this._listeners.push(google.maps.event.addDomListener(this._html.closeButton, 'click', function (e) {
+                        this.trackListener(google.maps.event.addDomListener(this._html.closeButton, 'click', function (e) {
                             e.cancelBubble = true;
                             if (e.stopPropagation) {
                                 e.stopPropagation();
                             }
-                            _this3.close();
+                            _this2.close();
                         }));
                     }
 
                     // Stop the mouse event propagation
                     var mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu', 'drag', 'dragend', 'dragstart', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'touchstart', 'touchend', 'touchmove', 'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
                     mouseEvents.forEach(function (event) {
-                        _this3._listeners.push(google.maps.event.addDomListener(_this3._html.wrapper, event, function (e) {
+                        _this2.trackListener(google.maps.event.addDomListener(_this2._html.wrapper, event, function (e) {
                             e.cancelBubble = true;
                             if (e.stopPropagation) {
                                 e.stopPropagation();
