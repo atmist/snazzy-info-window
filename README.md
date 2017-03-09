@@ -287,6 +287,13 @@ panning the map.
 - Type: _boolean_
 - Default: `true`
 
+#### closeWhenOthersOpen
+
+Determines if the info window will close when any other Snazzy Info Window is opened.
+
+- Type: _boolean_
+- Default: `false`
+
 #### showCloseButton
 
 Determines if the info window will show a close button.

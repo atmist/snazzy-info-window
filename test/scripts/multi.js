@@ -6,7 +6,8 @@ $(function(){
     var map = new google.maps.Map($('.map-canvas')[0], {
         zoom: 14,
         center: center,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        clickableIcons: false
     });
     var dx = 0.003;
     var placements = [
@@ -15,6 +16,7 @@ $(function(){
         { type: 'bottom', LatLng: offsetCenter(-dx, 0) },
         { type: 'left', LatLng: offsetCenter(0, -dx) }
     ];
+    window.infos = [];
     $.each(placements, function(i, e){
         var marker = new google.maps.Marker({
             map: map,
@@ -31,5 +33,6 @@ $(function(){
             panOnOpen: false
         }));
         info.open();
+        window.infos.push(info);
     });
 });

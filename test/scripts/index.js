@@ -2,7 +2,8 @@ $(function() {
     var map = new google.maps.Map($(".map-canvas")[0], {
         zoom: 14,
         center: new google.maps.LatLng(40.72, -74),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        clickableIcons: false
     });
 
     var marker = new google.maps.Marker({

@@ -2,6 +2,7 @@
 const _classPrefix = 'si-';
 const _root2 = 1.41421356237;
 const _inverseRoot2 = 0.7071067811865474;
+const _eventPrefix = 'snazzy-info-window-';
 const _defaultShadow = {
     h: '0px',
     v: '3px',
@@ -14,6 +15,7 @@ const _defaultOptions = {
     pointer: true,
     openOnMarkerClick: true,
     closeOnMapClick: true,
+    closeWhenOthersOpen: false,
     showCloseButton: true,
     panOnOpen: true,
     edgeOffset: {
@@ -132,11 +134,11 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
         // This listener remains active when the info window is closed.
         if (google && this._marker && this._opts.openOnMarkerClick) {
-            this._openOnMarkerClickListener = google.maps.event.addListener(this._marker, 'click', () => {
+            this.trackListener(google.maps.event.addListener(this._marker, 'click', () => {
                 if (!this.getMap()) {
                     this.open();
                 }
-            });
+            }), true);
         }
 
         // When using a position the default option for the offset is 0
@@ -185,15 +187,26 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         return lambda ? lambda.apply(this) : undefined;
     }
 
+    // Track the provided listener. A persistent listener means it remains
+    // tracked even if the info window is closed.
+    trackListener(listener, persistent) {
+        this._listeners.push({ listener, persistent });
+    }
+
     // Will clear all listeners that are used during the open state.
-    clearListeners() {
+    clearListeners(clearPersistent) {
         if (google) {
             if (this._listeners) {
-                this._listeners.forEach((listener) => {
-                    google.maps.event.removeListener(listener);
+                this._listeners.forEach((e) => {
+                    if (clearPersistent || !e.persistent) {
+                        google.maps.event.removeListener(e.listener);
+                        e.listener = null;
+                    }
+                });
+                this._listeners = this._listeners.filter((e) => {
+                    return e.listener != null;
                 });
             }
-            this._listeners = [];
         }
     }
 
@@ -229,14 +242,8 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         if (this.getMap()) {
             this.setMap(null);
         }
-
-        if (google) {
-            if (this._openOnMarkerClickListener) {
-                google.maps.event.removeListener(this._openOnMarkerClickListener);
-                this._openOnMarkerClickListener = null;
-            }
-        }
-        this.clearListeners();
+        // Make sure to clear all persistent listeners
+        this.clearListeners(true);
     }
 
     setContent(content) {
@@ -405,6 +412,9 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             this.resize();
             this.reposition();
             this.activateCallback('afterOpen');
+            if (google) {
+                google.maps.event.trigger(this.getMap(), `${_eventPrefix}opened`, this);
+            }
         }
     }
 
@@ -529,15 +539,22 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         const map = this.getMap();
         this.clearListeners();
         if (this._opts.closeOnMapClick) {
-            this._listeners.push(google.maps.event.addListener(map, 'click', () => {
+            this.trackListener(google.maps.event.addListener(map, 'click', () => {
                 this.close();
+            }));
+        }
+        if (this._opts.closeWhenOthersOpen) {
+            this.trackListener(google.maps.event.addListener(map, `${_eventPrefix}opened`, (other) => {
+                if (this !== other) {
+                    this.close();
+                }
             }));
         }
         if (google) {
             // Clear out the previous map bounds
             this._previousWidth = null;
             this._previousHeight = null;
-            this._listeners.push(google.maps.event.addListener(map, 'bounds_changed', () => {
+            this.trackListener(google.maps.event.addListener(map, 'bounds_changed', () => {
                 const d = map.getDiv();
                 const ow = d.offsetWidth;
                 const oh = d.offsetHeight;
@@ -552,7 +569,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
             // Marker moves
             if (this._marker) {
-                this._listeners.push(google.maps.event.addListener(this._marker,
+                this.trackListener(google.maps.event.addListener(this._marker,
                     'position_changed', () => {
                         this.draw();
                     }));
@@ -560,7 +577,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
             // Close button
             if (this._opts.showCloseButton && !this._opts.closeButtonMarkup) {
-                this._listeners.push(google.maps.event.addDomListener(this._html.closeButton,
+                this.trackListener(google.maps.event.addDomListener(this._html.closeButton,
                     'click', (e) => {
                         e.cancelBubble = true;
                         if (e.stopPropagation) {
@@ -577,7 +594,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                 'touchstart', 'touchend', 'touchmove',
                 'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
             mouseEvents.forEach((event) => {
-                this._listeners.push(google.maps.event.addDomListener(this._html.wrapper,
+                this.trackListener(google.maps.event.addDomListener(this._html.wrapper,
                     event, (e) => {
                         e.cancelBubble = true;
                         if (e.stopPropagation) {
