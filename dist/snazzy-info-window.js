@@ -181,7 +181,7 @@
 
     // Convert the value into a Google Map LatLng
     function toLatLng(v) {
-        if (v !== undefined && v !== null && google) {
+        if (v !== undefined && v !== null) {
             if (v instanceof google.maps.LatLng) {
                 return v;
             } else if (v.lat !== undefined && v.lng !== undefined) {
@@ -191,14 +191,23 @@
         return null;
     }
 
-    var SnazzyInfoWindow = function (_google$maps$OverlayV) {
-        _inherits(SnazzyInfoWindow, _google$maps$OverlayV);
+    // Export SnazzyInfoWindow even if google is not yet defined.
+    var getGoogleClass = function getGoogleClass() {
+        return typeof google !== 'undefined' ? google.maps.OverlayView : function noop() {};
+    };
+
+    var SnazzyInfoWindow = function (_getGoogleClass) {
+        _inherits(SnazzyInfoWindow, _getGoogleClass);
 
         function SnazzyInfoWindow(opts) {
             _classCallCheck(this, SnazzyInfoWindow);
 
             var _this = _possibleConstructorReturn(this, (SnazzyInfoWindow.__proto__ || Object.getPrototypeOf(SnazzyInfoWindow)).call(this, opts));
 
+            if (typeof google === 'undefined') {
+                console.warn('Snazzy Info Window: Google Maps is not defined!'); //eslint-disable-line
+                return _possibleConstructorReturn(_this);
+            }
             // Private properties
             _this._html = null;
             _this._opts = mergeDefaultOptions(opts);
@@ -210,7 +219,7 @@
             _this._listeners = [];
 
             // This listener remains active when the info window is closed.
-            if (google && _this._marker && _this._opts.openOnMarkerClick) {
+            if (_this._marker && _this._opts.openOnMarkerClick) {
                 _this.trackListener(google.maps.event.addListener(_this._marker, 'click', function () {
                     if (!_this.getMap()) {
                         _this.open();
@@ -274,18 +283,16 @@
         }, {
             key: 'clearListeners',
             value: function clearListeners(clearPersistent) {
-                if (google) {
-                    if (this._listeners) {
-                        this._listeners.forEach(function (e) {
-                            if (clearPersistent || !e.persistent) {
-                                google.maps.event.removeListener(e.listener);
-                                e.listener = null;
-                            }
-                        });
-                        this._listeners = this._listeners.filter(function (e) {
-                            return e.listener != null;
-                        });
-                    }
+                if (this._listeners) {
+                    this._listeners.forEach(function (e) {
+                        if (clearPersistent || !e.persistent) {
+                            google.maps.event.removeListener(e.listener);
+                            e.listener = null;
+                        }
+                    });
+                    this._listeners = this._listeners.filter(function (e) {
+                        return e.listener != null;
+                    });
                 }
             }
         }, {
@@ -342,6 +349,21 @@
                     this.resize();
                     this.reposition();
                 }
+            }
+        }, {
+            key: 'setWrapperClass',
+            value: function setWrapperClass(wrapperClass) {
+                if (this._html && this._html.wrapper) {
+                    var w = this._html.wrapper;
+                    w.className = _classPrefix + 'wrapper-' + this._opts.placement;
+                    if (this._opts.border) {
+                        w.className += ' ' + _classPrefix + 'has-border';
+                    }
+                    if (wrapperClass) {
+                        w.className += ' ' + wrapperClass;
+                    }
+                }
+                this._opts.wrapperClass = wrapperClass;
             }
         }, {
             key: 'getWrapper',
@@ -471,7 +493,9 @@
                         // Correctly rotate the shadows before the css transform
                         var hRotated = _inverseRoot2 * (hOffset.value - vOffset.value) + hOffset.units;
                         var vRotated = _inverseRoot2 * (hOffset.value + vOffset.value) + vOffset.units;
-                        this._html.shadowPointerInner.style.boxShadow = formatBoxShadow(hRotated, vRotated);
+                        if (this._html.shadowPointerInner) {
+                            this._html.shadowPointerInner.style.boxShadow = formatBoxShadow(hRotated, vRotated);
+                        }
                     }
                     if (this._opts.shadow.opacity) {
                         this._html.shadowWrapper.style.opacity = this._opts.shadow.opacity;
@@ -488,9 +512,7 @@
                     this.resize();
                     this.reposition();
                     this.activateCallback('afterOpen');
-                    if (google) {
-                        google.maps.event.trigger(this.getMap(), _eventPrefix + 'opened', this);
-                    }
+                    google.maps.event.trigger(this.getMap(), _eventPrefix + 'opened', this);
                 }
             }
         }, {
@@ -528,13 +550,8 @@
                 this._html = {};
 
                 // 1. Create the wrapper
-                this._html.wrapper = newElement('wrapper-' + this._opts.placement);
-                if (this._opts.wrapperClass) {
-                    this._html.wrapper.className += ' ' + this._opts.wrapperClass;
-                }
-                if (this._opts.border) {
-                    applyCss(this._html.wrapper, ['has-border']);
-                }
+                this._html.wrapper = newElement();
+                this.setWrapperClass(this._opts.wrapperClass);
 
                 // 2. Create the shadow
                 if (this._opts.shadow) {
@@ -608,52 +625,51 @@
                         }
                     }));
                 }
-                if (google) {
-                    // Clear out the previous map bounds
-                    this._previousWidth = null;
-                    this._previousHeight = null;
-                    this.trackListener(google.maps.event.addListener(map, 'bounds_changed', function () {
-                        var d = map.getDiv();
-                        var ow = d.offsetWidth;
-                        var oh = d.offsetHeight;
-                        var pw = _this2._previousWidth;
-                        var ph = _this2._previousHeight;
-                        if (pw === null || ph === null || pw !== ow || ph !== oh) {
-                            _this2._previousWidth = ow;
-                            _this2._previousHeight = oh;
-                            _this2.resize();
+
+                // Clear out the previous map bounds
+                this._previousWidth = null;
+                this._previousHeight = null;
+                this.trackListener(google.maps.event.addListener(map, 'bounds_changed', function () {
+                    var d = map.getDiv();
+                    var ow = d.offsetWidth;
+                    var oh = d.offsetHeight;
+                    var pw = _this2._previousWidth;
+                    var ph = _this2._previousHeight;
+                    if (pw === null || ph === null || pw !== ow || ph !== oh) {
+                        _this2._previousWidth = ow;
+                        _this2._previousHeight = oh;
+                        _this2.resize();
+                    }
+                }));
+
+                // Marker moves
+                if (this._marker) {
+                    this.trackListener(google.maps.event.addListener(this._marker, 'position_changed', function () {
+                        _this2.draw();
+                    }));
+                }
+
+                // Close button
+                if (this._opts.showCloseButton && !this._opts.closeButtonMarkup) {
+                    this.trackListener(google.maps.event.addDomListener(this._html.closeButton, 'click', function (e) {
+                        e.cancelBubble = true;
+                        if (e.stopPropagation) {
+                            e.stopPropagation();
+                        }
+                        _this2.close();
+                    }));
+                }
+
+                // Stop the mouse event propagation
+                var mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu', 'drag', 'dragend', 'dragstart', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'touchstart', 'touchend', 'touchmove', 'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
+                mouseEvents.forEach(function (event) {
+                    _this2.trackListener(google.maps.event.addDomListener(_this2._html.wrapper, event, function (e) {
+                        e.cancelBubble = true;
+                        if (e.stopPropagation) {
+                            e.stopPropagation();
                         }
                     }));
-
-                    // Marker moves
-                    if (this._marker) {
-                        this.trackListener(google.maps.event.addListener(this._marker, 'position_changed', function () {
-                            _this2.draw();
-                        }));
-                    }
-
-                    // Close button
-                    if (this._opts.showCloseButton && !this._opts.closeButtonMarkup) {
-                        this.trackListener(google.maps.event.addDomListener(this._html.closeButton, 'click', function (e) {
-                            e.cancelBubble = true;
-                            if (e.stopPropagation) {
-                                e.stopPropagation();
-                            }
-                            _this2.close();
-                        }));
-                    }
-
-                    // Stop the mouse event propagation
-                    var mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu', 'drag', 'dragend', 'dragstart', 'mousedown', 'mouseout', 'mouseover', 'mouseup', 'touchstart', 'touchend', 'touchmove', 'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
-                    mouseEvents.forEach(function (event) {
-                        _this2.trackListener(google.maps.event.addDomListener(_this2._html.wrapper, event, function (e) {
-                            e.cancelBubble = true;
-                            if (e.stopPropagation) {
-                                e.stopPropagation();
-                            }
-                        }));
-                    });
-                }
+                });
 
                 this.activateCallback('open');
             }
@@ -735,7 +751,7 @@
         }]);
 
         return SnazzyInfoWindow;
-    }(google.maps.OverlayView);
+    }(getGoogleClass());
 
     exports.default = SnazzyInfoWindow;
     module.exports = exports['default'];
