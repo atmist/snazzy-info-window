@@ -268,6 +268,20 @@ export default class SnazzyInfoWindow extends getGoogleClass() {
         }
     }
 
+    setWrapperClass(wrapperClass) {
+        if (this._html && this._html.wrapper) {
+            const w = this._html.wrapper;
+            w.className = `${_classPrefix}wrapper-${this._opts.placement}`;
+            if (this._opts.border) {
+                w.className += ` ${_classPrefix}has-border`;
+            }
+            if (wrapperClass) {
+                w.className += ` ${wrapperClass}`;
+            }
+        }
+        this._opts.wrapperClass = wrapperClass;
+    }
+
     getWrapper() {
         if (this._html) {
             return this._html.wrapper;
@@ -453,15 +467,8 @@ export default class SnazzyInfoWindow extends getGoogleClass() {
         this._html = {};
 
         // 1. Create the wrapper
-        this._html.wrapper = newElement(
-            `wrapper-${this._opts.placement}`
-        );
-        if (this._opts.wrapperClass) {
-            this._html.wrapper.className += ` ${this._opts.wrapperClass}`;
-        }
-        if (this._opts.border) {
-            applyCss(this._html.wrapper, ['has-border']);
-        }
+        this._html.wrapper = newElement();
+        this.setWrapperClass(this._opts.wrapperClass);
 
         // 2. Create the shadow
         if (this._opts.shadow) {
