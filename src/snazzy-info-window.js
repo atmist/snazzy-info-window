@@ -108,7 +108,7 @@ function capitalizePlacement(p) {
 
 // Convert the value into a Google Map LatLng
 function toLatLng(v) {
-    if (v !== undefined && v !== null && google) {
+    if (v !== undefined && v !== null) {
         if (v instanceof google.maps.LatLng) {
             return v;
         } else if (v.lat !== undefined && v.lng !== undefined) {
@@ -118,10 +118,18 @@ function toLatLng(v) {
     return null;
 }
 
-export default class SnazzyInfoWindow extends google.maps.OverlayView {
+// Export SnazzyInfoWindow even if google is not yet defined.
+const getGoogleClass = () => {
+    return typeof google !== 'undefined' ? google.maps.OverlayView : function noop() {};
+};
+export default class SnazzyInfoWindow extends getGoogleClass() {
 
     constructor(opts) {
         super(opts);
+        if (typeof google === 'undefined') {
+            console.warn('Snazzy Info Window: Google Maps is not defined!'); //eslint-disable-line
+            return;
+        }
         // Private properties
         this._html = null;
         this._opts = mergeDefaultOptions(opts);
@@ -133,7 +141,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         this._listeners = [];
 
         // This listener remains active when the info window is closed.
-        if (google && this._marker && this._opts.openOnMarkerClick) {
+        if (this._marker && this._opts.openOnMarkerClick) {
             this.trackListener(google.maps.event.addListener(this._marker, 'click', () => {
                 if (!this.getMap()) {
                     this.open();
@@ -195,18 +203,16 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
 
     // Will clear all listeners that are used during the open state.
     clearListeners(clearPersistent) {
-        if (google) {
-            if (this._listeners) {
-                this._listeners.forEach((e) => {
-                    if (clearPersistent || !e.persistent) {
-                        google.maps.event.removeListener(e.listener);
-                        e.listener = null;
-                    }
-                });
-                this._listeners = this._listeners.filter((e) => {
-                    return e.listener != null;
-                });
-            }
+        if (this._listeners) {
+            this._listeners.forEach((e) => {
+                if (clearPersistent || !e.persistent) {
+                    google.maps.event.removeListener(e.listener);
+                    e.listener = null;
+                }
+            });
+            this._listeners = this._listeners.filter((e) => {
+                return e.listener != null;
+            });
         }
     }
 
@@ -260,6 +266,20 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             this.resize();
             this.reposition();
         }
+    }
+
+    setWrapperClass(wrapperClass) {
+        if (this._html && this._html.wrapper) {
+            const w = this._html.wrapper;
+            w.className = `${_classPrefix}wrapper-${this._opts.placement}`;
+            if (this._opts.border) {
+                w.className += ` ${_classPrefix}has-border`;
+            }
+            if (wrapperClass) {
+                w.className += ` ${wrapperClass}`;
+            }
+        }
+        this._opts.wrapperClass = wrapperClass;
     }
 
     getWrapper() {
@@ -394,7 +414,10 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                 // Correctly rotate the shadows before the css transform
                 const hRotated = (_inverseRoot2 * (hOffset.value - vOffset.value)) + hOffset.units;
                 const vRotated = (_inverseRoot2 * (hOffset.value + vOffset.value)) + vOffset.units;
-                this._html.shadowPointerInner.style.boxShadow = formatBoxShadow(hRotated, vRotated);
+                if (this._html.shadowPointerInner) {
+                    this._html.shadowPointerInner.style.boxShadow =
+                        formatBoxShadow(hRotated, vRotated);
+                }
             }
             if (this._opts.shadow.opacity) {
                 this._html.shadowWrapper.style.opacity = this._opts.shadow.opacity;
@@ -412,9 +435,7 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
             this.resize();
             this.reposition();
             this.activateCallback('afterOpen');
-            if (google) {
-                google.maps.event.trigger(this.getMap(), `${_eventPrefix}opened`, this);
-            }
+            google.maps.event.trigger(this.getMap(), `${_eventPrefix}opened`, this);
         }
     }
 
@@ -446,15 +467,8 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
         this._html = {};
 
         // 1. Create the wrapper
-        this._html.wrapper = newElement(
-            `wrapper-${this._opts.placement}`
-        );
-        if (this._opts.wrapperClass) {
-            this._html.wrapper.className += ` ${this._opts.wrapperClass}`;
-        }
-        if (this._opts.border) {
-            applyCss(this._html.wrapper, ['has-border']);
-        }
+        this._html.wrapper = newElement();
+        this.setWrapperClass(this._opts.wrapperClass);
 
         // 2. Create the shadow
         if (this._opts.shadow) {
@@ -550,60 +564,58 @@ export default class SnazzyInfoWindow extends google.maps.OverlayView {
                 }
             }));
         }
-        if (google) {
-            // Clear out the previous map bounds
-            this._previousWidth = null;
-            this._previousHeight = null;
-            this.trackListener(google.maps.event.addListener(map, 'bounds_changed', () => {
-                const d = map.getDiv();
-                const ow = d.offsetWidth;
-                const oh = d.offsetHeight;
-                const pw = this._previousWidth;
-                const ph = this._previousHeight;
-                if (pw === null || ph === null || pw !== ow || ph !== oh) {
-                    this._previousWidth = ow;
-                    this._previousHeight = oh;
-                    this.resize();
-                }
-            }));
 
-            // Marker moves
-            if (this._marker) {
-                this.trackListener(google.maps.event.addListener(this._marker,
-                    'position_changed', () => {
-                        this.draw();
-                    }));
+        // Clear out the previous map bounds
+        this._previousWidth = null;
+        this._previousHeight = null;
+        this.trackListener(google.maps.event.addListener(map, 'bounds_changed', () => {
+            const d = map.getDiv();
+            const ow = d.offsetWidth;
+            const oh = d.offsetHeight;
+            const pw = this._previousWidth;
+            const ph = this._previousHeight;
+            if (pw === null || ph === null || pw !== ow || ph !== oh) {
+                this._previousWidth = ow;
+                this._previousHeight = oh;
+                this.resize();
             }
+        }));
 
-            // Close button
-            if (this._opts.showCloseButton && !this._opts.closeButtonMarkup) {
-                this.trackListener(google.maps.event.addDomListener(this._html.closeButton,
-                    'click', (e) => {
-                        e.cancelBubble = true;
-                        if (e.stopPropagation) {
-                            e.stopPropagation();
-                        }
-                        this.close();
-                    }));
-            }
-
-            // Stop the mouse event propagation
-            const mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu',
-                'drag', 'dragend', 'dragstart',
-                'mousedown', 'mouseout', 'mouseover', 'mouseup',
-                'touchstart', 'touchend', 'touchmove',
-                'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
-            mouseEvents.forEach((event) => {
-                this.trackListener(google.maps.event.addDomListener(this._html.wrapper,
-                    event, (e) => {
-                        e.cancelBubble = true;
-                        if (e.stopPropagation) {
-                            e.stopPropagation();
-                        }
-                    }));
-            });
+        // Marker moves
+        if (this._marker) {
+            this.trackListener(google.maps.event.addListener(this._marker,
+                'position_changed', () => {
+                    this.draw();
+                }));
         }
 
+        // Close button
+        if (this._opts.showCloseButton && !this._opts.closeButtonMarkup) {
+            this.trackListener(google.maps.event.addDomListener(this._html.closeButton,
+                'click', (e) => {
+                    e.cancelBubble = true;
+                    if (e.stopPropagation) {
+                        e.stopPropagation();
+                    }
+                    this.close();
+                }));
+        }
+
+        // Stop the mouse event propagation
+        const mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu',
+            'drag', 'dragend', 'dragstart',
+            'mousedown', 'mouseout', 'mouseover', 'mouseup',
+            'touchstart', 'touchend', 'touchmove',
+            'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
+        mouseEvents.forEach((event) => {
+            this.trackListener(google.maps.event.addDomListener(this._html.wrapper,
+                event, (e) => {
+                    e.cancelBubble = true;
+                    if (e.stopPropagation) {
+                        e.stopPropagation();
+                    }
+                }));
+        });
 
         this.activateCallback('open');
     }

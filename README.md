@@ -94,6 +94,13 @@ Set the `position` of the info window. A valid Google Map instance must be assoc
 - Parameter: `latLng`
   - _[LatLng]_ or _[LatLngLiteral]_
 
+#### setWrapperClass(wrapperClass)
+
+Set the `wrapperClass` of the info window. This can be called at any time.
+
+- Parameter: `wrapperClass`
+  - _string_
+
 #### getWrapper()
 
 Will return the DOM Element for the wrapper container of the info window.
