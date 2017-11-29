@@ -400,7 +400,10 @@ export default class SnazzyInfoWindow extends getGoogleClass() {
                 // Correctly rotate the shadows before the css transform
                 const hRotated = (_inverseRoot2 * (hOffset.value - vOffset.value)) + hOffset.units;
                 const vRotated = (_inverseRoot2 * (hOffset.value + vOffset.value)) + vOffset.units;
-                this._html.shadowPointerInner.style.boxShadow = formatBoxShadow(hRotated, vRotated);
+                if (this._html.shadowPointerInner) {
+                    this._html.shadowPointerInner.style.boxShadow =
+                        formatBoxShadow(hRotated, vRotated);
+                }
             }
             if (this._opts.shadow.opacity) {
                 this._html.shadowWrapper.style.opacity = this._opts.shadow.opacity;
