@@ -87,6 +87,8 @@
         placement: 'top',
         pointer: true,
         openOnMarkerClick: true,
+        openOnMarkerMouseOver: false,
+        closeOnMarkerMouseOut: false,
         closeOnMapClick: true,
         closeWhenOthersOpen: false,
         showCloseButton: true,
@@ -226,7 +228,25 @@
                     }
                 }), true);
             }
-
+			
+			// This listener remains active when the info window is closed.
+			if (_this._marker && _this._opts.openOnMarkerMouseOver) {
+				_this.trackListener(google.maps.event.addListener(_this._marker, 'mouseover', function () {
+					if (!_this.getMap()) {
+						_this.open();
+					}
+				}), true);
+			}
+			
+			// This listener remains active when the info window is closed.
+			if (_this._marker && _this._opts.closeOnMarkerMouseOut) {
+				_this.trackListener(google.maps.event.addListener(_this._marker, 'mouseout', function () {
+					if (_this.getMap()) {
+						_this.close();
+					}
+				}), true);
+			}
+			
             // When using a position the default option for the offset is 0
             if (_this._position && !_this._opts.offset) {
                 _this._opts.offset = {
