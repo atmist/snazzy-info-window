@@ -602,11 +602,18 @@ export default class SnazzyInfoWindow extends getGoogleClass() {
         }
 
         // Stop the mouse event propagation
-        const mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu',
+        let mouseEvents = ['click', 'dblclick', 'rightclick', 'contextmenu',
             'drag', 'dragend', 'dragstart',
             'mousedown', 'mouseout', 'mouseover', 'mouseup',
             'touchstart', 'touchend', 'touchmove',
             'wheel', 'mousewheel', 'DOMMouseScroll', 'MozMousePixelScroll'];
+        if (this._opts.whitelistedMouseEvents) {
+            const whitelistedEvents = this._opts.whitelistedMouseEvents;
+            mouseEvents = mouseEvents.filter((event) => {
+                return whitelistedEvents.indexOf(event) < 0;
+            });
+        }
+
         mouseEvents.forEach((event) => {
             this.trackListener(google.maps.event.addDomListener(this._html.wrapper,
                 event, (e) => {
