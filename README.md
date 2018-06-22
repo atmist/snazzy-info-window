@@ -322,6 +322,17 @@ Determines if the info window will be panned into view when opened.
 - Type: _boolean_
 - Default: `true`
 
+#### whitelistedMouseEvents
+
+An optional list of mouse events whose execution will not be stopped when the event occurs.
+
+- Type: _array_
+- Example:
+
+    ```js
+    whitelistedMouseEvents: ['mousedown', 'mouseup']
+    ```
+
 ### callbacks
 
 All callbacks are optional and can access the info window instance via `this`.
