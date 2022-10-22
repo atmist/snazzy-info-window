@@ -55,7 +55,7 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 .#{$si-pre}-wrapper-top {
     flex-direction: column;
     margin-top: -$si-default-marker-anchor-y - $si-default-marker-margin;
-    margin-left: $si-default-marker-width / 2 - $si-default-marker-anchor-x;
+    margin-left: $si-default-marker-width * 0.5 - $si-default-marker-anchor-x;
     transform: translate(-50%, -100%);
 }
 
@@ -63,13 +63,13 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 .#{$si-pre}-wrapper-bottom {
     flex-direction: column-reverse;
     margin-top: $si-default-marker-height - $si-default-marker-anchor-y + $si-default-marker-margin;
-    margin-left: $si-default-marker-width / 2 - $si-default-marker-anchor-x;
+    margin-left: $si-default-marker-width * 0.5 - $si-default-marker-anchor-x;
     transform: translate(-50%, 0);
 }
 
 // Left-positioned infowindow
 .#{$si-pre}-wrapper-left {
-    margin-top: $si-default-marker-height / 2 - $si-default-marker-anchor-y;
+    margin-top: $si-default-marker-height * 0.5 - $si-default-marker-anchor-y;
     margin-left: -$si-default-marker-anchor-x - $si-default-marker-margin;
     transform: translate(-100%, -50%);
 }
@@ -77,7 +77,7 @@ $si-rotated-shadow-v: $si-inverse-root-2 * ($si-shadow-h + $si-shadow-v);     //
 // Right-positioned infowindow
 .#{$si-pre}-wrapper-right {
     flex-direction: row-reverse;
-    margin-top: $si-default-marker-height / 2 - $si-default-marker-anchor-y;
+    margin-top: $si-default-marker-height * 0.5 - $si-default-marker-anchor-y;
     margin-left: $si-default-marker-width - $si-default-marker-anchor-x + $si-default-marker-margin;
     transform: translate(0, -50%);
 }
